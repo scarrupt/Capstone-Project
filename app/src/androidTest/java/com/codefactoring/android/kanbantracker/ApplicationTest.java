@@ -1,4 +1,4 @@
-package com.codefactoring.android.kanbantracker;
+package com.codefactoring.android.backlogapi;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

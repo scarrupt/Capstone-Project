@@ -1,9 +1,9 @@
-package com.codefactoring.android.kanbantracker.view.account;
+package com.codefactoring.android.backlogapi.view.account;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.codefactoring.android.kanbantracker.R;
+import com.codefactoring.android.backlogapi.R;
 
 public class AccountActivity extends AppCompatActivity {
 
