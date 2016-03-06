@@ -70,4 +70,21 @@ public class BacklogApiClientTest {
 
         subscriber.assertReceivedOnNext(users);
     }
+
+    @Test
+    public void throwsBacklogApiExceptionOn404Error() throws IOException, InterruptedException {
+        final TestSubscriber<User> subscriber = new TestSubscriber<>();
+
+        server.enqueue(new MockResponse().setResponseCode(404));
+        server.start();
+        final HttpUrl baseUrl = server.url("/api/v2/test");
+
+        final BacklogApiClient backlogApi = new BacklogApiClient(baseUrl.toString(), "apiKey");
+
+        backlogApi.getUserOperations().getOwnUser().subscribe(subscriber);
+
+        server.takeRequest();
+
+        subscriber.assertError(BacklogApiException.class);
+    }
 }

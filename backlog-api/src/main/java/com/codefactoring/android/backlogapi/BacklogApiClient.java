@@ -1,6 +1,7 @@
 package com.codefactoring.android.backlogapi;
 
 import com.codefactoring.android.backlogapi.interceptors.ApiKeyRequestInterceptor;
+import com.codefactoring.android.backlogapi.interceptors.HttpStatusNotFoundResponseInterceptor;
 import com.codefactoring.android.backlogapi.operations.UserOperations;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,6 +43,7 @@ public class BacklogApiClient {
     private OkHttpClient provideOkHttpClient(final String apiKey) {
         return new OkHttpClient.Builder()
                 .addInterceptor(new ApiKeyRequestInterceptor(apiKey))
+                .addInterceptor(new HttpStatusNotFoundResponseInterceptor())
                 .build();
     }
 
