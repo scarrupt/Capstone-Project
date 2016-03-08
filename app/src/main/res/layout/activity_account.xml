@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/space_info_form"
+    android:id="@+id/account_form"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="com.codefactoring.android.backlogtracker.view.account.AccountActivity">
+    tools:context=".view.account.AccountActivity">
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
@@ -14,10 +14,8 @@
         <EditText
             android:id="@+id/text_space_key"
             android:layout_width="match_parent"
-
             android:layout_height="match_parent"
 
-            android:layout_gravity="center"
             android:hint="@string/prompt_space_key"
             android:inputType="text"
             android:maxLines="1"
@@ -47,6 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:background="@color/colorPrimary"
         android:text="@string/action_next"
         android:textStyle="bold" />
 </LinearLayout>
