@@ -1,8 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/space_info_form"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".view.account.AccountActivity">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context="com.codefactoring.android.backlogtracker.view.account.AccountActivity">
 
-</RelativeLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/text_space_key"
+            android:layout_width="match_parent"
+
+            android:layout_height="match_parent"
+
+            android:layout_gravity="center"
+            android:hint="@string/prompt_space_key"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/text_api_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_api_key"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/button_next"
+        style="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/action_next"
+        android:textStyle="bold" />
+</LinearLayout>

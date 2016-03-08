@@ -1,3 +1,33 @@
 <resources>
-    <string name="app_name">Kanban Tracker</string>
+    <string name="app_name">Backlog Tracker</string>
+
+    <!--Account screen -->
+    <string name="prompt_space_key">Space Key</string>
+    <string name="prompt_api_key">API Key</string>
+    <string name="action_next">Next</string>
+
+    <string name="error_dialog_title">Error</string>
+    <string name="error_dialog_button_ok">OK</string>
+
+    <string name="account_type">backlog.android.codefactoring.com</string>
+    <string name="auth_token_type">backlogTracker</string>
+
+    <!-- UI Errors -->
+    <string name="error_field_required">This field is required</string>
+    <string name="error_space_key_length">Space key must between 3 and 10 characters long</string>
+
+    <!-- API Errors -->
+    <string name="error_server_internal">API Server Internal error</string>
+    <string name="error_licence_operation">No licence for this operation</string>
+    <string name="error_licence_expired">Licence has expired</string>
+    <string name="error_access_denied">Access denied</string>
+    <string name="error_unauthorized_operation">Unauthorized operation</string>
+    <string name="error_no_resource">No resource found</string>
+    <string name="error_invalid_request">Invalid request</string>
+    <string name="error_space_over_capacity">Space is over capacity</string>
+    <string name="error_resource_overflow">Resource overflow</string>
+    <string name="error_too_large_file">File is too large</string>
+    <string name="error_authentication">Not registered on this space.</string>
+    <string name="error_default">An error happened. Please retry</string>
+
 </resources>

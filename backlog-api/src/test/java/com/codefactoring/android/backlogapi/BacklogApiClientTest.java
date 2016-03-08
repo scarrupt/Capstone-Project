@@ -33,7 +33,8 @@ public class BacklogApiClientTest {
         server.start();
         final HttpUrl baseUrl = server.url("/api/v2/test");
 
-        final BacklogApiClient backlogApi = new BacklogApiClient(baseUrl.toString(), "apiKey");
+        final BacklogApiClient backlogApi = new BacklogApiClient(new BacklogTestConfig())
+                .connectWith(baseUrl.toString(), "apiKey");
 
         backlogApi.getUserOperations().getOwnUser().subscribe(subscriber);
 
@@ -60,7 +61,8 @@ public class BacklogApiClientTest {
 
         final HttpUrl baseUrl = server.url("/api/v2/users/myself");
 
-        final BacklogApiClient backlogApi = new BacklogApiClient(baseUrl.toString(), "apiKey");
+        final BacklogApiClient backlogApi = new BacklogApiClient(new BacklogTestConfig())
+                .connectWith(baseUrl.toString(), "apiKey");
         backlogApi.getUserOperations().getOwnUser().subscribe(subscriber);
 
         List<User> users = new ArrayList<>();
@@ -79,12 +81,20 @@ public class BacklogApiClientTest {
         server.start();
         final HttpUrl baseUrl = server.url("/api/v2/test");
 
-        final BacklogApiClient backlogApi = new BacklogApiClient(baseUrl.toString(), "apiKey");
+        final BacklogApiClient backlogApi = new BacklogApiClient(new BacklogTestConfig())
+                .connectWith(baseUrl.toString(), "apiKey");
 
         backlogApi.getUserOperations().getOwnUser().subscribe(subscriber);
 
         server.takeRequest();
 
         subscriber.assertError(BacklogApiException.class);
+    }
+
+    private class BacklogTestConfig extends BacklogToolConfig {
+        @Override
+        public String getBaseURL(String spaceUrl) {
+            return spaceUrl;
+        }
     }
 }

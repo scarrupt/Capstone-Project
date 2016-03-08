@@ -8,9 +8,9 @@ import com.google.gson.GsonBuilder;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
-import retrofit2.GsonConverterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Retrofit;
-import retrofit2.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 
 import static com.codefactoring.android.backlogapi.BacklogApiConstants.BACKLOG_API_ENDPOINT;
 import static com.codefactoring.android.backlogapi.BacklogApiConstants.DATE_FORMAT_PATTERN;
@@ -19,16 +19,24 @@ public class BacklogApiClient {
 
     private UserOperations mUserOperations;
 
-    public BacklogApiClient(String spaceUrl, final String apiKey) {
+    private BacklogToolConfig mBacklogApiConfig;
+
+    public BacklogApiClient connectWith(String spaceKey, String apiKey) {
         final Gson gson = provideGson();
 
-        final HttpUrl baseUrl = HttpUrl.parse(spaceUrl);
+        final HttpUrl baseUrl = HttpUrl.parse(mBacklogApiConfig.getBaseURL(spaceKey));
 
         final OkHttpClient client = provideOkHttpClient(apiKey);
 
         final Retrofit retrofit = provideRetrofit(gson, baseUrl, client);
 
         mUserOperations = retrofit.create(UserOperations.class);
+
+        return this;
+    }
+
+    public BacklogApiClient(BacklogToolConfig backlogApiConfig) {
+        mBacklogApiConfig = backlogApiConfig;
     }
 
     private Retrofit provideRetrofit(Gson gson, HttpUrl baseUrl, OkHttpClient client) {
