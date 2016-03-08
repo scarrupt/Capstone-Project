@@ -24,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class BacklogApiClientTest {
 
     private static final String PARAM_API_KEY = "apiKey";
+    public static final int PROJECT_ID = 1;
 
     private final MockWebServer server = new MockWebServer();
 
