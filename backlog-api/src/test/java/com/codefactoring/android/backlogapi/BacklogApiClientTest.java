@@ -1,5 +1,6 @@
 package com.codefactoring.android.backlogapi;
 
+import com.codefactoring.android.backlogapi.models.Project;
 import com.codefactoring.android.backlogapi.models.User;
 
 import org.junit.Test;
@@ -22,12 +23,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class BacklogApiClientTest {
 
-    private final MockWebServer server = new MockWebServer();
+    private static final String PARAM_API_KEY = "apiKey";
 
-    private TestSubscriber<User> subscriber = new TestSubscriber<>();
+    private final MockWebServer server = new MockWebServer();
 
     @Test
     public void addsApiKeyAsRequestParameter() throws IOException, InterruptedException {
+        final TestSubscriber<User> subscriber = new TestSubscriber<>();
 
         server.enqueue(new MockResponse().setBody("{}"));
         server.start();
@@ -45,6 +47,7 @@ public class BacklogApiClientTest {
 
     @Test
     public void returnsCurrentUserWhenGetOwnUserEndpointIsCalled() throws IOException {
+        final TestSubscriber<User> subscriber = new TestSubscriber<>();
 
         final String userJson = "{\n" +
                 "    \"id\": 1,\n" +
@@ -62,7 +65,7 @@ public class BacklogApiClientTest {
         final HttpUrl baseUrl = server.url("/api/v2/users/myself");
 
         final BacklogApiClient backlogApi = new BacklogApiClient(new BacklogTestConfig())
-                .connectWith(baseUrl.toString(), "apiKey");
+                .connectWith(baseUrl.toString(), PARAM_API_KEY);
         backlogApi.getUserOperations().getOwnUser().subscribe(subscriber);
 
         List<User> users = new ArrayList<>();
@@ -74,6 +77,44 @@ public class BacklogApiClientTest {
     }
 
     @Test
+    public void returnsProjectListWhenGetProjectListEndpointIsCalled() throws IOException {
+        final TestSubscriber<List<Project>> subscriber = new TestSubscriber<>();
+
+        final String projectListJson = "[\n" +
+                "    {\n" +
+                "        \"id\": 1,\n" +
+                "        \"projectKey\": \"TEST\",\n" +
+                "        \"name\": \"test\",\n" +
+                "        \"chartEnabled\": false,\n" +
+                "        \"subtaskingEnabled\": false,\n" +
+                "        \"projectLeaderCanEditProjectLeader\": false,\n" +
+                "        \"textFormattingRule\": \"markdown\",\n" +
+                "        \"archived\":false\n" +
+                "    }" +
+                "]";
+
+        server.enqueue(new MockResponse().setBody(projectListJson));
+
+        server.start();
+
+        final HttpUrl baseUrl = server.url("/api/v2/projects/");
+
+        final BacklogApiClient backlogApi = new BacklogApiClient(new BacklogTestConfig())
+                .connectWith(baseUrl.toString(), PARAM_API_KEY);
+        backlogApi.getProjectOperations().getProjectList().subscribe(subscriber);
+
+        final List<Project> projects = new ArrayList<>();
+        final Project expectedProject = new Project();
+        expectedProject.setProjectKey("TEST");
+        projects.add(expectedProject);
+
+        List<List<Project>> items = new ArrayList<>();
+        items.add(projects);
+
+        subscriber.assertReceivedOnNext(items);
+    }
+
+    @Test
     public void throwsBacklogApiExceptionOn404Error() throws IOException, InterruptedException {
         final TestSubscriber<User> subscriber = new TestSubscriber<>();
 
@@ -82,7 +123,7 @@ public class BacklogApiClientTest {
         final HttpUrl baseUrl = server.url("/api/v2/test");
 
         final BacklogApiClient backlogApi = new BacklogApiClient(new BacklogTestConfig())
-                .connectWith(baseUrl.toString(), "apiKey");
+                .connectWith(baseUrl.toString(), PARAM_API_KEY);
 
         backlogApi.getUserOperations().getOwnUser().subscribe(subscriber);
 

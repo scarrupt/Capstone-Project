@@ -2,15 +2,16 @@ package com.codefactoring.android.backlogapi;
 
 import com.codefactoring.android.backlogapi.interceptors.ApiKeyRequestInterceptor;
 import com.codefactoring.android.backlogapi.interceptors.HttpStatusNotFoundResponseInterceptor;
+import com.codefactoring.android.backlogapi.operations.ProjectOperations;
 import com.codefactoring.android.backlogapi.operations.UserOperations;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.codefactoring.android.backlogapi.BacklogApiConstants.BACKLOG_API_ENDPOINT;
 import static com.codefactoring.android.backlogapi.BacklogApiConstants.DATE_FORMAT_PATTERN;
@@ -18,6 +19,8 @@ import static com.codefactoring.android.backlogapi.BacklogApiConstants.DATE_FORM
 public class BacklogApiClient {
 
     private UserOperations mUserOperations;
+
+    private ProjectOperations mProjectOperations;
 
     private BacklogToolConfig mBacklogApiConfig;
 
@@ -31,6 +34,7 @@ public class BacklogApiClient {
         final Retrofit retrofit = provideRetrofit(gson, baseUrl, client);
 
         mUserOperations = retrofit.create(UserOperations.class);
+        mProjectOperations = retrofit.create(ProjectOperations.class);
 
         return this;
     }
@@ -63,5 +67,9 @@ public class BacklogApiClient {
 
     public UserOperations getUserOperations() {
         return mUserOperations;
+    }
+
+    public ProjectOperations getProjectOperations() {
+        return mProjectOperations;
     }
 }
