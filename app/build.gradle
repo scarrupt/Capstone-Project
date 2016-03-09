@@ -5,6 +5,12 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
+    /*
+     *Issue with Robolectric. To remove when fixed
+     * https://github.com/robolectric/robolectric/issues/1862
+     */
+    useLibrary 'org.apache.http.legacy'
+
     defaultConfig {
         applicationId "com.codefactoring.android.backlogtracker"
         minSdkVersion 16
