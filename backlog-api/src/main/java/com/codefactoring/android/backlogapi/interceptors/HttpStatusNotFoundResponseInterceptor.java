@@ -18,7 +18,7 @@ public class HttpStatusNotFoundResponseInterceptor implements Interceptor {
         final Response response = chain.proceed(request);
 
         if (HTTP_STATUS_NOT_FOUND == response.code()) {
-            throw new BacklogApiException(response.body().string());
+            throw new BacklogApiException(response.body() == null ? "" : response.body().string());
         }
 
         return response;

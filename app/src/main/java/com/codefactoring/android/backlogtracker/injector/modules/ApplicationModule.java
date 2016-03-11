@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.codefactoring.android.backlogtracker.authenticator.BacklogAuthenticator;
+import com.codefactoring.android.backlogtracker.sync.BacklogSyncAdapter;
 
 import javax.inject.Singleton;
 
@@ -32,7 +33,15 @@ public class ApplicationModule {
         return AccountManager.get(context);
     }
 
+    @Provides
+    @Singleton
     public BacklogAuthenticator backlogAuthenticator(Context context) {
         return new BacklogAuthenticator(context);
+    }
+
+    @Provides
+    @Singleton
+    public BacklogSyncAdapter backlogSyncAdapter(Context context) {
+        return new BacklogSyncAdapter(context, true);
     }
 }

@@ -12,6 +12,7 @@ import android.widget.EditText;
 import com.codefactoring.android.backlogapi.BacklogApiClient;
 import com.codefactoring.android.backlogapi.models.User;
 import com.codefactoring.android.backlogtracker.BacklogTrackerApplication;
+import com.codefactoring.android.backlogtracker.Config;
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.view.util.ErrorUtils;
 
@@ -24,8 +25,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class AccountActivity extends AccountAuthenticatorActivity {
-
-    public static final String KEY_API_KEY = "com.codefactoring.android.backlog.apiKey";
 
     @Bind(R.id.text_space_key)
     EditText mSpaceKeyView;
@@ -172,7 +171,8 @@ public class AccountActivity extends AccountAuthenticatorActivity {
             final Account account = new Account(mSpaceKey, accountType);
 
             final Bundle userData = new Bundle();
-            userData.putString(KEY_API_KEY, mApiKey);
+            userData.putString(Config.KEY_SPACE_KEY, mSpaceKey);
+            userData.putString(Config.KEY_API_KEY, mApiKey);
 
             mAccountManager.addAccountExplicitly(account, null, userData);
 
