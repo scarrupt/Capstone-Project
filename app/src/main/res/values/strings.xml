@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Backlog Tracker</string>
 
-    <!--Account screen -->
+    <!-- Account screen -->
     <string name="prompt_space_key">Space Key</string>
     <string name="prompt_api_key">API Key</string>
     <string name="action_next">Next</string>
@@ -12,6 +12,9 @@
     <string name="account_type">backlog.android.codefactoring.com</string>
     <string name="auth_token_type">backlogTracker</string>
     <string name="content_authority">com.codefactoring.android.backlog.app</string>
+
+    <!-- Project screen -->
+    <string name="title_activity_project_list">My projects</string>
 
     <!-- UI Errors -->
     <string name="error_field_required">This field is required</string>
@@ -30,6 +33,5 @@
     <string name="error_too_large_file">File is too large</string>
     <string name="error_authentication">Not registered on this space.</string>
     <string name="error_default">An error happened. Please retry</string>
-
 
 </resources>
