@@ -1,5 +1,6 @@
 package com.codefactoring.android.backlogapi;
 
+import com.codefactoring.android.backlogapi.models.Issue;
 import com.codefactoring.android.backlogapi.models.Project;
 import com.codefactoring.android.backlogapi.models.User;
 
@@ -24,6 +25,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class BacklogApiClientTest {
 
     private static final String PARAM_API_KEY = "apiKey";
+    private static final long PROJECT_ID = 1L;
+    private static final long KEY_ID = 1L;
 
     private final MockWebServer server = new MockWebServer();
 
@@ -149,6 +152,155 @@ public class BacklogApiClientTest {
 
         subscriber.assertReceivedOnNext(items);
     }
+
+    @Test
+    public void returnsIssueListWhenGetIssueListEndpointIsCalled() throws IOException {
+        final TestSubscriber<List<Issue>> subscriber = new TestSubscriber<>();
+
+        final String issueListJson = "[\n" +
+                "    {\n" +
+                "        \"id\": 1,\n" +
+                "        \"projectId\": 1,\n" +
+                "        \"issueKey\": \"BLG-1\",\n" +
+                "        \"keyId\": 1,\n" +
+                "        \"issueType\": {\n" +
+                "            \"id\": 2,\n" +
+                "            \"projectId\" :1,\n" +
+                "            \"name\": \"Task\",\n" +
+                "            \"color\": \"#7ea800\",\n" +
+                "            \"displayOrder\": 0\n" +
+                "        },\n" +
+                "        \"summary\": \"first issue\",\n" +
+                "        \"description\": \"\",\n" +
+                "        \"resolutions\": null,\n" +
+                "        \"priority\": {\n" +
+                "            \"id\": 3,\n" +
+                "            \"name\": \"Normal\"\n" +
+                "        },\n" +
+                "        \"status\": {\n" +
+                "            \"id\": 1,\n" +
+                "            \"name\": \"Open\"\n" +
+                "        },\n" +
+                "        \"assignee\": {\n" +
+                "            \"id\": 2,\n" +
+                "            \"name\": \"eguchi\",\n" +
+                "            \"roleType\" :2,\n" +
+                "            \"lang\": null,\n" +
+                "            \"mailAddress\": \"eguchi@nulab.example\"\n" +
+                "        },\n" +
+                "        \"category\": [],\n" +
+                "        \"versions\": [],\n" +
+                "        \"milestone\": [\n" +
+                "            {\n" +
+                "                \"id\": 30,\n" +
+                "                \"projectId\": 1,\n" +
+                "                \"name\": \"wait for release\",\n" +
+                "                \"description\": \"\",\n" +
+                "                \"startDate\": null,\n" +
+                "                \"releaseDueDate\": null,\n" +
+                "                \"archived\": false,\n" +
+                "                \"displayOrder\": 0\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"startDate\": null,\n" +
+                "        \"dueDate\": null,\n" +
+                "        \"estimatedHours\": null,\n" +
+                "        \"actualHours\": null,\n" +
+                "        \"parentIssueId\": null,\n" +
+                "        \"createdUser\": {\n" +
+                "            \"id\": 1,\n" +
+                "            \"userId\": \"admin\",\n" +
+                "            \"name\": \"admin\",\n" +
+                "            \"roleType\": 1,\n" +
+                "            \"lang\": \"ja\",\n" +
+                "            \"mailAddress\": \"eguchi@nulab.example\"\n" +
+                "        },\n" +
+                "        \"created\": \"2012-07-23T06:10:15Z\",\n" +
+                "        \"updatedUser\": {\n" +
+                "            \"id\": 1,\n" +
+                "            \"userId\": \"admin\",\n" +
+                "            \"name\": \"admin\",\n" +
+                "            \"roleType\": 1,\n" +
+                "            \"lang\": \"ja\",\n" +
+                "            \"mailAddress\": \"eguchi@nulab.example\"\n" +
+                "        },\n" +
+                "        \"updated\": \"2013-02-07T08:09:49Z\",\n" +
+                "        \"customFields\": [],\n" +
+                "        \"attachments\": [\n" +
+                "            {\n" +
+                "                \"id\": 1,\n" +
+                "                \"name\": \"IMGP0088.JPG\",\n" +
+                "                \"size\": 85079\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"sharedFiles\": [\n" +
+                "            {\n" +
+                "                \"id\": 454403,\n" +
+                "                \"type\": \"file\",\n" +
+                "                \"dir\": \"/userIcon/\",\n" +
+                "                \"name\": \"01_male clerk.png\",\n" +
+                "                \"size\": 2735,\n" +
+                "                \"createdUser\": {\n" +
+                "                    \"id\": 5686,\n" +
+                "                    \"userId\": \"takada\",\n" +
+                "                    \"name\": \"takada\",\n" +
+                "                    \"roleType\":2,\n" +
+                "                    \"lang\":\"ja\",\n" +
+                "                    \"mailAddress\":\"takada@nulab.example\"\n" +
+                "                },\n" +
+                "                \"created\": \"2009-02-27T03:26:15Z\",\n" +
+                "                \"updatedUser\": {\n" +
+                "                    \"id\": 5686,\n" +
+                "                    \"userId\": \"takada\",\n" +
+                "                    \"name\": \"takada\",\n" +
+                "                    \"roleType\": 2,\n" +
+                "                    \"lang\": \"ja\",\n" +
+                "                    \"mailAddress\": \"takada@nulab.example\"\n" +
+                "                },\n" +
+                "                \"updated\":\"2009-03-03T16:57:47Z\"\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"stars\": [\n" +
+                "            {\n" +
+                "                \"id\": 10,\n" +
+                "                \"comment\": null,\n" +
+                "                \"url\": \"https://xx.backlogtool.com/view/BLG-1\",\n" +
+                "                \"title\": \"[BLG-1] first issue | Show issue - Backlog\",\n" +
+                "                \"presenter\": {\n" +
+                "                    \"id\": 2,\n" +
+                "                    \"userId\": \"eguchi\",\n" +
+                "                    \"name\": \"eguchi\",\n" +
+                "                    \"roleType\": 2,\n" +
+                "                    \"lang\": \"ja\",\n" +
+                "                    \"mailAddress\": \"eguchi@nulab.example\"\n" +
+                "                },\n" +
+                "                \"created\":\"2013-07-08T10:24:28Z\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "]";
+
+        server.enqueue(new MockResponse().setBody(issueListJson));
+
+        server.start();
+
+        final HttpUrl baseUrl = server.url("/api/v2/issues");
+
+        final BacklogApiClient backlogApi = new BacklogApiClient(new BacklogTestConfig())
+                .connectWith(baseUrl.toString(), PARAM_API_KEY);
+        backlogApi.getIssueOperations().getIssueList(PROJECT_ID).subscribe(subscriber);
+
+        final List<Issue> issues = new ArrayList<>();
+        final Issue expectedIssue = new Issue();
+        expectedIssue.setKeyId(KEY_ID);
+        issues.add(expectedIssue);
+
+        List<List<Issue>> items = new ArrayList<>();
+        items.add(issues);
+
+        subscriber.assertReceivedOnNext(items);
+    }
+
 
     @Test
     public void throwsBacklogApiExceptionOn404Error() throws IOException, InterruptedException {

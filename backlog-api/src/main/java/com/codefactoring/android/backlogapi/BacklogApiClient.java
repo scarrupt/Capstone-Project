@@ -2,6 +2,7 @@ package com.codefactoring.android.backlogapi;
 
 import com.codefactoring.android.backlogapi.interceptors.ApiKeyRequestInterceptor;
 import com.codefactoring.android.backlogapi.interceptors.HttpStatusNotFoundResponseInterceptor;
+import com.codefactoring.android.backlogapi.operations.IssueOperations;
 import com.codefactoring.android.backlogapi.operations.ProjectOperations;
 import com.codefactoring.android.backlogapi.operations.UserOperations;
 import com.google.gson.Gson;
@@ -22,6 +23,8 @@ public class BacklogApiClient {
 
     private ProjectOperations mProjectOperations;
 
+    private IssueOperations mIssueOperations;
+
     private BacklogToolConfig mBacklogApiConfig;
 
     public BacklogApiClient connectWith(String spaceKey, String apiKey) {
@@ -35,6 +38,7 @@ public class BacklogApiClient {
 
         mUserOperations = retrofit.create(UserOperations.class);
         mProjectOperations = retrofit.create(ProjectOperations.class);
+        mIssueOperations = retrofit.create(IssueOperations.class);
 
         return this;
     }
@@ -71,5 +75,9 @@ public class BacklogApiClient {
 
     public ProjectOperations getProjectOperations() {
         return mProjectOperations;
+    }
+
+    public IssueOperations getIssueOperations() {
+        return mIssueOperations;
     }
 }
