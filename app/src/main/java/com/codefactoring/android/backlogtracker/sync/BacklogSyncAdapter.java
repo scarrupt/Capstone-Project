@@ -18,8 +18,11 @@ import com.codefactoring.android.backlogtracker.Config;
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.provider.BacklogContract;
 import com.codefactoring.android.backlogtracker.sync.fetchers.ProjectDataFetcher;
+import com.codefactoring.android.backlogtracker.sync.fetchers.UserDataFetcher;
 import com.codefactoring.android.backlogtracker.sync.handlers.ProjectDataHandler;
+import com.codefactoring.android.backlogtracker.sync.handlers.UserDataHandler;
 import com.codefactoring.android.backlogtracker.sync.models.ProjectDto;
+import com.codefactoring.android.backlogtracker.sync.models.UserDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,11 +54,9 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
         mBacklogApiClient.connectWith(spaceKey, apiKey);
 
-        final ProjectDataFetcher projectDataFetcher = new ProjectDataFetcher(mBacklogApiClient);
-        final List<ProjectDto> projects = projectDataFetcher.getProjectList();
-
-        final ProjectDataHandler projectDataHandler = new ProjectDataHandler(getContext());
-        final ArrayList<ContentProviderOperation> operations = projectDataHandler.makeContentProviderOperations(projects);
+        final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        operations.addAll(syncProjectData());
+        operations.addAll(syncUserData());
 
         if (operations.size() > 0) {
             try {
@@ -66,6 +67,22 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
                 Log.e(LOG_TAG, "OperationApplicationException while applying content provider operations.", ex);
             }
         }
+    }
+
+    protected ArrayList<ContentProviderOperation> syncProjectData() {
+        final ProjectDataFetcher projectDataFetcher = new ProjectDataFetcher(mBacklogApiClient);
+        final List<ProjectDto> projects = projectDataFetcher.getProjectList();
+
+        final ProjectDataHandler projectDataHandler = new ProjectDataHandler(getContext());
+        return projectDataHandler.makeContentProviderOperations(projects);
+    }
+
+    protected ArrayList<ContentProviderOperation> syncUserData() {
+        final UserDataFetcher userDataFetcher = new UserDataFetcher(mBacklogApiClient);
+        final List<UserDto> users = userDataFetcher.getUserList();
+
+        final UserDataHandler userDataHandler = new UserDataHandler(getContext());
+        return userDataHandler.makeContentProviderOperations(users);
     }
 
     public void syncImmediately() {
