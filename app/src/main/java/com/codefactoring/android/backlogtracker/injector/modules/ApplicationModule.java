@@ -4,6 +4,7 @@ import android.accounts.AccountManager;
 import android.app.Application;
 import android.content.Context;
 
+import com.codefactoring.android.backlogapi.BacklogApiClient;
 import com.codefactoring.android.backlogtracker.authenticator.BacklogAuthenticator;
 import com.codefactoring.android.backlogtracker.sync.BacklogSyncAdapter;
 
@@ -41,7 +42,8 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
-    public BacklogSyncAdapter backlogSyncAdapter(Context context) {
-        return new BacklogSyncAdapter(context, true);
+    public BacklogSyncAdapter backlogSyncAdapter(Context context, AccountManager accountManager,
+                                                 BacklogApiClient backlogApiClient) {
+        return new BacklogSyncAdapter(context, true, accountManager, backlogApiClient);
     }
 }

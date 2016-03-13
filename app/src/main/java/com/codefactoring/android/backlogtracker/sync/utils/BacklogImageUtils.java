@@ -3,14 +3,10 @@ package com.codefactoring.android.backlogtracker.sync.utils;
 import android.util.Log;
 
 import java.io.FileOutputStream;
-import java.util.regex.Pattern;
 
 public final class BacklogImageUtils {
 
     private static final String LOG_TAG = BacklogImageUtils.class.getSimpleName();
-
-    private static final Pattern CONTENT_DISPOSITION_PATTERN = Pattern
-            .compile("attachment;\\s*filename\\s*\\*?=(.*)''(.*\\.(jpg|png|gif|bmp))");
 
     private BacklogImageUtils() {
     }

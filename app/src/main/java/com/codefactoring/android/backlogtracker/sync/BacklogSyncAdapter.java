@@ -24,20 +24,22 @@ import com.codefactoring.android.backlogtracker.sync.models.ProjectDto;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public final String LOG_TAG = BacklogSyncAdapter.class.getSimpleName();
 
-    @Inject
-    BacklogApiClient mBacklogApiClient;
+    private final BacklogApiClient mBacklogApiClient;
 
-    @Inject
-    AccountManager mAccountManager;
+    private final AccountManager mAccountManager;
 
-    public BacklogSyncAdapter(Context context, boolean autoInitialize) {
+    private final Context mContext;
+
+    public BacklogSyncAdapter(Context context, boolean autoInitialize, AccountManager accountManager,
+                              BacklogApiClient backlogApiClient) {
         super(context, autoInitialize);
+        mContext = context;
+        mAccountManager = accountManager;
+        mBacklogApiClient = backlogApiClient;
     }
 
     @Override
@@ -49,17 +51,15 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
         mBacklogApiClient.connectWith(spaceKey, apiKey);
 
-        final ArrayList<ContentProviderOperation> contentProviderOperations = new ArrayList<>();
-
         final ProjectDataFetcher projectDataFetcher = new ProjectDataFetcher(mBacklogApiClient);
         final List<ProjectDto> projects = projectDataFetcher.getProjectList();
 
         final ProjectDataHandler projectDataHandler = new ProjectDataHandler(getContext());
-        projectDataHandler.makeContentProviderOperations(projects);
+        final ArrayList<ContentProviderOperation> operations = projectDataHandler.makeContentProviderOperations(projects);
 
-        if (contentProviderOperations.size() > 0) {
+        if (operations.size() > 0) {
             try {
-                getContext().getContentResolver().applyBatch(BacklogContract.CONTENT_AUTHORITY, contentProviderOperations);
+                getContext().getContentResolver().applyBatch(BacklogContract.CONTENT_AUTHORITY, operations);
             } catch (RemoteException ex) {
                 Log.e(LOG_TAG, "RemoteException while applying content provider operations.", ex);
             } catch (OperationApplicationException ex) {
@@ -68,14 +68,15 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    public void syncImmediately(Context context) {
-        final Account[] accounts = getSyncAccounts(context);
+    public void syncImmediately() {
+        final Account[] accounts = getSyncAccounts(mContext);
         for (Account account : accounts) {
             final Bundle bundle = new Bundle();
             bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
             bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
             ContentResolver.requestSync(account,
-                    context.getString(R.string.content_authority), bundle);
+                    mContext.getString(R.string.content_authority), bundle);
+
         }
     }
 

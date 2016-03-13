@@ -4,6 +4,8 @@ import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import com.codefactoring.android.backlogapi.models.User;
 import com.codefactoring.android.backlogtracker.BacklogTrackerApplication;
 import com.codefactoring.android.backlogtracker.Config;
 import com.codefactoring.android.backlogtracker.R;
+import com.codefactoring.android.backlogtracker.view.project.ProjectListActivity;
 import com.codefactoring.android.backlogtracker.view.util.ErrorUtils;
 
 import javax.inject.Inject;
@@ -130,6 +133,11 @@ public class AccountActivity extends AccountAuthenticatorActivity {
         mSpaceKeyView.setError(null);
     }
 
+
+    public static Intent makeIntent(Context context) {
+        return new Intent(context, AccountActivity.class);
+    }
+
     private class AuthenticationSubscriber extends rx.Subscriber<User> {
 
         private final String mSpaceKey;
@@ -186,6 +194,11 @@ public class AccountActivity extends AccountAuthenticatorActivity {
             setAccountAuthenticatorResult(intent.getExtras());
             // Tell the account manager settings page that all went well
             setResult(RESULT_OK, intent);
+
+            ContentResolver.setSyncAutomatically(account, getApplication().getString(R.string.content_authority), true);
+
+            startActivity(ProjectListActivity.makeIntent(getApplicationContext()));
+            finish();
         }
     }
 }
