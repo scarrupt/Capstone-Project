@@ -115,6 +115,42 @@ public class BacklogApiClientTest {
     }
 
     @Test
+    public void returnsUserListWhenGetUserListEndpointIsCalled() throws IOException {
+        final TestSubscriber<List<User>> subscriber = new TestSubscriber<>();
+
+        final String userListJson = "[\n" +
+                "    {\n" +
+                "        \"id\": 1,\n" +
+                "        \"userId\": \"admin\",\n" +
+                "        \"name\": \"admin\",\n" +
+                "        \"roleType\": 1,\n" +
+                "        \"lang\": \"ja\",\n" +
+                "        \"mailAddress\": \"eguchi@nulab.example\"\n" +
+                "    }\n" +
+                "]";
+
+        server.enqueue(new MockResponse().setBody(userListJson));
+
+        server.start();
+
+        final HttpUrl baseUrl = server.url("/api/v2/users/");
+
+        final BacklogApiClient backlogApi = new BacklogApiClient(new BacklogTestConfig())
+                .connectWith(baseUrl.toString(), PARAM_API_KEY);
+        backlogApi.getUserOperations().getUserList().subscribe(subscriber);
+
+        final List<User> users = new ArrayList<>();
+        final User expectedUser = new User();
+        expectedUser.setUserId("admin");
+        users.add(expectedUser);
+
+        List<List<User>> items = new ArrayList<>();
+        items.add(users);
+
+        subscriber.assertReceivedOnNext(items);
+    }
+
+    @Test
     public void throwsBacklogApiExceptionOn404Error() throws IOException, InterruptedException {
         final TestSubscriber<User> subscriber = new TestSubscriber<>();
 
