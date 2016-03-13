@@ -19,6 +19,7 @@ import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.*;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CONTENT_AUTHORITY;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.ProjectEntry;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -114,5 +115,33 @@ public class BacklogProviderTest {
         contentValues.put(ProjectEntry.THUMBNAIL_URL, "/thumbnails/projects/TEST.png");
 
         return shadowContentResolver.insert(ProjectEntry.CONTENT_URI, contentValues);
+    }
+
+    /*
+     * User Tests
+     */
+    @Test
+    public void insertsNewUser() {
+        final Uri uri = insertSampleUser();
+
+        assertThat(ContentUris.parseId(uri), equalTo(1L));
+    }
+
+    @Test
+    public void deletesExistingUser() {
+        insertSampleUser();
+
+        final int count = shadowContentResolver.delete(UserEntry.CONTENT_URI, null, null);
+        assertThat(count, equalTo(1));
+    }
+
+    private Uri insertSampleUser() {
+        final ContentValues contentValues = new ContentValues();
+        contentValues.put(UserEntry._ID, 1);
+        contentValues.put(UserEntry.NAME, "Hiroki Nakamura");
+        contentValues.put(UserEntry.USER_ID, "hiroki_nakamura");
+        contentValues.put(UserEntry.THUMBNAIL_URL, "/thumbnails/users/hiroki_nakamura.png");
+
+        return shadowContentResolver.insert(UserEntry.CONTENT_URI, contentValues);
     }
 }
