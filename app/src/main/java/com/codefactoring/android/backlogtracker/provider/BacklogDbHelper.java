@@ -4,11 +4,13 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.*;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.ProjectEntry;
 
 public class BacklogDbHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
+    private static final String DROP_TABLE_IF_EXISTS = "DROP TABLE IF EXISTS ";
 
     static final String DATABASE_NAME = "backlog.db";
 
@@ -25,12 +27,23 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
                 ProjectEntry.THUMBNAIL_URL + " TEXT NULL " +
                 " );";
 
+        final String SQL_CREATE_USER_TABLE = "CREATE TABLE " + UserEntry.TABLE_NAME + " (" +
+                UserEntry._ID + " INTEGER PRIMARY KEY," +
+                UserEntry.USER_ID + " TEXT NOT NULL, " +
+                UserEntry.NAME + " TEXT NOT NULL, " +
+                UserEntry.THUMBNAIL_URL + " TEXT NULL " +
+                " );";
+
         db.execSQL(SQL_CREATE_PROJECT_TABLE);
+        db.execSQL(SQL_CREATE_USER_TABLE);
     }
+
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + ProjectEntry.TABLE_NAME);
+        db.execSQL(DROP_TABLE_IF_EXISTS + ProjectEntry.TABLE_NAME);
+        db.execSQL(DROP_TABLE_IF_EXISTS + UserEntry.TABLE_NAME);
         onCreate(db);
     }
 }
