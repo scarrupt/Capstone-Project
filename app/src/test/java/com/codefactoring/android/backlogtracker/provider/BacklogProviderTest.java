@@ -174,4 +174,43 @@ public class BacklogProviderTest {
 
         return shadowContentResolver.insert(uri, contentValues);
     }
+
+    /*
+     * Issue Tests
+     */
+
+    @Test
+    public void insertsNewIssue() {
+        final Uri uri = insertSampleIssue();
+
+        assertThat(ContentUris.parseId(uri), equalTo(1L));
+    }
+
+    @Test
+    public void deletesExistingIssue() {
+        insertSampleIssue();
+
+        final int count = shadowContentResolver.delete(IssueEntry.CONTENT_URI, null, null);
+        assertThat(count, equalTo(1));
+    }
+
+    private Uri insertSampleIssue() {
+        final ContentValues contentValues = new ContentValues();
+        contentValues.put(IssueEntry._ID, 1);
+        contentValues.put(IssueEntry.PROJECT_ID, 1);
+        contentValues.put(IssueEntry.TYPE_ID, 1);
+        contentValues.put(IssueEntry.ISSUE_KEY, "ISSUE_KEY");
+        contentValues.put(IssueEntry.SUMMARY, "summary");
+        contentValues.put(IssueEntry.DESCRIPTION, "description");
+        contentValues.put(IssueEntry.PRIORITY, "priority");
+        contentValues.put(IssueEntry.STATUS, "status");
+        contentValues.put(IssueEntry.MILESTONES, "milestones");
+        contentValues.put(IssueEntry.ASSIGNEE_ID, 1);
+        contentValues.put(IssueEntry.CREATED_USER_ID, 1);
+        contentValues.put(IssueEntry.CREATED_DATE, "2013-02-07T08:09:49Z");
+        contentValues.put(IssueEntry.UPDATED_USER_ID, 1);
+        contentValues.put(IssueEntry.UPDATED_DATE, "2013-02-07T08:09:49Z");
+
+        return shadowContentResolver.insert(IssueEntry.CONTENT_URI, contentValues);
+    }
 }

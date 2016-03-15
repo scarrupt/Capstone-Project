@@ -43,9 +43,37 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
                 ProjectEntry.TABLE_NAME + " (" + ProjectEntry._ID + ")" +
                 " );";
 
+        final String SQL_CREATE_ISSUE_TABLE = "CREATE TABLE " + IssueEntry.TABLE_NAME + " (" +
+                IssueEntry._ID + " INTEGER PRIMARY KEY," +
+                IssueEntry.PROJECT_ID + " INTEGER NOT NULL, " +
+                IssueEntry.TYPE_ID + " INTEGER NOT NULL, " +
+                IssueEntry.ISSUE_KEY + " TEXT NOT NULL, " +
+                IssueEntry.SUMMARY + " TEXT NOT NULL, " +
+                IssueEntry.DESCRIPTION + " TEXT, " +
+                IssueEntry.PRIORITY + " TEXT NOT NULL, " +
+                IssueEntry.STATUS + " TEXT NOT NULL, " +
+                IssueEntry.MILESTONES + " TEXT NULL, " +
+                IssueEntry.ASSIGNEE_ID + " INTEGER, " +
+                IssueEntry.CREATED_USER_ID + " INTEGER NOT NULL, " +
+                IssueEntry.CREATED_DATE + " TEXT NOT NULL, " +
+                IssueEntry.UPDATED_USER_ID + " INTEGER, " +
+                IssueEntry.UPDATED_DATE + " TEXT, " +
+                " FOREIGN KEY (" + IssueEntry.PROJECT_ID + ") REFERENCES " +
+                ProjectEntry.TABLE_NAME + " (" + ProjectEntry._ID + "), " +
+                " FOREIGN KEY (" + IssueEntry.TYPE_ID + ") REFERENCES " +
+                IssueTypeEntry.TABLE_NAME + " (" + IssueTypeEntry._ID + "), " +
+                " FOREIGN KEY (" + IssueEntry.ASSIGNEE_ID + ") REFERENCES " +
+                UserEntry.TABLE_NAME + " (" + UserEntry._ID + "), " +
+                " FOREIGN KEY (" + IssueEntry.CREATED_USER_ID + ") REFERENCES " +
+                UserEntry.TABLE_NAME + " (" + UserEntry._ID + "), " +
+                " FOREIGN KEY (" + IssueEntry.UPDATED_USER_ID + ") REFERENCES " +
+                UserEntry.TABLE_NAME + " (" + UserEntry._ID + ")" +
+                " );";
+
         db.execSQL(SQL_CREATE_PROJECT_TABLE);
         db.execSQL(SQL_CREATE_USER_TABLE);
         db.execSQL(SQL_CREATE_ISSUE_TYPE_TABLE);
+        db.execSQL(SQL_CREATE_ISSUE_TABLE);
     }
 
     @Override
@@ -53,6 +81,7 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
         db.execSQL(DROP_TABLE_IF_EXISTS + ProjectEntry.TABLE_NAME);
         db.execSQL(DROP_TABLE_IF_EXISTS + UserEntry.TABLE_NAME);
         db.execSQL(DROP_TABLE_IF_EXISTS + IssueTypeEntry.TABLE_NAME);
+        db.execSQL(DROP_TABLE_IF_EXISTS + IssueEntry.TABLE_NAME);
         onCreate(db);
     }
 }

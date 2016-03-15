@@ -20,6 +20,8 @@ public class BacklogContract {
 
     public static final String PATH_PROJECT_ISSUE_TYPES = "projects/#/issueTypes";
 
+    public static final String PATH_ISSUES = "issues";
+
     interface ProjectColumns extends BaseColumns {
         String PROJECT_KEY = "project_key";
         String NAME = "name";
@@ -63,7 +65,6 @@ public class BacklogContract {
                 CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_USERS;
     }
 
-
     interface IssueTypeColumns extends BaseColumns {
         String PROJECT_ID = "project_id";
         String NAME = "name";
@@ -82,6 +83,49 @@ public class BacklogContract {
 
         public static Uri buildIssueTypeUri(String issueTypeId) {
             return ProjectEntry.CONTENT_URI.buildUpon().appendPath(issueTypeId).appendPath(PATH_ISSUE_TYPES).build();
+        }
+    }
+
+    interface IssueColumns extends BaseColumns {
+        String PROJECT_ID = "project_id";
+        String TYPE_ID = "type_id";
+        String ISSUE_KEY = "issue_key";
+        String SUMMARY = "summary";
+        String DESCRIPTION = "description";
+        String PRIORITY = "priority";
+        String STATUS = "status";
+        String MILESTONES = "milestones";
+        String ASSIGNEE_ID = "assignee_id";
+        String CREATED_USER_ID = "created_user_id";
+        String CREATED_DATE = "created_date";
+        String UPDATED_USER_ID = "updated_user_id";
+        String UPDATED_DATE = "updated_date";
+    }
+
+    public static final class IssueEntry implements IssueColumns {
+
+        public static final String TABLE_NAME = "issue";
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_ISSUES).build();
+
+        public static final String CONTENT_TYPE =
+                CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ISSUES;
+
+        public static final String CONTENT_ITEM_TYPE =
+                CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ISSUES;
+
+        public static final String QUERY_PARAMETER_PROJECT_KEY = "projectKey";
+
+        public static final String QUERY_PARAMETER_STATUS = "status";
+
+        public static final String DEFAULT_SORT = CREATED_DATE + " COLLATE NOCASE DESC";
+
+        public static Uri buildIssuesWithProjectKey(String projectKey) {
+            return CONTENT_URI
+                    .buildUpon()
+                    .appendQueryParameter(QUERY_PARAMETER_PROJECT_KEY, projectKey)
+                    .build();
         }
     }
 }
