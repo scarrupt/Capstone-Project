@@ -18,6 +18,7 @@ public class BacklogProvider extends ContentProvider {
     private BacklogDbHelper mOpenHelper;
 
     static final int PROJECTS = 100;
+    static final int ISSUE_TYPES = 101;
     static final int USERS = 200;
 
     private static final UriMatcher sURI_MATCHER = buildUriMatcher();
@@ -28,6 +29,7 @@ public class BacklogProvider extends ContentProvider {
 
         matcher.addURI(authority, PATH_PROJECTS, PROJECTS);
         matcher.addURI(authority, PATH_USERS, USERS);
+        matcher.addURI(authority, PATH_PROJECT_ISSUE_TYPES, ISSUE_TYPES);
 
         return matcher;
     }
@@ -106,6 +108,14 @@ public class BacklogProvider extends ContentProvider {
                     throw new SQLException("Failed to insert row into " + uri);
                 break;
             }
+            case ISSUE_TYPES: {
+                final long _id = db.insert(IssueTypeEntry.TABLE_NAME, null, values);
+                if (_id > 0)
+                    returnUri = ContentUris.withAppendedId(IssueTypeEntry.CONTENT_URI, _id);
+                else
+                    throw new SQLException("Failed to insert row into " + uri);
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -132,6 +142,10 @@ public class BacklogProvider extends ContentProvider {
             case USERS:
                 rowsDeleted = db.delete(
                         UserEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case ISSUE_TYPES:
+                rowsDeleted = db.delete(
+                        IssueTypeEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

@@ -34,16 +34,25 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
                 UserEntry.THUMBNAIL_URL + " TEXT NULL " +
                 " );";
 
+        final String SQL_CREATE_ISSUE_TYPE_TABLE = "CREATE TABLE " + IssueTypeEntry.TABLE_NAME + " (" +
+                IssueTypeEntry._ID + " INTEGER PRIMARY KEY," +
+                IssueTypeEntry.PROJECT_ID + " INTEGER NOT NULL, " +
+                IssueTypeEntry.NAME + " TEXT NOT NULL, " +
+                IssueTypeEntry.COLOR + " TEXT NOT NULL, " +
+                " FOREIGN KEY (" + IssueTypeEntry.PROJECT_ID + ") REFERENCES " +
+                ProjectEntry.TABLE_NAME + " (" + ProjectEntry._ID + ")" +
+                " );";
+
         db.execSQL(SQL_CREATE_PROJECT_TABLE);
         db.execSQL(SQL_CREATE_USER_TABLE);
+        db.execSQL(SQL_CREATE_ISSUE_TYPE_TABLE);
     }
-
-
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(DROP_TABLE_IF_EXISTS + ProjectEntry.TABLE_NAME);
         db.execSQL(DROP_TABLE_IF_EXISTS + UserEntry.TABLE_NAME);
+        db.execSQL(DROP_TABLE_IF_EXISTS + IssueTypeEntry.TABLE_NAME);
         onCreate(db);
     }
 }

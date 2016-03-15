@@ -16,6 +16,10 @@ public class BacklogContract {
 
     public static final String PATH_USERS = "users";
 
+    public static final String PATH_ISSUE_TYPES = "issueTypes";
+
+    public static final String PATH_PROJECT_ISSUE_TYPES = "projects/#/issueTypes";
+
     interface ProjectColumns extends BaseColumns {
         String PROJECT_KEY = "project_key";
         String NAME = "name";
@@ -57,5 +61,27 @@ public class BacklogContract {
 
         public static final String CONTENT_ITEM_TYPE =
                 CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_USERS;
+    }
+
+
+    interface IssueTypeColumns extends BaseColumns {
+        String PROJECT_ID = "project_id";
+        String NAME = "name";
+        String COLOR = "color";
+    }
+
+    public static final class IssueTypeEntry implements IssueTypeColumns {
+
+        public static final String TABLE_NAME = "issue_type";
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_ISSUE_TYPES).build();
+
+        public static final String CONTENT_TYPE =
+                ProjectEntry.CONTENT_TYPE +  "/" + PATH_ISSUE_TYPES;
+
+        public static Uri buildIssueTypeUri(String issueTypeId) {
+            return ProjectEntry.CONTENT_URI.buildUpon().appendPath(issueTypeId).appendPath(PATH_ISSUE_TYPES).build();
+        }
     }
 }

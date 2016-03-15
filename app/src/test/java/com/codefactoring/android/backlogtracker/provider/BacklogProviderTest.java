@@ -144,4 +144,34 @@ public class BacklogProviderTest {
 
         return shadowContentResolver.insert(UserEntry.CONTENT_URI, contentValues);
     }
+
+    /*
+     * Issue Type Tests
+     */
+    @Test
+    public void insertsNewIssueType() {
+        final Uri uri = insertSampleIssueType();
+
+        assertThat(ContentUris.parseId(uri), equalTo(1L));
+    }
+
+    @Test
+    public void deletesExistingIssueType() {
+        insertSampleIssueType();
+
+        final int count = shadowContentResolver.delete(IssueTypeEntry.buildIssueTypeUri("1"), null, null);
+        assertThat(count, equalTo(1));
+    }
+
+    private Uri insertSampleIssueType() {
+        final ContentValues contentValues = new ContentValues();
+        contentValues.put(IssueTypeEntry._ID, 1);
+        contentValues.put(IssueTypeEntry.PROJECT_ID, 1);
+        contentValues.put(IssueTypeEntry.NAME, "bug");
+        contentValues.put(IssueTypeEntry.COLOR, "#7ea800");
+
+        final Uri uri = IssueTypeEntry.buildIssueTypeUri("1");
+
+        return shadowContentResolver.insert(uri, contentValues);
+    }
 }
