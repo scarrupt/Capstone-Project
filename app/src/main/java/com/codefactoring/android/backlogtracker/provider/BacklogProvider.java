@@ -112,7 +112,7 @@ public class BacklogProvider extends ContentProvider {
                     throw new SQLException("Failed to insert row into " + uri);
                 break;
             }
-            case ISSUE_TYPES: {
+            case PROJECT_ISSUE_TYPES: {
                 final long _id = db.insert(IssueTypeEntry.TABLE_NAME, null, values);
                 if (_id > 0)
                     returnUri = ContentUris.withAppendedId(IssueTypeEntry.CONTENT_URI, _id);

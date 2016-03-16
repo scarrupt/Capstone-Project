@@ -160,7 +160,7 @@ public class BacklogProviderTest {
     public void deletesExistingIssueType() {
         insertSampleIssueType();
 
-        final int count = shadowContentResolver.delete(IssueTypeEntry.buildIssueTypeFromProjectIdUri(PROJECT_ID), null, null);
+        final int count = shadowContentResolver.delete(IssueTypeEntry.CONTENT_URI, null, null);
         assertThat(count, equalTo(1));
     }
 

@@ -17,15 +17,22 @@ import com.codefactoring.android.backlogapi.BacklogApiClient;
 import com.codefactoring.android.backlogtracker.Config;
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.provider.BacklogContract;
+import com.codefactoring.android.backlogtracker.sync.fetchers.IssueDataFetcher;
 import com.codefactoring.android.backlogtracker.sync.fetchers.ProjectDataFetcher;
 import com.codefactoring.android.backlogtracker.sync.fetchers.UserDataFetcher;
+import com.codefactoring.android.backlogtracker.sync.handlers.IssueDataHandler;
+import com.codefactoring.android.backlogtracker.sync.handlers.IssueTypeDataHandler;
 import com.codefactoring.android.backlogtracker.sync.handlers.ProjectDataHandler;
 import com.codefactoring.android.backlogtracker.sync.handlers.UserDataHandler;
+import com.codefactoring.android.backlogtracker.sync.models.IssueDto;
+import com.codefactoring.android.backlogtracker.sync.models.IssueTypeDto;
 import com.codefactoring.android.backlogtracker.sync.models.ProjectDto;
 import com.codefactoring.android.backlogtracker.sync.models.UserDto;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
@@ -55,8 +62,8 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
         mBacklogApiClient.connectWith(spaceKey, apiKey);
 
         final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        operations.addAll(syncProjectData());
         operations.addAll(syncUserData());
+        operations.addAll(syncProjectData());
 
         if (operations.size() > 0) {
             try {
@@ -70,11 +77,31 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     protected ArrayList<ContentProviderOperation> syncProjectData() {
+        final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+
         final ProjectDataFetcher projectDataFetcher = new ProjectDataFetcher(mBacklogApiClient);
         final List<ProjectDto> projects = projectDataFetcher.getProjectList();
-
         final ProjectDataHandler projectDataHandler = new ProjectDataHandler(getContext());
-        return projectDataHandler.makeContentProviderOperations(projects);
+        operations.addAll(projectDataHandler.makeContentProviderOperations(projects));
+
+        final IssueDataFetcher issueDataFetcher = new IssueDataFetcher(mBacklogApiClient);
+        final List<IssueDto> issues = new ArrayList<>();
+        for (ProjectDto projectDto : projects) {
+            issues.addAll(issueDataFetcher.getIssueList(projectDto.getId()));
+        }
+
+        final Set<IssueTypeDto> issueTypes = new HashSet<>();
+        for (IssueDto issue: issues) {
+            issueTypes.add(issue.getIssueType());
+        }
+
+        final IssueTypeDataHandler issueTypeDataHandler = new IssueTypeDataHandler();
+        operations.addAll(issueTypeDataHandler.makeContentProviderOperations(issueTypes));
+
+        final IssueDataHandler issueDataHandler = new IssueDataHandler();
+        operations.addAll(issueDataHandler.makeContentProviderOperations(issues));
+
+        return operations;
     }
 
     protected ArrayList<ContentProviderOperation> syncUserData() {
