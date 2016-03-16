@@ -28,6 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 public class BacklogProviderTest {
+    public static final long PROJECT_ID = 1L;
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -159,7 +160,7 @@ public class BacklogProviderTest {
     public void deletesExistingIssueType() {
         insertSampleIssueType();
 
-        final int count = shadowContentResolver.delete(IssueTypeEntry.buildIssueTypeUri("1"), null, null);
+        final int count = shadowContentResolver.delete(IssueTypeEntry.buildIssueTypeFromProjectIdUri(PROJECT_ID), null, null);
         assertThat(count, equalTo(1));
     }
 
@@ -170,7 +171,7 @@ public class BacklogProviderTest {
         contentValues.put(IssueTypeEntry.NAME, "bug");
         contentValues.put(IssueTypeEntry.COLOR, "#7ea800");
 
-        final Uri uri = IssueTypeEntry.buildIssueTypeUri("1");
+        final Uri uri = IssueTypeEntry.buildIssueTypeFromProjectIdUri(PROJECT_ID);
 
         return shadowContentResolver.insert(uri, contentValues);
     }

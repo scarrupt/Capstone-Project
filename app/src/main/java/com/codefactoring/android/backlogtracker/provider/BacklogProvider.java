@@ -18,8 +18,9 @@ public class BacklogProvider extends ContentProvider {
     private BacklogDbHelper mOpenHelper;
 
     static final int PROJECTS = 100;
-    static final int ISSUE_TYPES = 101;
+    static final int PROJECT_ISSUE_TYPES = 101;
     static final int USERS = 200;
+    static final int ISSUE_TYPES = 300;
     static final int ISSUES = 400;
 
     private static final UriMatcher sURI_MATCHER = buildUriMatcher();
@@ -30,7 +31,8 @@ public class BacklogProvider extends ContentProvider {
 
         matcher.addURI(authority, PATH_PROJECTS, PROJECTS);
         matcher.addURI(authority, PATH_USERS, USERS);
-        matcher.addURI(authority, PATH_PROJECT_ISSUE_TYPES, ISSUE_TYPES);
+        matcher.addURI(authority, PATH_PROJECT_ISSUE_TYPES, PROJECT_ISSUE_TYPES);
+        matcher.addURI(authority, PATH_ISSUE_TYPES, ISSUE_TYPES);
         matcher.addURI(authority, PATH_ISSUES, ISSUES);
 
         return matcher;

@@ -81,8 +81,9 @@ public class BacklogContract {
         public static final String CONTENT_TYPE =
                 ProjectEntry.CONTENT_TYPE +  "/" + PATH_ISSUE_TYPES;
 
-        public static Uri buildIssueTypeUri(String issueTypeId) {
-            return ProjectEntry.CONTENT_URI.buildUpon().appendPath(issueTypeId).appendPath(PATH_ISSUE_TYPES).build();
+        public static Uri buildIssueTypeFromProjectIdUri(long projectId) {
+            return ProjectEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(projectId))
+                    .appendPath(PATH_ISSUE_TYPES).build();
         }
     }
 
