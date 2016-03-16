@@ -2,16 +2,13 @@ package com.codefactoring.android.backlogtracker.sync.handlers;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
-import android.content.Context;
 
 import com.codefactoring.android.backlogtracker.BuildConfig;
 import com.codefactoring.android.backlogtracker.sync.models.IssueTypeDto;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentProviderOperation;
@@ -34,13 +31,6 @@ public class IssueTypeDataHandlerTest {
     private static final int INDEX_TYPE_INSERT = 1;
     private static final long PROJECT_ID = 1L;
     private static final long ISSUE_TYPE_ID = 1L;
-
-    private Context mContext;
-
-    @Before
-    public void setUp() {
-        mContext = RuntimeEnvironment.application;
-    }
 
     @Test
     public void createsOperationDeleteAllIssueTypesAtFirst() {
