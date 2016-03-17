@@ -22,6 +22,7 @@ public class BacklogProvider extends ContentProvider {
     static final int USERS = 200;
     static final int ISSUE_TYPES = 300;
     static final int ISSUES = 400;
+    static final int ISSUES_PREVIEWS = 401;
 
     private static final UriMatcher sURI_MATCHER = buildUriMatcher();
 
@@ -34,6 +35,7 @@ public class BacklogProvider extends ContentProvider {
         matcher.addURI(authority, PATH_PROJECT_ISSUE_TYPES, PROJECT_ISSUE_TYPES);
         matcher.addURI(authority, PATH_ISSUE_TYPES, ISSUE_TYPES);
         matcher.addURI(authority, PATH_ISSUES, ISSUES);
+        matcher.addURI(authority, PATH_ISSUES_PREVIEWS, ISSUES_PREVIEWS);
 
         return matcher;
     }
@@ -75,6 +77,10 @@ public class BacklogProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
+                break;
+            }
+            case ISSUES_PREVIEWS: {
+                retCursor = findIssuesPreviewsByProjectId(uri, projection, sortOrder);
                 break;
             }
             default:
@@ -219,5 +225,25 @@ public class BacklogProvider extends ContentProvider {
             default:
                 return super.bulkInsert(uri, values);
         }
+    }
+
+    private Cursor findIssuesPreviewsByProjectId(Uri uri, String[] projection, String sortOrder) {
+        final String selection = IssueEntry.PROJECT_ID + " = ? ";
+        final String projectId = uri.getQueryParameter(IssuePreviewEntry.QUERY_PARAMETER_PROJECT_ID);
+
+        if (projectId == null) {
+            throw new IllegalArgumentException("ProjectKey should not be null");
+        }
+
+        final String[] selectionArgs = new String[]{projectId};
+
+        return mOpenHelper.getReadableDatabase().query(
+                IssuePreviewEntry.VIEW_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
     }
 }

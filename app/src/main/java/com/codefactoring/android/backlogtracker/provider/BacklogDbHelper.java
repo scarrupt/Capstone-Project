@@ -70,10 +70,28 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
                 UserEntry.TABLE_NAME + " (" + UserEntry._ID + ")" +
                 " );";
 
+        final String SQL_CREATE_ISSUE_SUMMARY_VIEW = "CREATE VIEW " + IssuePreviewEntry.VIEW_NAME +
+                " AS SELECT " +
+                IssueEntry.TABLE_NAME + "." + IssueEntry._ID + ", " +
+                IssueEntry.ISSUE_KEY + ", " +
+                IssueEntry.PROJECT_ID + ", " +
+                IssueEntry.SUMMARY + ", " +
+                IssueEntry.PRIORITY + ", " +
+                IssueEntry.STATUS + ", " +
+                IssueEntry.CREATED_DATE + ", " +
+                UserEntry.NAME + " AS " + IssuePreviewEntry.ASSIGNEE_NAME_ALIAS + ", " +
+                UserEntry.THUMBNAIL_URL + " AS " + IssuePreviewEntry.ASSIGNEE_THUMBNAIL_URL_ALIAS +
+                " FROM " + IssueEntry.TABLE_NAME + " LEFT JOIN " + UserEntry.TABLE_NAME +
+                " ON " +
+                IssueEntry.TABLE_NAME + "." + IssueEntry.ASSIGNEE_ID +
+                " = " +
+                UserEntry.TABLE_NAME + "." + UserEntry._ID;
+
         db.execSQL(SQL_CREATE_PROJECT_TABLE);
         db.execSQL(SQL_CREATE_USER_TABLE);
         db.execSQL(SQL_CREATE_ISSUE_TYPE_TABLE);
         db.execSQL(SQL_CREATE_ISSUE_TABLE);
+        db.execSQL(SQL_CREATE_ISSUE_SUMMARY_VIEW);
     }
 
     @Override
@@ -82,6 +100,7 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
         db.execSQL(DROP_TABLE_IF_EXISTS + UserEntry.TABLE_NAME);
         db.execSQL(DROP_TABLE_IF_EXISTS + IssueTypeEntry.TABLE_NAME);
         db.execSQL(DROP_TABLE_IF_EXISTS + IssueEntry.TABLE_NAME);
+        db.execSQL("DROP VIEW IF EXISTS " + IssuePreviewEntry.VIEW_NAME);
         onCreate(db);
     }
 }

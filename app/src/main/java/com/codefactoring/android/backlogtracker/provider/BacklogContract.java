@@ -22,6 +22,8 @@ public class BacklogContract {
 
     public static final String PATH_ISSUES = "issues";
 
+    public static final String PATH_ISSUES_PREVIEWS = "issues/previews";
+
     interface ProjectColumns extends BaseColumns {
         String PROJECT_KEY = "project_key";
         String NAME = "name";
@@ -79,7 +81,7 @@ public class BacklogContract {
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_ISSUE_TYPES).build();
 
         public static final String CONTENT_TYPE =
-                ProjectEntry.CONTENT_TYPE +  "/" + PATH_ISSUE_TYPES;
+                ProjectEntry.CONTENT_TYPE + "/" + PATH_ISSUE_TYPES;
 
         public static Uri buildIssueTypeFromProjectIdUri(long projectId) {
             return ProjectEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(projectId))
@@ -126,6 +128,32 @@ public class BacklogContract {
             return CONTENT_URI
                     .buildUpon()
                     .appendQueryParameter(QUERY_PARAMETER_PROJECT_KEY, projectKey)
+                    .build();
+        }
+    }
+
+    public static final class IssuePreviewEntry {
+
+        public static final String VIEW_NAME = "issue_preview";
+
+        public static final String ASSIGNEE_NAME_ALIAS = "assignee_name";
+
+        public static final String ASSIGNEE_THUMBNAIL_URL_ALIAS = "assignee_thumbnail_url";
+
+        public static final String DEFAULT_SORT = IssueEntry.CREATED_DATE + " COLLATE NOCASE DESC";
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendEncodedPath(PATH_ISSUES_PREVIEWS).build();
+
+        public static final String CONTENT_TYPE =
+                CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ISSUES_PREVIEWS;
+
+        public static final String QUERY_PARAMETER_PROJECT_ID = "projectId";
+
+        public static Uri buildIssuePreviewsWithProjectId(long projectId) {
+            return CONTENT_URI
+                    .buildUpon()
+                    .appendQueryParameter(QUERY_PARAMETER_PROJECT_ID, String.valueOf(projectId))
                     .build();
         }
     }

@@ -195,6 +195,17 @@ public class BacklogProviderTest {
         assertThat(count, equalTo(1));
     }
 
+    /*
+ * Issues Summaries Test
+ */
+    @Test
+    public void returnsIssuePreviewsMatchingProjectIdParameter() {
+        insertSampleIssue();
+        final Uri uri = IssuePreviewEntry.buildIssuePreviewsWithProjectId(1);
+        Cursor cursor = shadowContentResolver.query(uri, null, null, null, null);
+        assertThat(cursor.getCount(), equalTo(1));
+    }
+
     private Uri insertSampleIssue() {
         final ContentValues contentValues = new ContentValues();
         contentValues.put(IssueEntry._ID, 1);
