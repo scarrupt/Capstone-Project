@@ -228,14 +228,15 @@ public class BacklogProvider extends ContentProvider {
     }
 
     private Cursor findIssuesPreviewsByProjectId(Uri uri, String[] projection, String sortOrder) {
-        final String selection = IssueEntry.PROJECT_ID + " = ? ";
+        final String selection = IssueEntry.PROJECT_ID + " = ? AND " + IssueEntry.STATUS + " = ? ";
         final String projectId = uri.getQueryParameter(IssuePreviewEntry.QUERY_PARAMETER_PROJECT_ID);
+        final String statusFilter = uri.getQueryParameter(IssuePreviewEntry.QUERY_PARAMETER_STATUS);
 
         if (projectId == null) {
-            throw new IllegalArgumentException("ProjectKey should not be null");
+            throw new IllegalArgumentException("ProjectId should not be null");
         }
 
-        final String[] selectionArgs = new String[]{projectId};
+        final String[] selectionArgs = new String[]{projectId, statusFilter};
 
         return mOpenHelper.getReadableDatabase().query(
                 IssuePreviewEntry.VIEW_NAME,

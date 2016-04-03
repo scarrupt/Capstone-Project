@@ -15,6 +15,7 @@ import com.codefactoring.android.backlogtracker.injector.modules.ApplicationModu
 import com.codefactoring.android.backlogtracker.injector.modules.BacklogModule;
 import com.codefactoring.android.backlogtracker.sync.BacklogSyncAdapter;
 import com.codefactoring.android.backlogtracker.view.account.AccountActivity;
+import com.codefactoring.android.backlogtracker.view.issue.IssuesMainActivity;
 
 import javax.inject.Inject;
 
@@ -46,7 +47,8 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-
+        final Intent intent = new Intent(this, IssuesMainActivity.class).setData(uri);
+        startActivity(intent);
     }
 
     public boolean isAuthenticated() {

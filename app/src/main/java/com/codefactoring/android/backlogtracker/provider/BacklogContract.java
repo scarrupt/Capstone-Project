@@ -150,10 +150,19 @@ public class BacklogContract {
 
         public static final String QUERY_PARAMETER_PROJECT_ID = "projectId";
 
+        public static final String QUERY_PARAMETER_STATUS = "status";
+
         public static Uri buildIssuePreviewsWithProjectId(long projectId) {
             return CONTENT_URI
                     .buildUpon()
                     .appendQueryParameter(QUERY_PARAMETER_PROJECT_ID, String.valueOf(projectId))
+                    .build();
+        }
+
+        public static Uri addStatusQueryParameterToUri(Uri uri, String status) {
+            return uri
+                    .buildUpon()
+                    .appendQueryParameter(QUERY_PARAMETER_STATUS, status)
                     .build();
         }
     }

@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.codefactoring.android.backlogapi.BacklogApiConstants;
 import com.codefactoring.android.backlogtracker.BuildConfig;
 
 import org.junit.Before;
@@ -196,13 +197,14 @@ public class BacklogProviderTest {
     }
 
     /*
- * Issues Summaries Test
- */
+     * Issues Summaries Test
+     */
     @Test
     public void returnsIssuePreviewsMatchingProjectIdParameter() {
         insertSampleIssue();
         final Uri uri = IssuePreviewEntry.buildIssuePreviewsWithProjectId(1);
-        Cursor cursor = shadowContentResolver.query(uri, null, null, null, null);
+        Uri filteredUri = IssuePreviewEntry.addStatusQueryParameterToUri(uri, BacklogApiConstants.STATUS_ISSUE_OPEN);
+        Cursor cursor = shadowContentResolver.query(filteredUri, null, null, null, null);
         assertThat(cursor.getCount(), equalTo(1));
     }
 
@@ -215,7 +217,7 @@ public class BacklogProviderTest {
         contentValues.put(IssueEntry.SUMMARY, "summary");
         contentValues.put(IssueEntry.DESCRIPTION, "description");
         contentValues.put(IssueEntry.PRIORITY, "priority");
-        contentValues.put(IssueEntry.STATUS, "status");
+        contentValues.put(IssueEntry.STATUS, "Open");
         contentValues.put(IssueEntry.MILESTONES, "milestones");
         contentValues.put(IssueEntry.ASSIGNEE_ID, 1);
         contentValues.put(IssueEntry.CREATED_USER_ID, 1);

@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.codefactoring.android.backlogtracker.R;
+import com.codefactoring.android.backlogtracker.provider.BacklogContract;
 
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.ProjectEntry;
 
@@ -54,7 +55,9 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null && mListener != null) {
-//                    mListener.onFragmentInteraction();
+                    mListener.onFragmentInteraction(BacklogContract.IssuePreviewEntry
+                            .buildIssuePreviewsWithProjectId(cursor.getLong(
+                                    cursor.getColumnIndex(ProjectEntry._ID))));
                 }
             }
         });

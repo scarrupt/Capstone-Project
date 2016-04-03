@@ -16,6 +16,12 @@
     <!-- Project screen -->
     <string name="title_activity_project_list">My projects</string>
 
+    <!-- Issue Main screen -->
+    <string name="title_activity_issues_main">Issues</string>
+    <string name="title_open_issues">Open</string>
+    <string name="title_in_progress_issues">In Progress</string>
+    <string name="title_resolved_issues">Resolved</string>
+
     <!-- UI Errors -->
     <string name="error_field_required">This field is required</string>
     <string name="error_space_key_length">Space key must between 3 and 10 characters long</string>
