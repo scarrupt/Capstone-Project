@@ -36,13 +36,15 @@ public class IssuesMainActivity extends AppCompatActivity {
 
     private class IssuesMainPageAdapter extends FragmentPagerAdapter {
 
-        private static final int TAB_COUNT = 3;
+        private static final int TAB_COUNT = 4;
 
         private static final int TAB_OPEN_ISSUES = 0;
 
         private static final int TAB_IN_PROGRESS_ISSUES = 1;
 
         private static final int TAB_RESOLVED_ISSUES = 2;
+
+        private static final int TAB_ISSUE_STATS = 3;
 
         public IssuesMainPageAdapter(FragmentManager fm) {
             super(fm);
@@ -66,6 +68,8 @@ public class IssuesMainActivity extends AppCompatActivity {
                             STATUS_ISSUE_RESOLVED);
                     return IssueListFragment.newInstance(filteredUri);
                 }
+                case TAB_ISSUE_STATS:
+                    return new IssueStatsFragment();
                 default:
                     throw new IllegalArgumentException();
             }
@@ -80,6 +84,8 @@ public class IssuesMainActivity extends AppCompatActivity {
                     return IssuesMainActivity.this.getString(R.string.title_in_progress_issues);
                 case TAB_RESOLVED_ISSUES:
                     return IssuesMainActivity.this.getString(R.string.title_resolved_issues);
+                case TAB_ISSUE_STATS:
+                    return getString(R.string.title_issue_stats);
                 default:
                     throw new IllegalArgumentException();
             }
