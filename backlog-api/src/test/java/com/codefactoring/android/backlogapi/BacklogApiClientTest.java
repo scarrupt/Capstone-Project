@@ -1,5 +1,6 @@
 package com.codefactoring.android.backlogapi;
 
+import com.codefactoring.android.backlogapi.models.Comment;
 import com.codefactoring.android.backlogapi.models.Issue;
 import com.codefactoring.android.backlogapi.models.Project;
 import com.codefactoring.android.backlogapi.models.User;
@@ -301,6 +302,50 @@ public class BacklogApiClientTest {
         subscriber.assertReceivedOnNext(items);
     }
 
+    @Test
+    public void returnsCommentListWhenGetCommentListEndpointIsCalled() throws IOException {
+        final TestSubscriber<List<Comment>> subscriber = new TestSubscriber<>();
+
+        final String commentListJson = "[\n" +
+                    " {\n" +
+                    "    \"id\": 6586,\n" +
+                    "    \"content\": \"test\",\n" +
+                    "    \"changeLog\": null,\n" +
+                    "    \"createdUser\": {\n" +
+                    "        \"id\": 1,\n" +
+                    "        \"userId\": \"admin\",\n" +
+                    "        \"name\": \"admin\",\n" +
+                    "        \"roleType\": 1,\n" +
+                    "        \"lang\": \"ja\",\n" +
+                    "        \"mailAddress\": \"eguchi@nulab.example\"\n" +
+                    "    },\n" +
+                    "    \"created\": \"2013-08-05T06:15:06Z\",\n" +
+                    "    \"updated\": \"2013-08-05T06:15:06Z\",\n" +
+                    "    \"stars\": [],\n" +
+                    "    \"notifications\": []\n" +
+                    "}" +
+                "]";
+
+        server.enqueue(new MockResponse().setBody(commentListJson));
+
+        server.start();
+
+        final HttpUrl baseUrl = server.url("/api/v2/issues/");
+
+        final BacklogApiClient backlogApi = new BacklogApiClient(new BacklogTestConfig())
+                .connectWith(baseUrl.toString(), PARAM_API_KEY);
+        backlogApi.getIssueOperations().getCommentList(1).subscribe(subscriber);
+
+        final List<Comment> comments = new ArrayList<>();
+        final Comment expectedComment = new Comment();
+        expectedComment.setId(6586);
+        comments.add(expectedComment);
+
+        List<List<Comment>> items = new ArrayList<>();
+        items.add(comments);
+
+        subscriber.assertReceivedOnNext(items);
+    }
 
     @Test
     public void throwsBacklogApiExceptionOn404Error() throws IOException, InterruptedException {
