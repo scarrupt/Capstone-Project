@@ -7,11 +7,26 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import static com.codefactoring.android.backlogtracker.provider.BacklogContract.*;
+import com.google.common.collect.Sets;
+
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CONTENT_AUTHORITY;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssuePreviewEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueTypeEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES_PREVIEWS;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES_STATS;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_TYPES;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_PROJECTS;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_PROJECT_ISSUE_TYPES;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_USERS;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.ProjectEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.UserEntry;
 
 public class BacklogProvider extends ContentProvider {
 
@@ -23,6 +38,7 @@ public class BacklogProvider extends ContentProvider {
     static final int ISSUE_TYPES = 300;
     static final int ISSUES = 400;
     static final int ISSUES_PREVIEWS = 401;
+    static final int ISSUES_STATS = 402;
 
     private static final UriMatcher sURI_MATCHER = buildUriMatcher();
 
@@ -36,6 +52,7 @@ public class BacklogProvider extends ContentProvider {
         matcher.addURI(authority, PATH_ISSUE_TYPES, ISSUE_TYPES);
         matcher.addURI(authority, PATH_ISSUES, ISSUES);
         matcher.addURI(authority, PATH_ISSUES_PREVIEWS, ISSUES_PREVIEWS);
+        matcher.addURI(authority, PATH_ISSUES_STATS, ISSUES_STATS);
 
         return matcher;
     }
@@ -64,7 +81,6 @@ public class BacklogProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
 
-
         Cursor retCursor;
         switch (sURI_MATCHER.match(uri)) {
             case PROJECTS: {
@@ -81,6 +97,10 @@ public class BacklogProvider extends ContentProvider {
             }
             case ISSUES_PREVIEWS: {
                 retCursor = findIssuesPreviewsByProjectId(uri, projection, sortOrder);
+                break;
+            }
+            case ISSUES_STATS: {
+                retCursor = findIssuesStatsByProjectId(uri);
                 break;
             }
             default:
@@ -246,5 +266,37 @@ public class BacklogProvider extends ContentProvider {
                 null,
                 null,
                 sortOrder);
+    }
+
+    private Cursor findIssuesStatsByProjectId(Uri uri) {
+        final String projectId = uri.getQueryParameter(IssuePreviewEntry.QUERY_PARAMETER_PROJECT_ID);
+
+        if (projectId == null) {
+            throw new IllegalArgumentException("ProjectId should not be null");
+        }
+
+        final String subQueryOpenIssues = createIssueSubQueryWithStatus(projectId, "Open");
+
+        final String subQueryInProgressIssues = createIssueSubQueryWithStatus(projectId, "In Progress");
+
+        final String subQueryResolved = createIssueSubQueryWithStatus(projectId, "Resolved");
+
+        final SQLiteQueryBuilder unionQueryBuilder = new SQLiteQueryBuilder();
+        final String sql = unionQueryBuilder.buildUnionQuery(new String[]{
+                        subQueryOpenIssues, subQueryInProgressIssues, subQueryResolved},
+                null, null);
+
+        return mOpenHelper.getReadableDatabase().rawQuery(sql, null);
+    }
+
+    private String createIssueSubQueryWithStatus(String projectId, String status) {
+        final SQLiteQueryBuilder statusQueryBuilder = new SQLiteQueryBuilder();
+        statusQueryBuilder.setTables(IssueEntry.TABLE_NAME);
+        return statusQueryBuilder.buildUnionSubQuery(
+                "Status", new String[]{"COUNT(*)", IssueEntry.STATUS},
+                Sets.newHashSet(IssueEntry.STATUS), 1, status,
+                IssueEntry.PROJECT_ID + " = " + projectId + " AND " + IssueEntry.STATUS + "= '"
+                        + status + "'",
+                null, null);
     }
 }

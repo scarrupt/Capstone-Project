@@ -208,6 +208,14 @@ public class BacklogProviderTest {
         assertThat(cursor.getCount(), equalTo(1));
     }
 
+    @Test
+    public void returnsIssueStatsMatchingProjectIdParameter() {
+        insertSampleIssue();
+        final Uri uri = IssueStatsEntry.buildIssueStatsUriWithProjectId("1");
+        Cursor cursor = shadowContentResolver.query(uri, null, null, null, null);
+        assertThat(cursor.getCount(), equalTo(3));
+    }
+
     private Uri insertSampleIssue() {
         final ContentValues contentValues = new ContentValues();
         contentValues.put(IssueEntry._ID, 1);

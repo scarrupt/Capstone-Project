@@ -5,6 +5,7 @@
     tools:context="com.codefactoring.android.backlogtracker.view.issue.IssueStatsFragment">
 
     <com.codefactoring.android.backlogtracker.view.issue.widget.BarChartView
+        android:id="@+id/chart_issues_stats"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </FrameLayout>

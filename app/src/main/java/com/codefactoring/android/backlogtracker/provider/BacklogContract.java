@@ -24,6 +24,8 @@ public class BacklogContract {
 
     public static final String PATH_ISSUES_PREVIEWS = "issues/previews";
 
+    public static final String PATH_ISSUES_STATS = "issues/stats";
+
     interface ProjectColumns extends BaseColumns {
         String PROJECT_KEY = "project_key";
         String NAME = "name";
@@ -163,6 +165,21 @@ public class BacklogContract {
             return uri
                     .buildUpon()
                     .appendQueryParameter(QUERY_PARAMETER_STATUS, status)
+                    .build();
+        }
+    }
+
+    public static final class IssueStatsEntry {
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendEncodedPath(PATH_ISSUES_STATS).build();
+
+        public static final String QUERY_PARAMETER_PROJECT_ID = "projectId";
+
+        public static Uri buildIssueStatsUriWithProjectId(String projectId) {
+            return CONTENT_URI
+                    .buildUpon()
+                    .appendQueryParameter(QUERY_PARAMETER_PROJECT_ID, projectId)
                     .build();
         }
     }

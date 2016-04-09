@@ -69,7 +69,8 @@ public class IssuesMainActivity extends AppCompatActivity {
                     return IssueListFragment.newInstance(filteredUri);
                 }
                 case TAB_ISSUE_STATS:
-                    return new IssueStatsFragment();
+                    final String projectId = getIntent().getData().getQueryParameter(IssueStatsEntry.QUERY_PARAMETER_PROJECT_ID);
+                    return IssueStatsFragment.newInstance(IssueStatsEntry.buildIssueStatsUriWithProjectId(projectId));
                 default:
                     throw new IllegalArgumentException();
             }
