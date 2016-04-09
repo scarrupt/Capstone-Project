@@ -15,12 +15,15 @@ import android.support.annotation.Nullable;
 import com.google.common.collect.Sets;
 
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CONTENT_AUTHORITY;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CommentEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssuePreviewEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueTypeEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_COMMENTS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES_PREVIEWS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES_STATS;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_COMMENTS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_TYPES;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_PROJECTS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_PROJECT_ISSUE_TYPES;
@@ -39,6 +42,8 @@ public class BacklogProvider extends ContentProvider {
     static final int ISSUES = 400;
     static final int ISSUES_PREVIEWS = 401;
     static final int ISSUES_STATS = 402;
+    static final int ISSUES_COMMENTS = 403;
+    static final int COMMENTS = 500;
 
     private static final UriMatcher sURI_MATCHER = buildUriMatcher();
 
@@ -53,6 +58,8 @@ public class BacklogProvider extends ContentProvider {
         matcher.addURI(authority, PATH_ISSUES, ISSUES);
         matcher.addURI(authority, PATH_ISSUES_PREVIEWS, ISSUES_PREVIEWS);
         matcher.addURI(authority, PATH_ISSUES_STATS, ISSUES_STATS);
+        matcher.addURI(authority, PATH_ISSUE_COMMENTS, ISSUES_COMMENTS);
+        matcher.addURI(authority, PATH_COMMENTS, COMMENTS);
 
         return matcher;
     }
@@ -100,6 +107,10 @@ public class BacklogProvider extends ContentProvider {
                 break;
             }
             case ISSUES_STATS: {
+                retCursor = findIssuesStatsByProjectId(uri);
+                break;
+            }
+            case ISSUES_COMMENTS: {
                 retCursor = findIssuesStatsByProjectId(uri);
                 break;
             }
@@ -154,6 +165,14 @@ public class BacklogProvider extends ContentProvider {
                     throw new SQLException("Failed to insert row into " + uri);
                 break;
             }
+            case ISSUES_COMMENTS: {
+                final long _id = db.insert(CommentEntry.TABLE_NAME, null, values);
+                if (_id > 0)
+                    returnUri = ContentUris.withAppendedId(CommentEntry.CONTENT_URI, _id);
+                else
+                    throw new SQLException("Failed to insert row into " + uri);
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -188,6 +207,10 @@ public class BacklogProvider extends ContentProvider {
             case ISSUES:
                 rowsDeleted = db.delete(
                         IssueEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case COMMENTS:
+                rowsDeleted = db.delete(
+                        CommentEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

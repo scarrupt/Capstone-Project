@@ -26,6 +26,10 @@ public class BacklogContract {
 
     public static final String PATH_ISSUES_STATS = "issues/stats";
 
+    public static final String PATH_ISSUE_COMMENTS = "issues/#/comments";
+
+    public static final String PATH_COMMENTS = "comments";
+
     interface ProjectColumns extends BaseColumns {
         String PROJECT_KEY = "project_key";
         String NAME = "name";
@@ -181,6 +185,30 @@ public class BacklogContract {
                     .buildUpon()
                     .appendQueryParameter(QUERY_PARAMETER_PROJECT_ID, projectId)
                     .build();
+        }
+    }
+
+    interface CommentColumns extends BaseColumns {
+        String ISSUE_ID = "issue_id";
+        String CONTENT = "content";
+        String CREATED_USER_ID = "created_user_id";
+        String CREATED = "created";
+        String UPDATED = "updated";
+    }
+
+    public static final class CommentEntry implements CommentColumns {
+
+        public static final String TABLE_NAME = "comment";
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendEncodedPath(PATH_COMMENTS).build();
+
+        public static final String CONTENT_TYPE =
+                ProjectEntry.CONTENT_TYPE + "/" + PATH_COMMENTS;
+
+        public static Uri buildCommentUriFromIssueIdUri(long issueId) {
+            return IssueEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(issueId))
+                    .appendPath(PATH_COMMENTS).build();
         }
     }
 }

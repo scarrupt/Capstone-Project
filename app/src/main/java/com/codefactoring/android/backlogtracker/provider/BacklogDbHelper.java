@@ -9,7 +9,7 @@ import static com.codefactoring.android.backlogtracker.provider.BacklogContract.
 
 public class BacklogDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DROP_TABLE_IF_EXISTS = "DROP TABLE IF EXISTS ";
 
     static final String DATABASE_NAME = "backlog.db";
@@ -43,6 +43,7 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
                 ProjectEntry.TABLE_NAME + " (" + ProjectEntry._ID + ")" +
                 " );";
 
+
         final String SQL_CREATE_ISSUE_TABLE = "CREATE TABLE " + IssueEntry.TABLE_NAME + " (" +
                 IssueEntry._ID + " INTEGER PRIMARY KEY," +
                 IssueEntry.PROJECT_ID + " INTEGER NOT NULL, " +
@@ -70,6 +71,19 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
                 UserEntry.TABLE_NAME + " (" + UserEntry._ID + ")" +
                 " );";
 
+        final String SQL_CREATE_COMMENT_TABLE = "CREATE TABLE " + CommentEntry.TABLE_NAME + " (" +
+                CommentEntry._ID + " INTEGER PRIMARY KEY," +
+                CommentEntry.ISSUE_ID + " INTEGER NOT NULL, " +
+                CommentEntry.CONTENT + " TEXT NOT NULL, " +
+                CommentEntry.CREATED_USER_ID + " INTEGER NOT NULL, " +
+                CommentEntry.CREATED + " TEXT NOT NULL, " +
+                CommentEntry.UPDATED + " TEXT NOT NULL, " +
+                " FOREIGN KEY (" + CommentEntry.ISSUE_ID + ") REFERENCES " +
+                IssueEntry.TABLE_NAME + " (" + IssueEntry._ID + "), " +
+                " FOREIGN KEY (" + IssueEntry.CREATED_USER_ID + ") REFERENCES " +
+                UserEntry.TABLE_NAME + " (" + UserEntry._ID + ")" +
+                " );";
+
         final String SQL_CREATE_ISSUE_SUMMARY_VIEW = "CREATE VIEW " + IssuePreviewEntry.VIEW_NAME +
                 " AS SELECT " +
                 IssueEntry.TABLE_NAME + "." + IssueEntry._ID + ", " +
@@ -91,6 +105,7 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_USER_TABLE);
         db.execSQL(SQL_CREATE_ISSUE_TYPE_TABLE);
         db.execSQL(SQL_CREATE_ISSUE_TABLE);
+        db.execSQL(SQL_CREATE_COMMENT_TABLE);
         db.execSQL(SQL_CREATE_ISSUE_SUMMARY_VIEW);
     }
 
@@ -100,6 +115,7 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
         db.execSQL(DROP_TABLE_IF_EXISTS + UserEntry.TABLE_NAME);
         db.execSQL(DROP_TABLE_IF_EXISTS + IssueTypeEntry.TABLE_NAME);
         db.execSQL(DROP_TABLE_IF_EXISTS + IssueEntry.TABLE_NAME);
+        db.execSQL(DROP_TABLE_IF_EXISTS + CommentEntry.TABLE_NAME);
         db.execSQL("DROP VIEW IF EXISTS " + IssuePreviewEntry.VIEW_NAME);
         onCreate(db);
     }

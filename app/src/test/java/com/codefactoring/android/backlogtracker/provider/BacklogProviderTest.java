@@ -29,7 +29,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 public class BacklogProviderTest {
-    public static final long PROJECT_ID = 1L;
+
+    private static final long PROJECT_ID = 1L;
+    private static final long ISSUE_ID = 1L;
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -215,6 +218,40 @@ public class BacklogProviderTest {
         Cursor cursor = shadowContentResolver.query(uri, null, null, null, null);
         assertThat(cursor.getCount(), equalTo(3));
     }
+
+    /*
+     * Comments
+     */
+
+    @Test
+    public void insertsNewComment() {
+        final Uri uri = insertSampleComment();
+
+        assertThat(ContentUris.parseId(uri), equalTo(1L));
+    }
+
+    @Test
+    public void deletesExistingComment() {
+        insertSampleComment();
+
+        final int count = shadowContentResolver.delete(CommentEntry.CONTENT_URI, null, null);
+        assertThat(count, equalTo(1));
+    }
+
+    private Uri insertSampleComment() {
+        final ContentValues contentValues = new ContentValues();
+        contentValues.put(CommentEntry._ID, 1);
+        contentValues.put(CommentEntry.ISSUE_ID, 1);
+        contentValues.put(CommentEntry.CONTENT, "test");
+        contentValues.put(CommentEntry.CREATED_USER_ID, 1);
+        contentValues.put(CommentEntry.CREATED, "2013-08-05T06:15:06Z");
+        contentValues.put(CommentEntry.UPDATED, "2013-08-05T06:15:06Z");
+
+        final Uri uri = CommentEntry.buildCommentUriFromIssueIdUri(ISSUE_ID);
+
+        return shadowContentResolver.insert(uri, contentValues);
+    }
+
 
     private Uri insertSampleIssue() {
         final ContentValues contentValues = new ContentValues();
