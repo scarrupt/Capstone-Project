@@ -26,6 +26,8 @@ public class BacklogContract {
 
     public static final String PATH_ISSUES_STATS = "issues/stats";
 
+    public static final String PATH_ISSUE = "issues/#";
+
     public static final String PATH_ISSUE_COMMENTS = "issues/#/comments";
 
     public static final String PATH_COMMENTS = "comments";
@@ -63,6 +65,12 @@ public class BacklogContract {
 
         public static final String TABLE_NAME = "user";
 
+        public static final String USER_PREFIX = TABLE_NAME + "_";
+
+        public static final String ASSIGNEE_ALIAS = "ASSIGNEE";
+
+        public static final String ASSIGNEE_PREFIX = ASSIGNEE_ALIAS + "_";
+
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_USERS).build();
 
@@ -82,6 +90,8 @@ public class BacklogContract {
     public static final class IssueTypeEntry implements IssueTypeColumns {
 
         public static final String TABLE_NAME = "issue_type";
+
+        public static final String PREFIX = TABLE_NAME + "_";
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_ISSUE_TYPES).build();
@@ -129,6 +139,11 @@ public class BacklogContract {
         public static final String QUERY_PARAMETER_STATUS = "status";
 
         public static final String DEFAULT_SORT = CREATED_DATE + " COLLATE NOCASE DESC";
+
+        public static Uri buildIssueUri(long issueId) {
+            return IssueEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(issueId))
+                    .build();
+        }
 
         public static Uri buildIssuesWithProjectKey(String projectKey) {
             return CONTENT_URI

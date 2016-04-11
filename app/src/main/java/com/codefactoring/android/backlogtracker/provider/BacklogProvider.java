@@ -14,12 +14,16 @@ import android.support.annotation.Nullable;
 
 import com.google.common.collect.Sets;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CONTENT_AUTHORITY;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CommentEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssuePreviewEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueTypeEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_COMMENTS;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES_PREVIEWS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES_STATS;
@@ -42,7 +46,8 @@ public class BacklogProvider extends ContentProvider {
     static final int ISSUES = 400;
     static final int ISSUES_PREVIEWS = 401;
     static final int ISSUES_STATS = 402;
-    static final int ISSUES_COMMENTS = 403;
+    static final int ISSUE = 410;
+    static final int ISSUE_COMMENTS = 411;
     static final int COMMENTS = 500;
 
     private static final UriMatcher sURI_MATCHER = buildUriMatcher();
@@ -58,7 +63,8 @@ public class BacklogProvider extends ContentProvider {
         matcher.addURI(authority, PATH_ISSUES, ISSUES);
         matcher.addURI(authority, PATH_ISSUES_PREVIEWS, ISSUES_PREVIEWS);
         matcher.addURI(authority, PATH_ISSUES_STATS, ISSUES_STATS);
-        matcher.addURI(authority, PATH_ISSUE_COMMENTS, ISSUES_COMMENTS);
+        matcher.addURI(authority, PATH_ISSUE, ISSUE);
+        matcher.addURI(authority, PATH_ISSUE_COMMENTS, ISSUE_COMMENTS);
         matcher.addURI(authority, PATH_COMMENTS, COMMENTS);
 
         return matcher;
@@ -110,8 +116,8 @@ public class BacklogProvider extends ContentProvider {
                 retCursor = findIssuesStatsByProjectId(uri);
                 break;
             }
-            case ISSUES_COMMENTS: {
-                retCursor = findIssuesStatsByProjectId(uri);
+            case ISSUE: {
+                retCursor = findIssueById(uri);
                 break;
             }
             default:
@@ -165,7 +171,7 @@ public class BacklogProvider extends ContentProvider {
                     throw new SQLException("Failed to insert row into " + uri);
                 break;
             }
-            case ISSUES_COMMENTS: {
+            case ISSUE_COMMENTS: {
                 final long _id = db.insert(CommentEntry.TABLE_NAME, null, values);
                 if (_id > 0)
                     returnUri = ContentUris.withAppendedId(CommentEntry.CONTENT_URI, _id);
@@ -321,5 +327,53 @@ public class BacklogProvider extends ContentProvider {
                 IssueEntry.PROJECT_ID + " = " + projectId + " AND " + IssueEntry.STATUS + "= '"
                         + status + "'",
                 null, null);
+    }
+
+    private Cursor findIssueById(Uri uri) {
+        final String issueId = uri.getLastPathSegment();
+
+        final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        queryBuilder.setTables(IssueEntry.TABLE_NAME
+                + " INNER JOIN " + UserEntry.TABLE_NAME
+                + " ON " + IssueEntry.TABLE_NAME + ".CREATED_USER_ID = " + UserEntry.TABLE_NAME + "._ID " +
+                "LEFT OUTER JOIN " + UserEntry.TABLE_NAME + " AS ASSIGNEE ON "
+                + IssueEntry.TABLE_NAME + ".ASSIGNEE_ID = ASSIGNEE._ID " +
+                "INNER JOIN " + IssueTypeEntry.TABLE_NAME + " ON " + IssueEntry.TABLE_NAME +
+                ".TYPE_ID = " + IssueTypeEntry.TABLE_NAME + "._ID");
+
+        final Map<String, String> columnMap = new HashMap<>();
+        columnMap.put(UserEntry.USER_PREFIX + UserEntry.THUMBNAIL_URL, UserEntry.TABLE_NAME + "." + UserEntry.THUMBNAIL_URL);
+        columnMap.put(UserEntry.USER_PREFIX + UserEntry.NAME, UserEntry.TABLE_NAME + "." + UserEntry.NAME);
+        columnMap.put(IssueEntry.CREATED_DATE, IssueEntry.CREATED_DATE);
+        columnMap.put(IssueEntry.DESCRIPTION, IssueEntry.DESCRIPTION);
+        columnMap.put(UserEntry.ASSIGNEE_PREFIX + UserEntry.THUMBNAIL_URL, UserEntry.ASSIGNEE_ALIAS+ "." + UserEntry.THUMBNAIL_URL);
+        columnMap.put(UserEntry.ASSIGNEE_PREFIX + UserEntry.NAME, UserEntry.ASSIGNEE_ALIAS + "." + UserEntry.NAME);
+        columnMap.put(IssueEntry.STATUS, IssueEntry.STATUS);
+        columnMap.put(IssueEntry.PRIORITY, IssueEntry.PRIORITY);
+        columnMap.put(IssueTypeEntry.PREFIX + IssueTypeEntry.NAME, IssueTypeEntry.TABLE_NAME + "." + IssueTypeEntry.NAME);
+        columnMap.put(IssueEntry.MILESTONES, IssueEntry.MILESTONES);
+        queryBuilder.setProjectionMap(columnMap);
+        queryBuilder.appendWhere(IssueEntry.TABLE_NAME + "." + IssueEntry._ID + "=");
+        queryBuilder.appendWhere(issueId);
+
+        final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+
+        return queryBuilder.query(
+                db,
+                new String[]{
+                        UserEntry.USER_PREFIX + UserEntry.THUMBNAIL_URL,
+                        UserEntry.USER_PREFIX + UserEntry.NAME,
+                        IssueEntry.CREATED_DATE,
+                        IssueEntry.DESCRIPTION,
+                        UserEntry.ASSIGNEE_PREFIX + UserEntry.THUMBNAIL_URL,
+                        UserEntry.ASSIGNEE_PREFIX + UserEntry.NAME, IssueEntry.STATUS,
+                        IssueEntry.PRIORITY,
+                        IssueTypeEntry.PREFIX + IssueTypeEntry.NAME,
+                        IssueEntry.MILESTONES},
+                null,
+                null,
+                null,
+                null,
+                null);
     }
 }
