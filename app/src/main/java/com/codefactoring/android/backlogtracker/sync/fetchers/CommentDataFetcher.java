@@ -22,7 +22,7 @@ public class CommentDataFetcher {
         mBacklogApiClient = backlogApiClient;
     }
 
-    public List<CommentDto> getCommentList(long issueId) {
+    public List<CommentDto> getCommentList(final long issueId) {
         return mBacklogApiClient.getIssueOperations().getCommentList(issueId)
                 .onErrorReturn(new Func1<Throwable, List<Comment>>() {
                     @Override
@@ -42,6 +42,7 @@ public class CommentDataFetcher {
                     public Observable<CommentDto> call(Comment comment) {
                         final CommentDto commentDto = new CommentDto();
                         commentDto.setId(comment.getId());
+                        commentDto.setIssueId(issueId);
                         commentDto.setContent(comment.getContent());
                         commentDto.setCreated(comment.getCreated());
                         commentDto.setUpdated(comment.getUpdated());
