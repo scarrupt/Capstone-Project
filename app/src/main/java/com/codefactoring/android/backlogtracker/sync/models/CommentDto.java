@@ -7,6 +7,7 @@ import java.util.Objects;
 public class CommentDto {
 
     private long id;
+    private long issueId;
     private String content;
     private long createdUserId;
     private String created;
@@ -18,6 +19,14 @@ public class CommentDto {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getIssueId() {
+        return issueId;
+    }
+
+    public void setIssueId(long issueId) {
+        this.issueId = issueId;
     }
 
     public String getContent() {
