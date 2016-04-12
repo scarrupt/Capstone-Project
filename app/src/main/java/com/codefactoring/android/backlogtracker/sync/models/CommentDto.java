@@ -1,12 +1,14 @@
-package com.codefactoring.android.backlogapi.models;
+package com.codefactoring.android.backlogtracker.sync.models;
+
+import com.codefactoring.android.backlogapi.models.User;
 
 import java.util.Objects;
 
-public class Comment {
+public class CommentDto {
 
     private long id;
     private String content;
-    private User createdUser;
+    private long createdUserId;
     private String created;
     private String updated;
 
@@ -26,12 +28,12 @@ public class Comment {
         this.content = content;
     }
 
-    public User getCreatedUser() {
-        return createdUser;
+    public long getCreatedUserId() {
+        return createdUserId;
     }
 
-    public void setCreatedUser(User createdUser) {
-        this.createdUser = createdUser;
+    public void setCreatedUserId(long createdUserId) {
+        this.createdUserId = createdUserId;
     }
 
     public String getCreated() {
@@ -54,23 +56,12 @@ public class Comment {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Comment comment = (Comment) o;
-        return Objects.equals(id, comment.id);
+        CommentDto that = (CommentDto) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Comment{" +
-                "id=" + id +
-                ", content='" + content + '\'' +
-                ", createdUser=" + createdUser +
-                ", created='" + created + '\'' +
-                ", updated='" + updated + '\'' +
-                '}';
     }
 }
