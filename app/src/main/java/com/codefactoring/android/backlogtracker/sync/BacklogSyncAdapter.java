@@ -17,13 +17,16 @@ import com.codefactoring.android.backlogapi.BacklogApiClient;
 import com.codefactoring.android.backlogtracker.Config;
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.provider.BacklogContract;
+import com.codefactoring.android.backlogtracker.sync.fetchers.CommentDataFetcher;
 import com.codefactoring.android.backlogtracker.sync.fetchers.IssueDataFetcher;
 import com.codefactoring.android.backlogtracker.sync.fetchers.ProjectDataFetcher;
 import com.codefactoring.android.backlogtracker.sync.fetchers.UserDataFetcher;
+import com.codefactoring.android.backlogtracker.sync.handlers.CommentDataHandler;
 import com.codefactoring.android.backlogtracker.sync.handlers.IssueDataHandler;
 import com.codefactoring.android.backlogtracker.sync.handlers.IssueTypeDataHandler;
 import com.codefactoring.android.backlogtracker.sync.handlers.ProjectDataHandler;
 import com.codefactoring.android.backlogtracker.sync.handlers.UserDataHandler;
+import com.codefactoring.android.backlogtracker.sync.models.CommentDto;
 import com.codefactoring.android.backlogtracker.sync.models.IssueDto;
 import com.codefactoring.android.backlogtracker.sync.models.IssueTypeDto;
 import com.codefactoring.android.backlogtracker.sync.models.ProjectDto;
@@ -100,6 +103,15 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
         final IssueDataHandler issueDataHandler = new IssueDataHandler();
         operations.addAll(issueDataHandler.makeContentProviderOperations(issues));
+
+        final CommentDataFetcher commentDataFetcher = new CommentDataFetcher(mBacklogApiClient);
+        final List<CommentDto> comments = new ArrayList<>();
+        for (IssueDto issue: issues) {
+            comments.addAll(commentDataFetcher.getCommentList(issue.getId()));
+        }
+
+        final CommentDataHandler commentDataHandler = new CommentDataHandler();
+        operations.addAll(commentDataHandler.makeContentProviderOperations(comments));
 
         return operations;
     }

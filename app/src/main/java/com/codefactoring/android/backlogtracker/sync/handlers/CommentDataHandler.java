@@ -6,11 +6,12 @@ import com.codefactoring.android.backlogtracker.provider.BacklogContract;
 import com.codefactoring.android.backlogtracker.sync.models.CommentDto;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class CommentDataHandler {
 
-    public ArrayList<ContentProviderOperation> makeContentProviderOperations(Set<CommentDto> comments) {
+    public ArrayList<ContentProviderOperation> makeContentProviderOperations(List<CommentDto> comments) {
 
         final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
