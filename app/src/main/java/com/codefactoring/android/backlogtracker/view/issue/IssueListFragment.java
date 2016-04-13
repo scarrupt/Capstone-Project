@@ -1,6 +1,7 @@
 package com.codefactoring.android.backlogtracker.view.issue;
 
 
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.codefactoring.android.backlogtracker.R;
@@ -32,6 +34,7 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
 
     private Uri mIssueListUri;
     private IssueAdapter mIssueAdapter;
+    private OnFragmentInteractionListener mListener;
 
     public static IssueListFragment newInstance(Uri issueListUri) {
         final IssueListFragment fragment = new IssueListFragment();
@@ -59,6 +62,19 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
 
         final ListView listView = (ListView) rootView.findViewById(R.id.listview_issue);
         listView.setAdapter(mIssueAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                if (cursor != null && mListener != null) {
+                    mListener.onFragmentInteraction(BacklogContract.IssueEntry
+                            .buildIssueUri(cursor.getLong(
+                                    cursor.getColumnIndex(BacklogContract.IssueEntry.ISSUE_KEY))));
+                }
+            }
+        });
+
         return rootView;
     }
 
@@ -66,6 +82,27 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(ISSUE_LIST_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public interface OnFragmentInteractionListener {
+        void onFragmentInteraction(Uri uri);
     }
 
     @Override

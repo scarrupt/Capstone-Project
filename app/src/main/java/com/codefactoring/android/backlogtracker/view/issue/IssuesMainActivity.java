@@ -1,5 +1,6 @@
 package com.codefactoring.android.backlogtracker.view.issue;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -18,7 +19,7 @@ import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_IS
 import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_RESOLVED;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.*;
 
-public class IssuesMainActivity extends AppCompatActivity {
+public class IssuesMainActivity extends AppCompatActivity implements IssueListFragment.OnFragmentInteractionListener {
 
 
     @Override
@@ -32,6 +33,12 @@ public class IssuesMainActivity extends AppCompatActivity {
         viewPager.setAdapter(pageAdapter);
         final TabLayout tabLayout = ButterKnife.findById(this, R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        final Intent intent = new Intent(this, IssueDetailActivity.class).setData(uri);
+        startActivity(intent);
     }
 
     private class IssuesMainPageAdapter extends FragmentPagerAdapter {
