@@ -186,12 +186,12 @@ public class BacklogProviderTest {
 
 
     @Test
-    public void returnsIssueFromId() {
+    public void returnsIssueFromIssueKey() {
         insertSampleIssueType();
         insertSampleUser();
         insertSampleIssue();
 
-        Uri issueIdUri = IssueEntry.buildIssueUri(1L);
+        Uri issueIdUri = IssueEntry.buildIssueUriFromIssueKey("ISSUE_KEY");
 
         Cursor cursor = shadowContentResolver.query(issueIdUri, null, null, null, null);
 

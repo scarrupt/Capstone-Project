@@ -26,7 +26,9 @@ public class BacklogContract {
 
     public static final String PATH_ISSUES_STATS = "issues/stats";
 
-    public static final String PATH_ISSUE = "issues/#";
+    public static final String PATH_ISSUE_ID = "issues/#";
+
+    public static final String PATH_ISSUE_KEY = "issues/*";
 
     public static final String PATH_ISSUE_COMMENTS = "issues/#/comments";
 
@@ -140,8 +142,8 @@ public class BacklogContract {
 
         public static final String DEFAULT_SORT = CREATED_DATE + " COLLATE NOCASE DESC";
 
-        public static Uri buildIssueUri(long issueId) {
-            return IssueEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(issueId))
+        public static Uri buildIssueUriFromIssueKey(String issueKey) {
+            return IssueEntry.CONTENT_URI.buildUpon().appendPath(issueKey)
                     .build();
         }
 

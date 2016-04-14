@@ -23,11 +23,12 @@ import static com.codefactoring.android.backlogtracker.provider.BacklogContract.
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssuePreviewEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueTypeEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_COMMENTS;
-import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_ID;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES_PREVIEWS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES_STATS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_COMMENTS;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_KEY;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_TYPES;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_PROJECTS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_PROJECT_ISSUE_TYPES;
@@ -63,7 +64,8 @@ public class BacklogProvider extends ContentProvider {
         matcher.addURI(authority, PATH_ISSUES, ISSUES);
         matcher.addURI(authority, PATH_ISSUES_PREVIEWS, ISSUES_PREVIEWS);
         matcher.addURI(authority, PATH_ISSUES_STATS, ISSUES_STATS);
-        matcher.addURI(authority, PATH_ISSUE, ISSUE);
+        matcher.addURI(authority, PATH_ISSUE_ID, ISSUE);
+        matcher.addURI(authority, PATH_ISSUE_KEY, ISSUE);
         matcher.addURI(authority, PATH_ISSUE_COMMENTS, ISSUE_COMMENTS);
         matcher.addURI(authority, PATH_COMMENTS, COMMENTS);
 
@@ -330,7 +332,7 @@ public class BacklogProvider extends ContentProvider {
     }
 
     private Cursor findIssueById(Uri uri) {
-        final String issueId = uri.getLastPathSegment();
+        final String issueKey = uri.getLastPathSegment();
 
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(IssueEntry.TABLE_NAME
@@ -353,8 +355,8 @@ public class BacklogProvider extends ContentProvider {
         columnMap.put(IssueTypeEntry.PREFIX + IssueTypeEntry.NAME, IssueTypeEntry.TABLE_NAME + "." + IssueTypeEntry.NAME);
         columnMap.put(IssueEntry.MILESTONES, IssueEntry.MILESTONES);
         queryBuilder.setProjectionMap(columnMap);
-        queryBuilder.appendWhere(IssueEntry.TABLE_NAME + "." + IssueEntry._ID + "=");
-        queryBuilder.appendWhere(issueId);
+        queryBuilder.appendWhere(IssueEntry.TABLE_NAME + "." + IssueEntry.ISSUE_KEY + "=");
+        queryBuilder.appendWhere("'" + issueKey + "'");
 
         final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
 
