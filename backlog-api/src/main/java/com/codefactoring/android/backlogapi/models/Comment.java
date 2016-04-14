@@ -6,6 +6,7 @@ public class Comment {
 
     private long id;
     private String content;
+    private ChangeLog[] changeLog;
     private User createdUser;
     private String created;
     private String updated;
@@ -24,6 +25,14 @@ public class Comment {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public ChangeLog[] getChangeLog() {
+        return changeLog;
+    }
+
+    public void setChangeLog(ChangeLog[] changeLog) {
+        this.changeLog = changeLog;
     }
 
     public User getCreatedUser() {
@@ -68,6 +77,7 @@ public class Comment {
         return "Comment{" +
                 "id=" + id +
                 ", content='" + content + '\'' +
+                ", changeLog='" + changeLog + '\'' +
                 ", createdUser=" + createdUser +
                 ", created='" + created + '\'' +
                 ", updated='" + updated + '\'' +

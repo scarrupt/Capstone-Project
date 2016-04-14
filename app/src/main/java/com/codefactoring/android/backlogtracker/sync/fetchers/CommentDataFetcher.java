@@ -3,6 +3,7 @@ package com.codefactoring.android.backlogtracker.sync.fetchers;
 import android.util.Log;
 
 import com.codefactoring.android.backlogapi.BacklogApiClient;
+import com.codefactoring.android.backlogapi.models.ChangeLog;
 import com.codefactoring.android.backlogapi.models.Comment;
 import com.codefactoring.android.backlogtracker.sync.models.CommentDto;
 
@@ -43,7 +44,10 @@ public class CommentDataFetcher {
                         final CommentDto commentDto = new CommentDto();
                         commentDto.setId(comment.getId());
                         commentDto.setIssueId(issueId);
-                        commentDto.setContent(comment.getContent());
+                        commentDto.setContent(
+                                comment.getContent() == null
+                                        ? transformToString(comment.getChangeLog())
+                                        : comment.getContent());
                         commentDto.setCreated(comment.getCreated());
                         commentDto.setUpdated(comment.getUpdated());
                         return Observable.just(commentDto);
@@ -52,5 +56,20 @@ public class CommentDataFetcher {
                 .toList()
                 .toBlocking()
                 .first();
+    }
+
+    private String transformToString(ChangeLog[] changeLogs) {
+        final StringBuilder sb = new StringBuilder();
+
+        for (ChangeLog changeLog : changeLogs) {
+            sb.append(changeLog.getField())
+                    .append(": ")
+                    .append(changeLog.getOldValue())
+                    .append(" -> ")
+                    .append(changeLog.getNewValue())
+                    .append("\n");
+        }
+
+        return sb.toString();
     }
 }

@@ -15,8 +15,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentProviderOperation;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,7 +35,7 @@ public class CommentDataHandlerTest {
     @Test
     public void createsOperationDeleteAllCommentsTypesAtFirst() {
         final ArrayList<ContentProviderOperation> operations = new CommentDataHandler()
-                .makeContentProviderOperations(new HashSet<CommentDto>());
+                .makeContentProviderOperations(new ArrayList<CommentDto>());
 
         final ContentProviderOperation operation = operations.get(INDEX_TYPE_DELETE);
 
@@ -47,7 +46,7 @@ public class CommentDataHandlerTest {
 
     @Test
     public void createsOperationInsertCommentType() {
-        final Set<CommentDto> comments = new HashSet<>();
+        final List<CommentDto> comments = new ArrayList<>();
         final CommentDto commentDto = new CommentDto();
         commentDto.setId(COMMENT_ID);
         commentDto.setCreatedUserId(USER_ID);
