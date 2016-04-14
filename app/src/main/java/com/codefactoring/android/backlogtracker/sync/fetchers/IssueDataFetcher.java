@@ -4,10 +4,13 @@ import android.util.Log;
 
 import com.codefactoring.android.backlogapi.BacklogApiClient;
 import com.codefactoring.android.backlogapi.models.Issue;
+import com.codefactoring.android.backlogapi.models.Milestone;
 import com.codefactoring.android.backlogapi.models.User;
 import com.codefactoring.android.backlogtracker.sync.models.IssueDto;
 import com.codefactoring.android.backlogtracker.sync.models.IssueTypeDto;
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,7 +62,15 @@ public class IssueDataFetcher {
                         issueDto.setPriority(issue.getPriority().getName());
                         issueDto.setStatus(issue.getStatus().getName());
                         issueDto.setAssigneeId(getUserIdOrNull(issue.getAssignee()));
-                        issueDto.setMilestones(Joiner.on(",").join(issue.getMilestone()));
+                        issueDto.setMilestones(Joiner.on(",").join(Lists.transform(issue.getMilestone(),
+                                new Function<Milestone, String>() {
+                                    @Override
+                                    public String apply(Milestone milestone) {
+                                        return milestone.getName();
+                                    }
+                                }
+                        )));
+
                         issueDto.setCreatedUserId(issue.getCreatedUser().getId());
                         issueDto.setCreatedDate(formatDate(issue.getCreated()));
                         issueDto.setUpdatedUserId(getUserIdOrNull(issue.getUpdatedUser()));
