@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name">Backlog Tracker</string>
 
     <!-- Account screen -->
@@ -22,6 +22,20 @@
     <string name="title_in_progress_issues">In Progress</string>
     <string name="title_resolved_issues">Resolved</string>
 
+    <!-- Issue Stats screen -->
+    <string name="title_issue_stats">Stats</string>
+
+    <!-- Issue Detail screen-->
+    <string name="format_author">
+        <xliff:g id="author">%s</xliff:g> <xliff:g id="verb">%s</xliff:g> this issue on
+        <xliff:g id="created_date">%s</xliff:g>
+    </string>
+    <string name="label_assignee">Assignee</string>
+    <string name="label_status">status</string>
+    <string name="label_priority">Priority</string>
+    <string name="label_type">Type</string>
+    <string name="label_milestones">Milestones</string>
+
     <!-- UI Errors -->
     <string name="error_field_required">This field is required</string>
     <string name="error_space_key_length">Space key must between 3 and 10 characters long</string>
@@ -42,6 +56,5 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_issue_stats">Stats</string>
 
 </resources>
