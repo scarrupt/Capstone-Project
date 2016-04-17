@@ -69,8 +69,8 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
                 final Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null && mListener != null) {
                     mListener.onFragmentInteraction(BacklogContract.IssueEntry
-                            .buildIssueUri(cursor.getLong(
-                                    cursor.getColumnIndex(BacklogContract.IssueEntry.ISSUE_KEY))));
+                            .buildIssueUriFromIssueId(cursor.getString(
+                                    cursor.getColumnIndex(BacklogContract.IssueEntry._ID))));
                 }
             }
         });

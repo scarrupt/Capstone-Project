@@ -30,7 +30,9 @@ public class BacklogContract {
 
     public static final String PATH_ISSUE_KEY = "issues/*";
 
-    public static final String PATH_ISSUE_COMMENTS = "issues/#/comments";
+    public static final String PATH_ISSUE_COMMENTS = "issues/*/comments";
+
+    public static final String PATH_ISSUE_KEY_COMMENTS = "issues/#/comments";
 
     public static final String PATH_COMMENTS = "comments";
 
@@ -142,8 +144,8 @@ public class BacklogContract {
 
         public static final String DEFAULT_SORT = CREATED_DATE + " COLLATE NOCASE DESC";
 
-        public static Uri buildIssueUriFromIssueKey(String issueKey) {
-            return IssueEntry.CONTENT_URI.buildUpon().appendPath(issueKey)
+        public static Uri buildIssueUriFromIssueId(String issueId) {
+            return IssueEntry.CONTENT_URI.buildUpon().appendPath(issueId)
                     .build();
         }
 
@@ -223,9 +225,16 @@ public class BacklogContract {
         public static final String CONTENT_TYPE =
                 ProjectEntry.CONTENT_TYPE + "/" + PATH_COMMENTS;
 
+        public static final String DEFAULT_SORT = CREATED + " COLLATE NOCASE DESC";
+
         public static Uri buildCommentUriFromIssueIdUri(long issueId) {
             return IssueEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(issueId))
                     .appendPath(PATH_COMMENTS).build();
+        }
+
+        public static Uri buildCommentUriFromIssueUri(Uri uri) {
+            final Uri uri1 = Uri.withAppendedPath(uri, PATH_COMMENTS);
+            return uri1;
         }
     }
 }

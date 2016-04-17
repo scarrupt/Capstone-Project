@@ -44,8 +44,9 @@ public class CommentDataFetcher {
                         final CommentDto commentDto = new CommentDto();
                         commentDto.setId(comment.getId());
                         commentDto.setIssueId(issueId);
+                        commentDto.setCreatedUserId(comment.getCreatedUser().getId());
                         commentDto.setContent(
-                                comment.getContent() == null
+                                comment.getContent() == null || comment.getContent().isEmpty()
                                         ? transformToString(comment.getChangeLog())
                                         : comment.getContent());
                         commentDto.setCreated(comment.getCreated());

@@ -23,12 +23,13 @@ import static com.codefactoring.android.backlogtracker.provider.BacklogContract.
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssuePreviewEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueTypeEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_COMMENTS;
-import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_ID;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES_PREVIEWS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES_STATS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_COMMENTS;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_ID;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_KEY;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_KEY_COMMENTS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_TYPES;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_PROJECTS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_PROJECT_ISSUE_TYPES;
@@ -67,6 +68,7 @@ public class BacklogProvider extends ContentProvider {
         matcher.addURI(authority, PATH_ISSUE_ID, ISSUE);
         matcher.addURI(authority, PATH_ISSUE_KEY, ISSUE);
         matcher.addURI(authority, PATH_ISSUE_COMMENTS, ISSUE_COMMENTS);
+        matcher.addURI(authority, PATH_ISSUE_KEY_COMMENTS, ISSUE_COMMENTS);
         matcher.addURI(authority, PATH_COMMENTS, COMMENTS);
 
         return matcher;
@@ -120,6 +122,10 @@ public class BacklogProvider extends ContentProvider {
             }
             case ISSUE: {
                 retCursor = findIssueById(uri);
+                break;
+            }
+            case ISSUE_COMMENTS: {
+                retCursor = findCommentsByIssueId(uri, projection, sortOrder);
                 break;
             }
             default:
@@ -332,7 +338,7 @@ public class BacklogProvider extends ContentProvider {
     }
 
     private Cursor findIssueById(Uri uri) {
-        final String issueKey = uri.getLastPathSegment();
+        final String issueId = uri.getLastPathSegment();
 
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(IssueEntry.TABLE_NAME
@@ -348,15 +354,15 @@ public class BacklogProvider extends ContentProvider {
         columnMap.put(UserEntry.USER_PREFIX + UserEntry.NAME, UserEntry.TABLE_NAME + "." + UserEntry.NAME);
         columnMap.put(IssueEntry.CREATED_DATE, IssueEntry.CREATED_DATE);
         columnMap.put(IssueEntry.DESCRIPTION, IssueEntry.DESCRIPTION);
-        columnMap.put(UserEntry.ASSIGNEE_PREFIX + UserEntry.THUMBNAIL_URL, UserEntry.ASSIGNEE_ALIAS+ "." + UserEntry.THUMBNAIL_URL);
+        columnMap.put(UserEntry.ASSIGNEE_PREFIX + UserEntry.THUMBNAIL_URL, UserEntry.ASSIGNEE_ALIAS + "." + UserEntry.THUMBNAIL_URL);
         columnMap.put(UserEntry.ASSIGNEE_PREFIX + UserEntry.NAME, UserEntry.ASSIGNEE_ALIAS + "." + UserEntry.NAME);
         columnMap.put(IssueEntry.STATUS, IssueEntry.STATUS);
         columnMap.put(IssueEntry.PRIORITY, IssueEntry.PRIORITY);
         columnMap.put(IssueTypeEntry.PREFIX + IssueTypeEntry.NAME, IssueTypeEntry.TABLE_NAME + "." + IssueTypeEntry.NAME);
         columnMap.put(IssueEntry.MILESTONES, IssueEntry.MILESTONES);
         queryBuilder.setProjectionMap(columnMap);
-        queryBuilder.appendWhere(IssueEntry.TABLE_NAME + "." + IssueEntry.ISSUE_KEY + "=");
-        queryBuilder.appendWhere("'" + issueKey + "'");
+        queryBuilder.appendWhere(IssueEntry.TABLE_NAME + "." + IssueEntry._ID + "=");
+        queryBuilder.appendWhere("'" + issueId + "'");
 
         final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
 
@@ -377,5 +383,28 @@ public class BacklogProvider extends ContentProvider {
                 null,
                 null,
                 null);
+    }
+
+    public Cursor findCommentsByIssueId(Uri uri, String[] projections, String sortOrder) {
+        final String issueKey = uri.getPathSegments().get(uri.getPathSegments().size() - 2);
+
+        final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        queryBuilder.setTables(CommentEntry.TABLE_NAME
+                        + " INNER JOIN " + UserEntry.TABLE_NAME
+                        + " ON " + CommentEntry.TABLE_NAME + ".CREATED_USER_ID = " + UserEntry.TABLE_NAME + "._ID "
+        );
+
+        final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+
+        final String selection = CommentEntry.ISSUE_ID +  " = ?";
+
+        return queryBuilder.query(
+                db,
+                projections,
+                selection,
+                new String[]{issueKey},
+                null,
+                null,
+                sortOrder);
     }
 }

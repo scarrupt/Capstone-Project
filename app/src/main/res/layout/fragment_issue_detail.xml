@@ -6,19 +6,14 @@
     tools:context="com.codefactoring.android.backlogtracker.view.issue.IssueDetailFragment">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/person_image_empty" />
 
             <TextView
                 android:id="@+id/text_author"
@@ -30,151 +25,178 @@
 
         <TextView
             android:id="@+id/text_description"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Content" />
+
     </LinearLayout>
 
+    <View
+        android:id="@+id/separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/listDivider" />
+
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
 
-        <View
-            android:id="@+id/separator"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="16dp"
-            android:background="?android:attr/listDivider" />
-
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:id="@+id/img_assignee"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:adjustViewBounds="true"
+                android:maxHeight="24dp"
+                android:maxWidth="24dp"
                 android:src="@drawable/person_image_empty" />
 
             <TextView
                 android:id="@+id/label_assignee"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="test" />
+                android:layout_weight="0.3"
+                android:text="@string/label_assignee" />
 
             <TextView
                 android:id="@+id/text_assignee"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.4"
                 android:text="test" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/person_image_empty" />
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:src="@drawable/ic_show_chart" />
 
             <TextView
                 android:id="@+id/label_status"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="test" />
+                android:layout_weight="0.3"
+                android:text="@string/label_status" />
 
             <TextView
                 android:id="@+id/text_status"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.4"
                 android:text="test" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/person_image_empty" />
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:src="@drawable/ic_label" />
 
             <TextView
                 android:id="@+id/label_priority"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="test" />
+                android:layout_weight="0.3"
+                android:text="@string/label_priority" />
 
             <TextView
                 android:id="@+id/text_priority"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.4"
                 android:text="test" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/person_image_empty" />
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:src="@drawable/ic_info_outline" />
 
             <TextView
                 android:id="@+id/label_type"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="test" />
+                android:layout_weight="0.3"
+                android:text="@string/label_type" />
 
             <TextView
-                android:id="@+id/text_label"
-                android:layout_width="wrap_content"
+                android:id="@+id/text_type"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.4"
                 android:text="test" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/person_image_empty" />
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:src="@drawable/ic_event" />
 
             <TextView
                 android:id="@+id/label_milestones"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="test" />
+                android:layout_weight="0.3"
+                android:text="@string/label_milestones" />
 
             <TextView
                 android:id="@+id/text_milestones"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.4"
                 android:text="test" />
 
         </LinearLayout>
 
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="16dp"
-            android:background="?android:attr/listDivider" />
-
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/listDivider" />
+
+    <fragment
+        android:id="@+id/fragment_comment_list"
+        android:name="com.codefactoring.android.backlogtracker.view.issue.CommentListFragment"
+        class="com.codefactoring.android.backlogtracker.view.issue.CommentListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_comment_list" />
 
 </LinearLayout>

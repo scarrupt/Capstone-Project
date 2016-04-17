@@ -30,11 +30,11 @@
         <xliff:g id="author">%s</xliff:g> <xliff:g id="verb">%s</xliff:g> this issue on
         <xliff:g id="created_date">%s</xliff:g>
     </string>
-    <string name="label_assignee">Assignee</string>
-    <string name="label_status">status</string>
-    <string name="label_priority">Priority</string>
-    <string name="label_type">Type</string>
-    <string name="label_milestones">Milestones</string>
+    <string name="label_assignee">Assignee:</string>
+    <string name="label_status">status:</string>
+    <string name="label_priority">Priority:</string>
+    <string name="label_type">Type:</string>
+    <string name="label_milestones">Milestones:</string>
 
     <!-- UI Errors -->
     <string name="error_field_required">This field is required</string>
@@ -53,8 +53,5 @@
     <string name="error_too_large_file">File is too large</string>
     <string name="error_authentication">Not registered on this space.</string>
     <string name="error_default">An error happened. Please retry</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
