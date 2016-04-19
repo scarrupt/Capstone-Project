@@ -24,6 +24,9 @@
         </activity>
         <activity android:name=".view.issue.IssuesMainActivity" />
         <activity android:name=".view.issue.IssueDetailActivity" />
+        <activity
+            android:name=".view.settings.SettingsActivity"
+            android:label="@string/title_activity_settings"/>
 
         <!-- The Authenticator service -->
         <service

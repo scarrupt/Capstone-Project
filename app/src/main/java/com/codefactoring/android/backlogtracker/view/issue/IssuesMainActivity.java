@@ -2,22 +2,26 @@ package com.codefactoring.android.backlogtracker.view.issue;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.codefactoring.android.backlogtracker.R;
+import com.codefactoring.android.backlogtracker.view.settings.SettingsActivity;
 
 import butterknife.ButterKnife;
 
 import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_IN_PROGRESS;
 import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_OPEN;
 import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_RESOLVED;
-import static com.codefactoring.android.backlogtracker.provider.BacklogContract.*;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssuePreviewEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueStatsEntry;
 
 public class IssuesMainActivity extends AppCompatActivity implements IssueListFragment.OnFragmentInteractionListener {
 
@@ -33,6 +37,23 @@ public class IssuesMainActivity extends AppCompatActivity implements IssueListFr
         viewPager.setAdapter(pageAdapter);
         final TabLayout tabLayout = ButterKnife.findById(this, R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final int itemId = item.getItemId();
+
+        if (itemId == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -36,6 +36,12 @@
     <string name="label_type">Type:</string>
     <string name="label_milestones">Milestones:</string>
 
+    <!-- Settings screen -->
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Menu Settings -->
+    <string name="action_settings">Settings</string>
+
     <!-- UI Errors -->
     <string name="error_field_required">This field is required</string>
     <string name="error_space_key_length">Space key must between 3 and 10 characters long</string>
@@ -53,5 +59,11 @@
     <string name="error_too_large_file">File is too large</string>
     <string name="error_authentication">Not registered on this space.</string>
     <string name="error_default">An error happened. Please retry</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_notification_key">notifications</string>
+    <string name="pref_notification_summary_on">On</string>
+    <string name="pref_notification_summary_off">Off</string>
+    <string name="pref_notification_label">Notifications</string>
 
 </resources>
