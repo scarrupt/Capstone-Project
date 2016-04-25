@@ -7,8 +7,10 @@ import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
@@ -39,6 +41,8 @@ import java.util.Set;
 
 public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
+    public static final String ACTION_DATA_UPDATED = "com.codefactoring.android.backlogtracker.sync.BacklogSyncAdapter.ACTION_DATA_UPDATED";
+
     public final String LOG_TAG = BacklogSyncAdapter.class.getSimpleName();
 
     private final BacklogApiClient mBacklogApiClient;
@@ -57,6 +61,11 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+        if (!isOnline()) {
+            Log.d(LOG_TAG, "Data will be not syncing because device is offline");
+            return;
+        }
+
         Log.d(LOG_TAG, "Starting sync");
 
         final String spaceKey = mAccountManager.getUserData(account, Config.KEY_SPACE_KEY);
@@ -71,12 +80,23 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
         if (operations.size() > 0) {
             try {
                 getContext().getContentResolver().applyBatch(BacklogContract.CONTENT_AUTHORITY, operations);
+
+                final Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
+                        .setPackage(getContext().getPackageName());
+                getContext().sendBroadcast(dataUpdatedIntent);
             } catch (RemoteException ex) {
                 Log.e(LOG_TAG, "RemoteException while applying content provider operations.", ex);
             } catch (OperationApplicationException ex) {
                 Log.e(LOG_TAG, "OperationApplicationException while applying content provider operations.", ex);
             }
         }
+    }
+
+    private boolean isOnline() {
+        final ConnectivityManager connectivityManager = (ConnectivityManager)
+                mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connectivityManager.getActiveNetworkInfo() != null &&
+                connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting();
     }
 
     protected ArrayList<ContentProviderOperation> syncProjectData() {
@@ -94,7 +114,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
         }
 
         final Set<IssueTypeDto> issueTypes = new HashSet<>();
-        for (IssueDto issue: issues) {
+        for (IssueDto issue : issues) {
             issueTypes.add(issue.getIssueType());
         }
 
@@ -106,7 +126,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
         final CommentDataFetcher commentDataFetcher = new CommentDataFetcher(mBacklogApiClient);
         final List<CommentDto> comments = new ArrayList<>();
-        for (IssueDto issue: issues) {
+        for (IssueDto issue : issues) {
             comments.addAll(commentDataFetcher.getCommentList(issue.getId()));
         }
 

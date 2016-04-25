@@ -39,6 +39,9 @@
     <!-- Settings screen -->
     <string name="title_activity_settings">Settings</string>
 
+    <!-- Widget screen -->
+    <string name="empty_list_last_issues">No opened issues</string>
+
     <!-- Menu Settings -->
     <string name="action_settings">Settings</string>
 
@@ -65,5 +68,9 @@
     <string name="pref_notification_summary_on">On</string>
     <string name="pref_notification_summary_off">Off</string>
     <string name="pref_notification_label">Notifications</string>
+
+    <!-- A11y -->
+    <string name="a11y_issue_key">issue key</string>
+    <string name="a11y_issue_summary">issue summary</string>
 
 </resources>

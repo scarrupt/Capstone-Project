@@ -28,11 +28,13 @@ public class BacklogContract {
 
     public static final String PATH_ISSUE_ID = "issues/#";
 
-    public static final String PATH_ISSUE_KEY = "issues/*";
+//    public static final String PATH_ISSUE_KEY = "issues/*";
 
-    public static final String PATH_ISSUE_COMMENTS = "issues/*/comments";
+    public static final String PATH_ISSUE_COMMENTS = "issues/#/comments";
 
-    public static final String PATH_ISSUE_KEY_COMMENTS = "issues/#/comments";
+//    public static final String PATH_ISSUE_KEY_COMMENTS = "issues/*/comments";
+
+    public static final String PATH_ISSUES_LAST_TEN = "issues/last";
 
     public static final String PATH_COMMENTS = "comments";
 
@@ -149,10 +151,10 @@ public class BacklogContract {
                     .build();
         }
 
-        public static Uri buildIssuesWithProjectKey(String projectKey) {
-            return CONTENT_URI
+        public static Uri buildLast10OpenedIssueUri() {
+            return BASE_CONTENT_URI
                     .buildUpon()
-                    .appendQueryParameter(QUERY_PARAMETER_PROJECT_KEY, projectKey)
+                    .appendEncodedPath(PATH_ISSUES_LAST_TEN)
                     .build();
         }
     }

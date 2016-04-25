@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".BacklogTrackerApplication"
@@ -26,7 +27,7 @@
         <activity android:name=".view.issue.IssueDetailActivity" />
         <activity
             android:name=".view.settings.SettingsActivity"
-            android:label="@string/title_activity_settings"/>
+            android:label="@string/title_activity_settings" />
 
         <!-- The Authenticator service -->
         <service
@@ -61,6 +62,22 @@
             android:exported="false"
             android:syncable="true" />
 
+        <receiver android:name=".appwidget.LastOpenedIssuesProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.codefactoring.android.backlogtracker.sync.BacklogSyncAdapter.ACTION_DATA_UPDATED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/last_opened_issues_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".appwidget.LastOpenedIssuesWidgetService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

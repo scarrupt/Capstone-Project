@@ -36,7 +36,7 @@ public class CommentAdapter extends CursorAdapter {
 
         final String author = cursor.getString(cursor.getColumnIndex(BacklogContract.UserEntry.NAME));
         final String createdDate = cursor.getString(cursor.getColumnIndex(BacklogContract.CommentEntry.CREATED));
-        viewHolder.authorView.setText(context.getString(R.string.format_author, "commented", author, createdDate));
+        viewHolder.authorView.setText(context.getString(R.string.format_author, author, " commented ", createdDate));
 
         final String authorThumbnailPath = cursor.getString(cursor.getColumnIndex(BacklogContract.UserEntry.THUMBNAIL_URL));
         Glide.with(view.getContext())

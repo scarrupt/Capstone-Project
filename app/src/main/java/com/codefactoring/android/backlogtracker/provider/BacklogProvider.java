@@ -17,6 +17,7 @@ import com.google.common.collect.Sets;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_OPEN;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CONTENT_AUTHORITY;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CommentEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueEntry;
@@ -24,12 +25,11 @@ import static com.codefactoring.android.backlogtracker.provider.BacklogContract.
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueTypeEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_COMMENTS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES_LAST_TEN;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES_PREVIEWS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUES_STATS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_COMMENTS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_ID;
-import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_KEY;
-import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_KEY_COMMENTS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_ISSUE_TYPES;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_PROJECTS;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.PATH_PROJECT_ISSUE_TYPES;
@@ -50,6 +50,7 @@ public class BacklogProvider extends ContentProvider {
     static final int ISSUES_STATS = 402;
     static final int ISSUE = 410;
     static final int ISSUE_COMMENTS = 411;
+    static final int ISSUES_LAST_TEN = 403;
     static final int COMMENTS = 500;
 
     private static final UriMatcher sURI_MATCHER = buildUriMatcher();
@@ -66,9 +67,9 @@ public class BacklogProvider extends ContentProvider {
         matcher.addURI(authority, PATH_ISSUES_PREVIEWS, ISSUES_PREVIEWS);
         matcher.addURI(authority, PATH_ISSUES_STATS, ISSUES_STATS);
         matcher.addURI(authority, PATH_ISSUE_ID, ISSUE);
-        matcher.addURI(authority, PATH_ISSUE_KEY, ISSUE);
         matcher.addURI(authority, PATH_ISSUE_COMMENTS, ISSUE_COMMENTS);
-        matcher.addURI(authority, PATH_ISSUE_KEY_COMMENTS, ISSUE_COMMENTS);
+//        matcher.addURI(authority, PATH_ISSUE_KEY_COMMENTS, ISSUE_COMMENTS);
+        matcher.addURI(authority, PATH_ISSUES_LAST_TEN, ISSUES_LAST_TEN);
         matcher.addURI(authority, PATH_COMMENTS, COMMENTS);
 
         return matcher;
@@ -126,6 +127,10 @@ public class BacklogProvider extends ContentProvider {
             }
             case ISSUE_COMMENTS: {
                 retCursor = findCommentsByIssueId(uri, projection, sortOrder);
+                break;
+            }
+            case ISSUES_LAST_TEN: {
+                retCursor = findLastTenOpenedIssues(projection);
                 break;
             }
             default:
@@ -386,7 +391,7 @@ public class BacklogProvider extends ContentProvider {
     }
 
     public Cursor findCommentsByIssueId(Uri uri, String[] projections, String sortOrder) {
-        final String issueKey = uri.getPathSegments().get(uri.getPathSegments().size() - 2);
+        final String issueId = uri.getPathSegments().get(uri.getPathSegments().size() - 2);
 
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(CommentEntry.TABLE_NAME
@@ -396,15 +401,35 @@ public class BacklogProvider extends ContentProvider {
 
         final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
 
-        final String selection = CommentEntry.ISSUE_ID +  " = ?";
+        final String selection = CommentEntry.ISSUE_ID + " = ?";
 
         return queryBuilder.query(
                 db,
                 projections,
                 selection,
-                new String[]{issueKey},
+                new String[]{issueId},
                 null,
                 null,
                 sortOrder);
+    }
+
+    public Cursor findLastTenOpenedIssues(String[] projections) {
+
+        final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        queryBuilder.setTables(IssueEntry.TABLE_NAME);
+        queryBuilder.appendWhere(IssueEntry.STATUS + " = ? ");
+
+        final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+
+        return queryBuilder.query(
+                db,
+                projections,
+                null,
+                new String[]{ STATUS_ISSUE_OPEN },
+                null,
+                null,
+                IssueEntry.DEFAULT_SORT,
+                "10",
+                null);
     }
 }

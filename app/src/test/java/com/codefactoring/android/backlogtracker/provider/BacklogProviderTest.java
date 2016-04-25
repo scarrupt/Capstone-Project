@@ -20,9 +20,14 @@ import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 
-import static com.codefactoring.android.backlogtracker.provider.BacklogContract.*;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CONTENT_AUTHORITY;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CommentEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssuePreviewEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueStatsEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueTypeEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.ProjectEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.UserEntry;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -231,6 +236,23 @@ public class BacklogProviderTest {
         final Uri uri = IssueStatsEntry.buildIssueStatsUriWithProjectId("1");
         Cursor cursor = shadowContentResolver.query(uri, null, null, null, null);
         assertThat(cursor.getCount(), equalTo(3));
+    }
+
+    @Test
+    public void returnsLast10OpenedIssues() {
+        insertSampleIssue();
+        final Uri uri = IssueEntry.buildLast10OpenedIssueUri();
+        final Cursor cursor = shadowContentResolver.query(uri, null, null, null, null);
+        assertThat(cursor.getCount(), equalTo(1));
+    }
+
+    @Test
+    public void returnsCommentsMatchingIssueId() {
+        insertSampleUser();
+        insertSampleComment();
+        final Uri uri = CommentEntry.buildCommentUriFromIssueIdUri(1L);
+        final Cursor cursor = shadowContentResolver.query(uri, null, null, null, null);
+        assertThat(cursor.getCount(), equalTo(1));
     }
 
     /*
