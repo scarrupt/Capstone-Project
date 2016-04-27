@@ -12,8 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.codefactoring.android.backlogtracker.BacklogTrackerApplication;
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.view.settings.SettingsActivity;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 
@@ -25,6 +30,8 @@ import static com.codefactoring.android.backlogtracker.provider.BacklogContract.
 
 public class IssuesMainActivity extends AppCompatActivity implements IssueListFragment.OnFragmentInteractionListener {
 
+    @Inject
+    Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +39,23 @@ public class IssuesMainActivity extends AppCompatActivity implements IssueListFr
         setContentView(R.layout.activity_issues_main);
         setTitle(R.string.title_activity_issues_main);
 
+
+        initializeDependencyInjector();
+
         final ViewPager viewPager = ButterKnife.findById(this, R.id.pager_issues);
         final FragmentPagerAdapter pageAdapter = new IssuesMainPageAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pageAdapter);
         final TabLayout tabLayout = ButterKnife.findById(this, R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        mTracker.setScreenName(IssuesMainActivity.class.getSimpleName());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
+
+    private void initializeDependencyInjector() {
+        ((BacklogTrackerApplication) getApplication())
+                .getApplicationComponent()
+                .inject(this);
     }
 
     @Override

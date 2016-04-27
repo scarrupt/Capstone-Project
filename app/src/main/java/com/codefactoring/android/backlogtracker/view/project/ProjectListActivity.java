@@ -19,6 +19,8 @@ import com.codefactoring.android.backlogtracker.sync.BacklogSyncAdapter;
 import com.codefactoring.android.backlogtracker.view.account.AccountActivity;
 import com.codefactoring.android.backlogtracker.view.issue.IssuesMainActivity;
 import com.codefactoring.android.backlogtracker.view.settings.SettingsActivity;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import javax.inject.Inject;
 
@@ -30,22 +32,31 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
     @Inject
     AccountManager mAccountManager;
 
+    @Inject
+    Tracker mTracker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_list);
         setTitle(R.string.title_activity_project_list);
+        initializeDependencyInjector();
 
+        mTracker.setScreenName(ProjectListActivity.class.getSimpleName());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
+        if (isAuthenticated()) {
+            mBacklogSyncAdapter.syncImmediately();
+        }
+    }
+
+    private void initializeDependencyInjector() {
         DaggerApplicationComponent
                 .builder()
                 .applicationModule(new ApplicationModule(getApplication()))
                 .backlogModule(new BacklogModule(new BacklogToolConfig()))
                 .build()
                 .inject(this);
-
-        if (isAuthenticated()) {
-            mBacklogSyncAdapter.syncImmediately();
-        }
     }
 
     @Override

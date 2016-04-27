@@ -18,6 +18,8 @@ import com.codefactoring.android.backlogtracker.Config;
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.view.project.ProjectListActivity;
 import com.codefactoring.android.backlogtracker.view.util.ErrorUtils;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import javax.inject.Inject;
 
@@ -41,12 +43,17 @@ public class AccountActivity extends AccountAuthenticatorActivity {
     @Inject
     BacklogApiClient mBacklogApiClient;
 
+    @Inject
+    Tracker mTracker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
         initButterKnife();
         initializeDependencyInjector();
+        mTracker.setScreenName(AccountActivity.class.getSimpleName());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     private void initButterKnife() {

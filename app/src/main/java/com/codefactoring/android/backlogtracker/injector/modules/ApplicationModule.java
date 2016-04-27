@@ -5,8 +5,11 @@ import android.app.Application;
 import android.content.Context;
 
 import com.codefactoring.android.backlogapi.BacklogApiClient;
+import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.authenticator.BacklogAuthenticator;
 import com.codefactoring.android.backlogtracker.sync.BacklogSyncAdapter;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 
 import javax.inject.Singleton;
 
@@ -45,5 +48,11 @@ public class ApplicationModule {
     public BacklogSyncAdapter backlogSyncAdapter(Context context, AccountManager accountManager,
                                                  BacklogApiClient backlogApiClient) {
         return new BacklogSyncAdapter(context, true, accountManager, backlogApiClient);
+    }
+
+    @Provides
+    @Singleton
+    public Tracker tracker(Context context) {
+        return GoogleAnalytics.getInstance(context).newTracker(R.xml.global_tracker);
     }
 }
