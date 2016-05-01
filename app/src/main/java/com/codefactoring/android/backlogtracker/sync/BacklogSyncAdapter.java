@@ -62,6 +62,8 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private static final String PREF_KEY_DATA_TIMESTAMP = "data_timestamp";
 
+    private static final String PREF_DATA_BOOTSTRAP_DONE = "data_bootstrap_done";
+
     private static final String DEFAULT_TIMESTAMP = "2000-01-01T00:00:00Z";
 
     private final BacklogApiClient mBacklogApiClient;
@@ -159,7 +161,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public void setDataTimestamp(String timestamp) {
         Log.d(LOG_TAG, "Setting data timestamp to: " + timestamp);
-        mSharedPreferences.edit().putString(PREF_KEY_DATA_TIMESTAMP, timestamp).commit();
+        mSharedPreferences.edit().putString(PREF_KEY_DATA_TIMESTAMP, timestamp).apply();
     }
 
     private void sendNotifications(String lastDataTimestamp) {
@@ -258,5 +260,20 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private Account[] getSyncAccounts(Context context) {
         return mAccountManager.getAccountsByType(context.getString(R.string.account_type));
+    }
+
+    private boolean isDataBootstrapDone() {
+        return mSharedPreferences.getBoolean(PREF_DATA_BOOTSTRAP_DONE, false);
+    }
+
+    private void markDataBootstrapDone() {
+        mSharedPreferences.edit().putBoolean(PREF_DATA_BOOTSTRAP_DONE, true).apply();
+    }
+
+    public void startDataBootstrap() {
+        if(!isDataBootstrapDone()) {
+            syncImmediately();
+            markDataBootstrapDone();
+        }
     }
 }

@@ -53,7 +53,7 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
         if (isAuthenticated() && checkPlayServices()) {
-            mBacklogSyncAdapter.syncImmediately();
+            mBacklogSyncAdapter.startDataBootstrap();
             final Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
