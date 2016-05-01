@@ -103,6 +103,7 @@ public class BacklogContract {
         String PRIORITY = "priority";
         String STATUS = "status";
         String MILESTONES = "milestones";
+        String URL = "url";
         String ASSIGNEE_ID = "assignee_id";
         String CREATED_USER_ID = "created_user_id";
         String CREATED_DATE = "created_date";

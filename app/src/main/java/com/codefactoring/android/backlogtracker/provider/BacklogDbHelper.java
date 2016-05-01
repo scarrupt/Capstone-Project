@@ -4,12 +4,16 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import static com.codefactoring.android.backlogtracker.provider.BacklogContract.*;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CommentEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssuePreviewEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueTypeEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.ProjectEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.UserEntry;
 
 public class BacklogDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String DROP_TABLE_IF_EXISTS = "DROP TABLE IF EXISTS ";
 
     static final String DATABASE_NAME = "backlog.db";
@@ -54,6 +58,7 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
                 IssueEntry.PRIORITY + " TEXT NOT NULL, " +
                 IssueEntry.STATUS + " TEXT NOT NULL, " +
                 IssueEntry.MILESTONES + " TEXT NULL, " +
+                IssueEntry.URL + " TEXT NULL, " +
                 IssueEntry.ASSIGNEE_ID + " INTEGER, " +
                 IssueEntry.CREATED_USER_ID + " INTEGER NOT NULL, " +
                 IssueEntry.CREATED_DATE + " TEXT NOT NULL, " +

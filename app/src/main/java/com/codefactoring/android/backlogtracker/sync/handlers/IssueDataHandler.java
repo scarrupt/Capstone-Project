@@ -27,6 +27,7 @@ public class IssueDataHandler {
                     .withValue(IssueEntry.PRIORITY, issue.getPriority())
                     .withValue(IssueEntry.STATUS, issue.getStatus())
                     .withValue(IssueEntry.MILESTONES, issue.getMilestones())
+                    .withValue(IssueEntry.URL, issue.getUrl())
                     .withValue(IssueEntry.ASSIGNEE_ID, issue.getAssigneeId())
                     .withValue(IssueEntry.CREATED_USER_ID, issue.getCreatedUserId())
                     .withValue(IssueEntry.CREATED_DATE, issue.getCreatedDate())

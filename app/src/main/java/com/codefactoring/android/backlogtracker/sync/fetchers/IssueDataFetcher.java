@@ -75,6 +75,7 @@ public class IssueDataFetcher {
                         issueDto.setCreatedDate(formatDate(issue.getCreated()));
                         issueDto.setUpdatedUserId(getUserIdOrNull(issue.getUpdatedUser()));
                         issueDto.setUpdatedDate(formatDate(issue.getUpdated()));
+                        issueDto.setUrl(mBacklogApiClient.getBaseURL() + issue.getIssueKey());
 
                         final IssueTypeDto issueTypeDto = new IssueTypeDto();
                         issueTypeDto.setId(issue.getIssueType().getId());

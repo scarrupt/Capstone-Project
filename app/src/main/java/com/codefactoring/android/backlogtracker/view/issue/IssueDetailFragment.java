@@ -1,5 +1,6 @@
 package com.codefactoring.android.backlogtracker.view.issue;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -9,7 +10,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -38,6 +44,7 @@ public class IssueDetailFragment extends Fragment implements LoaderManager.Loade
     private static final int COL_PRIORITY = 7;
     private static final int COL_TYPE = 8;
     private static final int COL_MILESTONES = 9;
+    private static final int COL_URL = 10;
 
     @Bind(R.id.text_author)
     TextView mAuthorView;
@@ -65,6 +72,14 @@ public class IssueDetailFragment extends Fragment implements LoaderManager.Loade
 
     private Uri mUri;
 
+    private ShareActionProvider mShareActionProvider;
+
+    private String mIssueUrl;
+
+    public IssueDetailFragment() {
+        setHasOptionsMenu(true);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +100,27 @@ public class IssueDetailFragment extends Fragment implements LoaderManager.Loade
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_issue_detail, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+        if (mIssueUrl != null) {
+            mShareActionProvider.setShareIntent(createShareIntent());
+        }
+    }
+
+    private Intent createShareIntent() {
+        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, mIssueUrl);
+        return shareIntent;
     }
 
     @Override
@@ -150,6 +186,12 @@ public class IssueDetailFragment extends Fragment implements LoaderManager.Loade
 
             final String milestones = data.getString(COL_MILESTONES);
             mMilestonesView.setText(milestones);
+
+            mIssueUrl = data.getString(COL_URL);
+
+            if (mShareActionProvider != null) {
+                mShareActionProvider.setShareIntent(createShareIntent());
+            }
         }
     }
 

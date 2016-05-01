@@ -370,6 +370,7 @@ public class BacklogProvider extends ContentProvider {
         columnMap.put(IssueEntry.PRIORITY, IssueEntry.PRIORITY);
         columnMap.put(IssueTypeEntry.PREFIX + IssueTypeEntry.NAME, IssueTypeEntry.TABLE_NAME + "." + IssueTypeEntry.NAME);
         columnMap.put(IssueEntry.MILESTONES, IssueEntry.MILESTONES);
+        columnMap.put(IssueEntry.URL, IssueEntry.URL);
         queryBuilder.setProjectionMap(columnMap);
         queryBuilder.appendWhere(IssueEntry.TABLE_NAME + "." + IssueEntry._ID + "=");
         queryBuilder.appendWhere("'" + issueId + "'");
@@ -387,7 +388,8 @@ public class BacklogProvider extends ContentProvider {
                         UserEntry.ASSIGNEE_PREFIX + UserEntry.NAME, IssueEntry.STATUS,
                         IssueEntry.PRIORITY,
                         IssueTypeEntry.PREFIX + IssueTypeEntry.NAME,
-                        IssueEntry.MILESTONES},
+                        IssueEntry.MILESTONES,
+                        IssueEntry.URL},
                 null,
                 null,
                 null,

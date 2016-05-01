@@ -27,10 +27,13 @@ public class BacklogApiClient {
 
     private BacklogToolConfig mBacklogApiConfig;
 
+    private String mBaseURL;
+
     public BacklogApiClient connectWith(String spaceKey, String apiKey) {
         final Gson gson = provideGson();
 
         final HttpUrl baseUrl = HttpUrl.parse(mBacklogApiConfig.getBaseURL(spaceKey));
+        mBaseURL = baseUrl.toString();
 
         final OkHttpClient client = provideOkHttpClient(apiKey);
 
@@ -79,5 +82,9 @@ public class BacklogApiClient {
 
     public IssueOperations getIssueOperations() {
         return mIssueOperations;
+    }
+
+    public String getBaseURL() {
+        return mBaseURL;
     }
 }

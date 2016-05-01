@@ -17,6 +17,7 @@ public class IssueDto {
     private String createdDate;
     private Long updatedUserId;
     private String updatedDate;
+    private String url;
 
     public long getId() {
         return id;
@@ -128,6 +129,14 @@ public class IssueDto {
 
     public void setUpdatedDate(String updatedDate) {
         this.updatedDate = updatedDate;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @Override
