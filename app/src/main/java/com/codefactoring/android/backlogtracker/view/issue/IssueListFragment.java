@@ -62,6 +62,7 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
 
         final ListView listView = (ListView) rootView.findViewById(R.id.listview_issue);
         listView.setAdapter(mIssueAdapter);
+        listView.setEmptyView(rootView.findViewById(R.id.text_empty_issues));
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

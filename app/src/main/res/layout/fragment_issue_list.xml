@@ -2,11 +2,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.codefactoring.android.backlog.view.issue.IssueListFragment">
+    tools:context=".view.issue.IssueListFragment">
 
     <ListView
         android:id="@+id/listview_issue"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/text_empty_issues"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="center"
+        android:text="@string/text_empty_issues"
+        android:textAppearance="?android:textAppearanceLarge" />
 
 </FrameLayout>

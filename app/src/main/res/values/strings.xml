@@ -21,6 +21,7 @@
     <string name="title_open_issues">Open</string>
     <string name="title_in_progress_issues">In Progress</string>
     <string name="title_resolved_issues">Resolved</string>
+    <string name="text_empty_issues">No issues</string>
 
     <!-- Issue Stats screen -->
     <string name="title_issue_stats">Stats</string>
