@@ -121,6 +121,12 @@ public class BacklogProvider extends ContentProvider {
                 retCursor = findIssuesStatsByProjectId(uri);
                 break;
             }
+            case ISSUES: {
+                final String status = uri.getQueryParameter(IssueEntry.QUERY_PARAMETER_STATUS);
+                final String created = uri.getQueryParameter(IssueEntry.QUERY_PARAMETER_CREATED_DATE);
+                retCursor = findIssuesByStatusAndCreated(projection, status, created);
+                break;
+            }
             case ISSUE: {
                 retCursor = findIssueById(uri);
                 break;
@@ -390,13 +396,34 @@ public class BacklogProvider extends ContentProvider {
                 null);
     }
 
+    private Cursor findIssuesByStatusAndCreated(String[] projections, String status, String created) {
+        final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        queryBuilder.setTables(IssueEntry.TABLE_NAME);
+        queryBuilder.appendWhere(IssueEntry.STATUS + " = ? ");
+        queryBuilder.appendWhere("AND strftime('%s',"
+                + IssueEntry.CREATED_DATE + ") - strftime('%s', ? ) > 0");
+
+        final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+
+        return queryBuilder.query(
+                db,
+                projections,
+                null,
+                new String[]{status, created},
+                null,
+                null,
+                IssueEntry.DEFAULT_SORT,
+                null,
+                null);
+    }
+
     public Cursor findCommentsByIssueId(Uri uri, String[] projections, String sortOrder) {
         final String issueId = uri.getPathSegments().get(uri.getPathSegments().size() - 2);
 
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(CommentEntry.TABLE_NAME
-                        + " INNER JOIN " + UserEntry.TABLE_NAME
-                        + " ON " + CommentEntry.TABLE_NAME + ".CREATED_USER_ID = " + UserEntry.TABLE_NAME + "._ID "
+                + " INNER JOIN " + UserEntry.TABLE_NAME
+                + " ON " + CommentEntry.TABLE_NAME + ".CREATED_USER_ID = " + UserEntry.TABLE_NAME + "._ID "
         );
 
         final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
@@ -425,7 +452,7 @@ public class BacklogProvider extends ContentProvider {
                 db,
                 projections,
                 null,
-                new String[]{ STATUS_ISSUE_OPEN },
+                new String[]{STATUS_ISSUE_OPEN},
                 null,
                 null,
                 IssueEntry.DEFAULT_SORT,

@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.codefactoring.android.backlogapi.BacklogApiConstants;
 import com.codefactoring.android.backlogtracker.BuildConfig;
 
 import org.junit.Before;
@@ -20,6 +19,7 @@ import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 
+import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_OPEN;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CONTENT_AUTHORITY;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CommentEntry;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueEntry;
@@ -225,7 +225,7 @@ public class BacklogProviderTest {
     public void returnsIssuePreviewsMatchingProjectIdParameter() {
         insertSampleIssue();
         final Uri uri = IssuePreviewEntry.buildIssuePreviewsWithProjectId(1);
-        Uri filteredUri = IssuePreviewEntry.addStatusQueryParameterToUri(uri, BacklogApiConstants.STATUS_ISSUE_OPEN);
+        Uri filteredUri = IssuePreviewEntry.addStatusQueryParameterToUri(uri, STATUS_ISSUE_OPEN);
         Cursor cursor = shadowContentResolver.query(filteredUri, null, null, null, null);
         assertThat(cursor.getCount(), equalTo(1));
     }
@@ -251,6 +251,14 @@ public class BacklogProviderTest {
         insertSampleUser();
         insertSampleComment();
         final Uri uri = CommentEntry.buildCommentUriFromIssueIdUri(1L);
+        final Cursor cursor = shadowContentResolver.query(uri, null, null, null, null);
+        assertThat(cursor.getCount(), equalTo(1));
+    }
+
+    @Test
+    public void returnsIssuesOpenedAfterPreviousSync() {
+        insertSampleIssue();
+        final Uri uri = IssueEntry.buildIssueUriWithStatusAndCreatedDate(STATUS_ISSUE_OPEN, "2000-01-01T00:00:00Z");
         final Cursor cursor = shadowContentResolver.query(uri, null, null, null, null);
         assertThat(cursor.getCount(), equalTo(1));
     }

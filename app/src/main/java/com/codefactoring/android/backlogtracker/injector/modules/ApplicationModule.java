@@ -3,6 +3,8 @@ package com.codefactoring.android.backlogtracker.injector.modules;
 import android.accounts.AccountManager;
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.codefactoring.android.backlogapi.BacklogApiClient;
 import com.codefactoring.android.backlogtracker.R;
@@ -45,9 +47,15 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
+    public SharedPreferences sharedPreferences(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    @Provides
+    @Singleton
     public BacklogSyncAdapter backlogSyncAdapter(Context context, AccountManager accountManager,
-                                                 BacklogApiClient backlogApiClient) {
-        return new BacklogSyncAdapter(context, true, accountManager, backlogApiClient);
+                                                 BacklogApiClient backlogApiClient, SharedPreferences sharedPreferences) {
+        return new BacklogSyncAdapter(context, true, accountManager, backlogApiClient, sharedPreferences);
     }
 
     @Provides

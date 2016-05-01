@@ -2,6 +2,8 @@ package com.codefactoring.android.backlogtracker.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
@@ -9,16 +11,19 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
+import android.content.SharedPreferences;
 import android.content.SyncResult;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.codefactoring.android.backlogapi.BacklogApiClient;
 import com.codefactoring.android.backlogtracker.Config;
 import com.codefactoring.android.backlogtracker.R;
-import com.codefactoring.android.backlogtracker.provider.BacklogContract;
 import com.codefactoring.android.backlogtracker.sync.fetchers.CommentDataFetcher;
 import com.codefactoring.android.backlogtracker.sync.fetchers.IssueDataFetcher;
 import com.codefactoring.android.backlogtracker.sync.fetchers.ProjectDataFetcher;
@@ -33,11 +38,21 @@ import com.codefactoring.android.backlogtracker.sync.models.IssueDto;
 import com.codefactoring.android.backlogtracker.sync.models.IssueTypeDto;
 import com.codefactoring.android.backlogtracker.sync.models.ProjectDto;
 import com.codefactoring.android.backlogtracker.sync.models.UserDto;
+import com.codefactoring.android.backlogtracker.view.issue.IssueDetailActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+
+import static com.codefactoring.android.backlogapi.BacklogApiConstants.DATE_FORMAT_PATTERN;
+import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_OPEN;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CONTENT_AUTHORITY;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueEntry;
 
 public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
@@ -45,18 +60,39 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public static final String LOG_TAG = BacklogSyncAdapter.class.getSimpleName();
 
+    private static final String PREF_KEY_DATA_TIMESTAMP = "data_timestamp";
+
+    private static final String DEFAULT_TIMESTAMP = "2000-01-01T00:00:00Z";
+
     private final BacklogApiClient mBacklogApiClient;
 
     private final AccountManager mAccountManager;
 
     private final Context mContext;
 
+    private final SharedPreferences mSharedPreferences;
+
+    public static final String[] ISSUES_COLUMNS =
+            new String[]{
+                    IssueEntry._ID,
+                    IssueEntry.ISSUE_KEY,
+                    IssueEntry.PROJECT_ID,
+                    IssueEntry.SUMMARY
+            };
+
+    private static final int INDEX_ISSUE_ID = 0;
+    private static final int INDEX_ISSUE_KEY = 1;
+    private static final int INDEX_PROJECT_ID = 2;
+    private static final int INDEX_ISSUE_SUMMARY = 3;
+
+
     public BacklogSyncAdapter(Context context, boolean autoInitialize, AccountManager accountManager,
-                              BacklogApiClient backlogApiClient) {
+                              BacklogApiClient backlogApiClient, SharedPreferences sharedPreferences) {
         super(context, autoInitialize);
         mContext = context;
         mAccountManager = accountManager;
         mBacklogApiClient = backlogApiClient;
+        mSharedPreferences = sharedPreferences;
     }
 
     @Override
@@ -79,13 +115,18 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
         if (operations.size() > 0) {
             try {
-                getContext().getContentResolver().applyBatch(BacklogContract.CONTENT_AUTHORITY, operations);
+                getContext().getContentResolver().applyBatch(CONTENT_AUTHORITY, operations);
 
                 final Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
                         .setPackage(getContext().getPackageName());
                 getContext().sendBroadcast(dataUpdatedIntent);
 
+                final String lastDataTimestamp = getDataTimestamp();
 
+                sendNotifications(lastDataTimestamp);
+
+                final Date now = GregorianCalendar.getInstance().getTime();
+                setDataTimestamp(formatDate(now));
             } catch (RemoteException ex) {
                 Log.e(LOG_TAG, "RemoteException while applying content provider operations.", ex);
             } catch (OperationApplicationException ex) {
@@ -96,12 +137,67 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(LOG_TAG, "Done sync");
     }
 
+    private String formatDate(Date date) {
+        if (date == null) {
+            return null;
+        } else {
+            final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.getDefault());
+            return simpleDateFormat.format(date);
+        }
+    }
+
     private boolean isOnline() {
         final ConnectivityManager connectivityManager = (ConnectivityManager)
                 mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo() != null &&
                 connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting();
     }
+
+    private String getDataTimestamp() {
+        return mSharedPreferences.getString(PREF_KEY_DATA_TIMESTAMP, DEFAULT_TIMESTAMP);
+    }
+
+    public void setDataTimestamp(String timestamp) {
+        Log.d(LOG_TAG, "Setting data timestamp to: " + timestamp);
+        mSharedPreferences.edit().putString(PREF_KEY_DATA_TIMESTAMP, timestamp).commit();
+    }
+
+    private void sendNotifications(String lastDataTimestamp) {
+
+        final Uri uri = IssueEntry.buildIssueUriWithStatusAndCreatedDate(STATUS_ISSUE_OPEN, lastDataTimestamp);
+
+        final Cursor data = mContext.getContentResolver().query(uri,
+                ISSUES_COLUMNS, null, null, null);
+
+        final NotificationManager notificationManager = (NotificationManager)
+                mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (data != null) {
+            while (data.moveToNext()) {
+                final int issueId = data.getInt(INDEX_ISSUE_ID);
+                final String projectId = data.getString(INDEX_PROJECT_ID);
+                final String issueKey = data.getString(INDEX_ISSUE_KEY);
+                final String summary = data.getString(INDEX_ISSUE_SUMMARY);
+
+                final Intent intent = new Intent(mContext, IssueDetailActivity.class);
+                intent.setData(IssueEntry.buildIssueUriFromIssueId(String.valueOf(issueId)));
+                final PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(mContext.getString(R.string.notification_title))
+                        .setContentText(mContext.getString(R.string.notification_message,
+                                issueKey, summary))
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true)
+                        .setGroup(projectId);
+
+                notificationManager.notify(issueId, builder.build());
+            }
+            data.close();
+        }
+    }
+
 
     protected ArrayList<ContentProviderOperation> syncProjectData() {
         final ArrayList<ContentProviderOperation> operations = new ArrayList<>();

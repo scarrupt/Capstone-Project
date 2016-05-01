@@ -140,9 +140,9 @@ public class BacklogContract {
         public static final String CONTENT_ITEM_TYPE =
                 CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ISSUES;
 
-        public static final String QUERY_PARAMETER_PROJECT_KEY = "projectKey";
-
         public static final String QUERY_PARAMETER_STATUS = "status";
+
+        public static final String QUERY_PARAMETER_CREATED_DATE = CREATED_DATE;
 
         public static final String DEFAULT_SORT = CREATED_DATE + " COLLATE NOCASE DESC";
 
@@ -155,6 +155,14 @@ public class BacklogContract {
             return BASE_CONTENT_URI
                     .buildUpon()
                     .appendEncodedPath(PATH_ISSUES_LAST_TEN)
+                    .build();
+        }
+
+        public static Uri buildIssueUriWithStatusAndCreatedDate(String status, String createdDate) {
+            return CONTENT_URI
+                    .buildUpon()
+                    .appendQueryParameter(QUERY_PARAMETER_STATUS, status)
+                    .appendQueryParameter(QUERY_PARAMETER_CREATED_DATE, createdDate)
                     .build();
         }
     }

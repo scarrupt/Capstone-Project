@@ -73,4 +73,9 @@
     <string name="a11y_issue_key">issue key</string>
     <string name="a11y_issue_summary">issue summary</string>
 
+    <!-- Notifications -->
+    <string name="notification_title">New issue was added</string>
+    <string name="notification_message"># <xliff:g id="issueKey">%s</xliff:g> - <xliff:g id="created_date">%s</xliff:g>
+    </string>
+
 </resources>
