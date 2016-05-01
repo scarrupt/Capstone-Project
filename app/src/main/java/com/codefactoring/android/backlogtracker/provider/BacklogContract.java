@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import static android.content.ContentResolver.CURSOR_DIR_BASE_TYPE;
-import static android.content.ContentResolver.CURSOR_ITEM_BASE_TYPE;
 
 public class BacklogContract {
 
@@ -28,11 +27,7 @@ public class BacklogContract {
 
     public static final String PATH_ISSUE_ID = "issues/#";
 
-//    public static final String PATH_ISSUE_KEY = "issues/*";
-
     public static final String PATH_ISSUE_COMMENTS = "issues/#/comments";
-
-//    public static final String PATH_ISSUE_KEY_COMMENTS = "issues/*/comments";
 
     public static final String PATH_ISSUES_LAST_TEN = "issues/last";
 
@@ -56,9 +51,6 @@ public class BacklogContract {
 
         public static final String DEFAULT_SORT = NAME + " COLLATE NOCASE ASC";
 
-        public static Uri buildProjectUri(long projectId) {
-            return CONTENT_URI.buildUpon().appendPath(String.valueOf(projectId)).build();
-        }
     }
 
     interface UserColumns extends BaseColumns {
@@ -79,12 +71,6 @@ public class BacklogContract {
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_USERS).build();
-
-        public static final String CONTENT_TYPE =
-                CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_USERS;
-
-        public static final String CONTENT_ITEM_TYPE =
-                CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_USERS;
     }
 
     interface IssueTypeColumns extends BaseColumns {
@@ -101,9 +87,6 @@ public class BacklogContract {
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_ISSUE_TYPES).build();
-
-        public static final String CONTENT_TYPE =
-                ProjectEntry.CONTENT_TYPE + "/" + PATH_ISSUE_TYPES;
 
         public static Uri buildIssueTypeFromProjectIdUri(long projectId) {
             return ProjectEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(projectId))
@@ -133,12 +116,6 @@ public class BacklogContract {
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_ISSUES).build();
-
-        public static final String CONTENT_TYPE =
-                CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ISSUES;
-
-        public static final String CONTENT_ITEM_TYPE =
-                CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ISSUES;
 
         public static final String QUERY_PARAMETER_STATUS = "status";
 
@@ -175,13 +152,8 @@ public class BacklogContract {
 
         public static final String ASSIGNEE_THUMBNAIL_URL_ALIAS = "assignee_thumbnail_url";
 
-        public static final String DEFAULT_SORT = IssueEntry.CREATED_DATE + " COLLATE NOCASE DESC";
-
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendEncodedPath(PATH_ISSUES_PREVIEWS).build();
-
-        public static final String CONTENT_TYPE =
-                CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ISSUES_PREVIEWS;
 
         public static final String QUERY_PARAMETER_PROJECT_ID = "projectId";
 
@@ -232,9 +204,6 @@ public class BacklogContract {
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendEncodedPath(PATH_COMMENTS).build();
 
-        public static final String CONTENT_TYPE =
-                ProjectEntry.CONTENT_TYPE + "/" + PATH_COMMENTS;
-
         public static final String DEFAULT_SORT = CREATED + " COLLATE NOCASE DESC";
 
         public static Uri buildCommentUriFromIssueIdUri(long issueId) {
@@ -243,8 +212,7 @@ public class BacklogContract {
         }
 
         public static Uri buildCommentUriFromIssueUri(Uri uri) {
-            final Uri uri1 = Uri.withAppendedPath(uri, PATH_COMMENTS);
-            return uri1;
+            return Uri.withAppendedPath(uri, PATH_COMMENTS);
         }
     }
 }

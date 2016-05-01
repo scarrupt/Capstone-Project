@@ -7,7 +7,6 @@ import com.codefactoring.android.backlogtracker.sync.models.CommentDto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class CommentDataHandler {
 

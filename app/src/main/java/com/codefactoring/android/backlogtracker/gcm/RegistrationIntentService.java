@@ -18,8 +18,6 @@ public class RegistrationIntentService extends IntentService {
 
     public static final String LOG_TAG = RegistrationIntentService.class.getSimpleName();
 
-    private static final String BASE_URL = "http://localhost:8080/_ah/api/";
-
     public RegistrationIntentService() {
         super("RegistrationIntentService");
     }

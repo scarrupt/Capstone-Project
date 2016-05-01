@@ -1,7 +1,5 @@
 package com.codefactoring.android.backlogtracker.sync.models;
 
-import com.codefactoring.android.backlogapi.models.User;
-
 import java.util.Objects;
 
 public class CommentDto {

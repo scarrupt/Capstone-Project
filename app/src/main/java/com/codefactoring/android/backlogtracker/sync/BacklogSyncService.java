@@ -14,9 +14,6 @@ import javax.inject.Inject;
 
 public class BacklogSyncService extends Service {
 
-    private static final Object sSyncAdapterLock = new Object();
-    private static BacklogSyncAdapter sBacklogSyncAdapter = null;
-
     @Inject
     BacklogSyncAdapter mBacklogSyncAdapter;
 

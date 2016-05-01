@@ -91,7 +91,6 @@ public class LastOpenedIssuesWidgetService extends RemoteViewsService {
 
                 final Intent fillInIntent = new Intent();
                 fillInIntent.setData(BacklogContract.IssueEntry.buildIssueUriFromIssueId(issueId));
-                //fillInIntent.putExtra(IssueDetailActivity.PARAM_ISSUE_URI, BacklogContract.IssueEntry.buildIssueUriFromIssueId(issueId));
                 views.setOnClickFillInIntent(R.id.item_issue_widget, fillInIntent);
                 return views;
             }

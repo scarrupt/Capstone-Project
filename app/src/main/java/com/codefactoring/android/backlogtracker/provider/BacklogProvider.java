@@ -68,7 +68,6 @@ public class BacklogProvider extends ContentProvider {
         matcher.addURI(authority, PATH_ISSUES_STATS, ISSUES_STATS);
         matcher.addURI(authority, PATH_ISSUE_ID, ISSUE);
         matcher.addURI(authority, PATH_ISSUE_COMMENTS, ISSUE_COMMENTS);
-//        matcher.addURI(authority, PATH_ISSUE_KEY_COMMENTS, ISSUE_COMMENTS);
         matcher.addURI(authority, PATH_ISSUES_LAST_TEN, ISSUES_LAST_TEN);
         matcher.addURI(authority, PATH_COMMENTS, COMMENTS);
 
