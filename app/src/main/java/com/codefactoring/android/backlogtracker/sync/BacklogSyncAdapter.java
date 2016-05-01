@@ -125,7 +125,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
                 final String lastDataTimestamp = getDataTimestamp();
 
-                sendNotifications(lastDataTimestamp);
+                sendNotificationsIfEnabled(lastDataTimestamp);
 
                 final Date now = GregorianCalendar.getInstance().getTime();
                 setDataTimestamp(formatDate(now));
@@ -164,39 +164,41 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
         mSharedPreferences.edit().putString(PREF_KEY_DATA_TIMESTAMP, timestamp).apply();
     }
 
-    private void sendNotifications(String lastDataTimestamp) {
+    private void sendNotificationsIfEnabled(String lastDataTimestamp) {
+        if (isNotificationEnabled()) {
 
-        final Uri uri = IssueEntry.buildIssueUriWithStatusAndCreatedDate(STATUS_ISSUE_OPEN, lastDataTimestamp);
+            final Uri uri = IssueEntry.buildIssueUriWithStatusAndCreatedDate(STATUS_ISSUE_OPEN, lastDataTimestamp);
 
-        final Cursor data = mContext.getContentResolver().query(uri,
-                ISSUES_COLUMNS, null, null, null);
+            final Cursor data = mContext.getContentResolver().query(uri,
+                    ISSUES_COLUMNS, null, null, null);
 
-        final NotificationManager notificationManager = (NotificationManager)
-                mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            final NotificationManager notificationManager = (NotificationManager)
+                    mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if (data != null) {
-            while (data.moveToNext()) {
-                final int issueId = data.getInt(INDEX_ISSUE_ID);
-                final String projectId = data.getString(INDEX_PROJECT_ID);
-                final String issueKey = data.getString(INDEX_ISSUE_KEY);
-                final String summary = data.getString(INDEX_ISSUE_SUMMARY);
+            if (data != null) {
+                while (data.moveToNext()) {
+                    final int issueId = data.getInt(INDEX_ISSUE_ID);
+                    final String projectId = data.getString(INDEX_PROJECT_ID);
+                    final String issueKey = data.getString(INDEX_ISSUE_KEY);
+                    final String summary = data.getString(INDEX_ISSUE_SUMMARY);
 
-                final Intent intent = new Intent(mContext, IssueDetailActivity.class);
-                intent.setData(IssueEntry.buildIssueUriFromIssueId(String.valueOf(issueId)));
-                final PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    final Intent intent = new Intent(mContext, IssueDetailActivity.class);
+                    intent.setData(IssueEntry.buildIssueUriFromIssueId(String.valueOf(issueId)));
+                    final PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(mContext.getString(R.string.notification_title))
-                        .setContentText(mContext.getString(R.string.notification_message,
-                                issueKey, summary))
-                        .setContentIntent(pendingIntent)
-                        .setAutoCancel(true)
-                        .setGroup(projectId);
+                    final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentTitle(mContext.getString(R.string.notification_title))
+                            .setContentText(mContext.getString(R.string.notification_message,
+                                    issueKey, summary))
+                            .setContentIntent(pendingIntent)
+                            .setAutoCancel(true)
+                            .setGroup(projectId);
 
-                notificationManager.notify(issueId, builder.build());
+                    notificationManager.notify(issueId, builder.build());
+                }
+                data.close();
             }
-            data.close();
         }
     }
 
@@ -268,6 +270,11 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void markDataBootstrapDone() {
         mSharedPreferences.edit().putBoolean(PREF_DATA_BOOTSTRAP_DONE, true).apply();
+    }
+
+    private boolean isNotificationEnabled() {
+        return mSharedPreferences.getBoolean(mContext.getString(R.string.pref_notification_key),
+                mContext.getResources().getBoolean(R.bool.pref_notification_default));
     }
 
     public void startDataBootstrap() {
