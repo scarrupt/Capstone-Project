@@ -7,11 +7,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.codefactoring.android.backlogapi.BacklogToolConfig;
 import com.codefactoring.android.backlogtracker.R;
+import com.codefactoring.android.backlogtracker.gcm.RegistrationIntentService;
 import com.codefactoring.android.backlogtracker.injector.components.DaggerApplicationComponent;
 import com.codefactoring.android.backlogtracker.injector.modules.ApplicationModule;
 import com.codefactoring.android.backlogtracker.injector.modules.BacklogModule;
@@ -21,10 +23,15 @@ import com.codefactoring.android.backlogtracker.view.issue.IssuesMainActivity;
 import com.codefactoring.android.backlogtracker.view.settings.SettingsActivity;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import javax.inject.Inject;
 
 public class ProjectListActivity extends AppCompatActivity implements ProjectListFragment.OnFragmentInteractionListener {
+
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final String TAG_NAME = ProjectListActivity.class.getSimpleName();
 
     @Inject
     BacklogSyncAdapter mBacklogSyncAdapter;
@@ -45,8 +52,10 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
         mTracker.setScreenName(ProjectListActivity.class.getSimpleName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
-        if (isAuthenticated()) {
+        if (isAuthenticated() && checkPlayServices()) {
             mBacklogSyncAdapter.syncImmediately();
+            final Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
         }
     }
 
@@ -98,5 +107,21 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
 
     public static Intent makeIntent(Context context) {
         return new Intent(context, ProjectListActivity.class);
+    }
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.i(TAG_NAME, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 }

@@ -1,6 +1,8 @@
 package com.codefactoring.android.backlogtracker.injector.components;
 
 
+import com.codefactoring.android.backlogtracker.gcm.GcmMessageHandler;
+import com.codefactoring.android.backlogtracker.gcm.RegistrationIntentService;
 import com.codefactoring.android.backlogtracker.injector.modules.ApplicationModule;
 import com.codefactoring.android.backlogtracker.injector.modules.BacklogModule;
 import com.codefactoring.android.backlogtracker.sync.BacklogSyncService;
@@ -21,4 +23,7 @@ public interface ApplicationComponent {
     void inject(IssuesMainActivity issuesMainActivity);
     void inject(IssueDetailActivity issueDetailActivity);
     void inject(BacklogSyncService service);
+    void inject(RegistrationIntentService service);
+    void inject(GcmMessageHandler handler);
+
 }

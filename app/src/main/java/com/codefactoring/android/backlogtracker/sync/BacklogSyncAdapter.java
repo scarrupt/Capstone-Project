@@ -43,7 +43,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public static final String ACTION_DATA_UPDATED = "com.codefactoring.android.backlogtracker.sync.BacklogSyncAdapter.ACTION_DATA_UPDATED";
 
-    public final String LOG_TAG = BacklogSyncAdapter.class.getSimpleName();
+    public static final String LOG_TAG = BacklogSyncAdapter.class.getSimpleName();
 
     private final BacklogApiClient mBacklogApiClient;
 
@@ -84,12 +84,16 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
                 final Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
                         .setPackage(getContext().getPackageName());
                 getContext().sendBroadcast(dataUpdatedIntent);
+
+
             } catch (RemoteException ex) {
                 Log.e(LOG_TAG, "RemoteException while applying content provider operations.", ex);
             } catch (OperationApplicationException ex) {
                 Log.e(LOG_TAG, "OperationApplicationException while applying content provider operations.", ex);
             }
         }
+
+        Log.d(LOG_TAG, "Done sync");
     }
 
     private boolean isOnline() {
