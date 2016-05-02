@@ -69,8 +69,9 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteraction(Uri uri, String projectKey) {
         final Intent intent = new Intent(this, IssuesMainActivity.class).setData(uri);
+        intent.putExtra(Intent.EXTRA_TEXT, projectKey);
         startActivity(intent);
     }
 

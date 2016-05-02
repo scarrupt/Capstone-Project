@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,6 +40,13 @@ public class IssuesMainActivity extends AppCompatActivity implements IssueListFr
         setContentView(R.layout.activity_issues_main);
         setTitle(R.string.title_activity_issues_main);
 
+        if (getIntent() != null && getIntent().hasExtra(Intent.EXTRA_TEXT)) {
+            final String projectKey = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+            final ActionBar supportActionBar = getSupportActionBar();
+            if (supportActionBar != null) {
+                supportActionBar.setSubtitle(projectKey);
+            }
+        }
 
         initializeDependencyInjector();
 
@@ -76,8 +84,9 @@ public class IssuesMainActivity extends AppCompatActivity implements IssueListFr
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteraction(Uri uri, String issueKey) {
         final Intent intent = new Intent(this, IssueDetailActivity.class).setData(uri);
+        intent.putExtra(Intent.EXTRA_TEXT, issueKey);
         startActivity(intent);
     }
 

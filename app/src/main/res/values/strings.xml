@@ -27,6 +27,7 @@
     <string name="title_issue_stats">Stats</string>
 
     <!-- Issue Detail screen-->
+    <string name="title_activity_issue_detail">Issue detail</string>
     <string name="format_author">
         <xliff:g id="author">%s</xliff:g> <xliff:g id="verb">%s</xliff:g> this issue on
         <xliff:g id="created_date">%s</xliff:g>

@@ -71,7 +71,8 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
                 if (cursor != null && mListener != null) {
                     mListener.onFragmentInteraction(BacklogContract.IssueEntry
                             .buildIssueUriFromIssueId(cursor.getString(
-                                    cursor.getColumnIndex(BacklogContract.IssueEntry._ID))));
+                                    cursor.getColumnIndex(BacklogContract.IssueEntry._ID))),
+                                    cursor.getString(cursor.getColumnIndex(BacklogContract.IssueEntry.ISSUE_KEY)));
                 }
             }
         });
@@ -103,7 +104,7 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(Uri uri, String issueKey);
     }
 
     @Override

@@ -81,7 +81,9 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
                 if (cursor != null && mListener != null) {
                     mListener.onFragmentInteraction(BacklogContract.IssuePreviewEntry
                             .buildIssuePreviewsWithProjectId(cursor.getString(
-                                    cursor.getColumnIndex(ProjectEntry._ID))));
+                                    cursor.getColumnIndex(ProjectEntry._ID))),
+                            cursor.getString(
+                                    cursor.getColumnIndex(ProjectEntry.PROJECT_KEY)));
                 }
             }
         });
@@ -142,7 +144,7 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(Uri uri, String projectKey);
     }
 
     public void showLoadingIndicator() {
