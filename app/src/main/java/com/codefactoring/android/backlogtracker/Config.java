@@ -6,4 +6,8 @@ public interface Config {
 
     String KEY_SPACE_KEY = "com.codefactoring.android.backlog.spaceKey";
 
+    String ACTION_SYNC_STARTED = "com.codefactoring.android.backlogtracker.SYNC_STARTED";
+
+    String ACTION_SYNC_DONE = "com.codefactoring.android.backlogtracker.SYNC_DONE";
+
 }

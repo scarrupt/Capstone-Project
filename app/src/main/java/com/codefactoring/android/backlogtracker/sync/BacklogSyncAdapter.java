@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.codefactoring.android.backlogapi.BacklogApiClient;
@@ -105,6 +106,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
         }
 
         Log.d(LOG_TAG, "Starting sync");
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(Config.ACTION_SYNC_STARTED));
 
         final String spaceKey = mAccountManager.getUserData(account, Config.KEY_SPACE_KEY);
         final String apiKey = mAccountManager.getUserData(account, Config.KEY_API_KEY);
@@ -136,6 +138,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
 
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(Config.ACTION_SYNC_DONE));
         Log.d(LOG_TAG, "Done sync");
     }
 

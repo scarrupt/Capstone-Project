@@ -1,6 +1,9 @@
 package com.codefactoring.android.backlogtracker.view.project;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,20 +11,29 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
+import com.codefactoring.android.backlogtracker.Config;
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.provider.BacklogContract;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.ProjectEntry;
 
 public class ProjectListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int PROJECT_LIST_LOADER = 0;
+
+    @Bind(R.id.progress_project)
+    ProgressBar mLoadingIndicator;
 
     private OnFragmentInteractionListener mListener;
 
@@ -32,6 +44,17 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
             ProjectEntry.NAME,
             ProjectEntry.PROJECT_KEY,
             ProjectEntry.THUMBNAIL_URL
+    };
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Config.ACTION_SYNC_STARTED.equals(intent.getAction())) {
+                showLoadingIndicator();
+            } else if (Config.ACTION_SYNC_DONE.equals(intent.getAction())) {
+                hideLoadingIndicator();
+            }
+        }
     };
 
     @Override
@@ -46,6 +69,7 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
         mProjectAdapter = new ProjectAdapter(getActivity(), null, 0);
 
         final View rootView = inflater.inflate(R.layout.fragment_project_list, container, false);
+        ButterKnife.bind(this, rootView);
 
         final ListView listView = (ListView) rootView.findViewById(R.id.listview_project);
         listView.setAdapter(mProjectAdapter);
@@ -61,7 +85,6 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
                 }
             }
         });
-
 
         return rootView;
     }
@@ -81,6 +104,21 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mMessageReceiver,
+                new IntentFilter(Config.ACTION_SYNC_STARTED));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mMessageReceiver,
+                new IntentFilter(Config.ACTION_SYNC_DONE));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mMessageReceiver);
     }
 
     @Override
@@ -105,5 +143,13 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void showLoadingIndicator() {
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+    }
+
+    public void hideLoadingIndicator() {
+        mLoadingIndicator.setVisibility(View.GONE);
     }
 }
