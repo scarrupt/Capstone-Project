@@ -4,12 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.codefactoring.android.backlogtracker.BacklogTrackerApplication;
 import com.codefactoring.android.backlogtracker.R;
-import com.codefactoring.android.backlogtracker.view.settings.SettingsActivity;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -42,22 +39,5 @@ public class IssueDetailActivity extends AppCompatActivity {
         ((BacklogTrackerApplication) getApplication())
                 .getApplicationComponent()
                 .inject(this);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        final int itemId = item.getItemId();
-
-        if (itemId == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

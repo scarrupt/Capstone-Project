@@ -26,6 +26,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.provider.BacklogContract;
+import com.codefactoring.android.backlogtracker.view.settings.SettingsActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -113,6 +114,17 @@ public class IssueDetailFragment extends Fragment implements LoaderManager.Loade
         if (mIssueUrl != null) {
             mShareActionProvider.setShareIntent(createShareIntent());
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final int itemId = item.getItemId();
+
+        if (itemId == R.id.action_settings) {
+            startActivity(new Intent(getContext(), SettingsActivity.class));
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private Intent createShareIntent() {
