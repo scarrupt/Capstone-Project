@@ -16,6 +16,7 @@
         android:layout_height="@dimen/progress_bar_height"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="@dimen/progress_bar_margin_bottom"
-        android:indeterminate="true" />
+        android:visibility="gone"
+        />
 
 </FrameLayout>
