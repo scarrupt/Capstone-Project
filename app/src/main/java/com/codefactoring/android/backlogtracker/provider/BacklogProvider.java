@@ -399,7 +399,10 @@ public class BacklogProvider extends ContentProvider {
 
     private Cursor findIssuesByStatusAndCreated(String[] projections, String status, String created) {
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        queryBuilder.setTables(IssueEntry.TABLE_NAME);
+        queryBuilder.setTables(IssueEntry.TABLE_NAME
+                + " INNER JOIN " + ProjectEntry.TABLE_NAME
+                + " ON " + IssueEntry.TABLE_NAME + "." + IssueEntry.PROJECT_ID
+                + "=" + ProjectEntry.TABLE_NAME + "." + ProjectEntry._ID);
         queryBuilder.appendWhere(IssueEntry.STATUS + " = ? ");
         queryBuilder.appendWhere("AND strftime('%s',"
                 + IssueEntry.CREATED_DATE + ") - strftime('%s', ? ) > 0");

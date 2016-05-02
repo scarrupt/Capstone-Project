@@ -80,7 +80,7 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
                 final Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null && mListener != null) {
                     mListener.onFragmentInteraction(BacklogContract.IssuePreviewEntry
-                            .buildIssuePreviewsWithProjectId(cursor.getLong(
+                            .buildIssuePreviewsWithProjectId(cursor.getString(
                                     cursor.getColumnIndex(ProjectEntry._ID))));
                 }
             }

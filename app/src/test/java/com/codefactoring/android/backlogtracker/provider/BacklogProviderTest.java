@@ -224,7 +224,7 @@ public class BacklogProviderTest {
     @Test
     public void returnsIssuePreviewsMatchingProjectIdParameter() {
         insertSampleIssue();
-        final Uri uri = IssuePreviewEntry.buildIssuePreviewsWithProjectId(1);
+        final Uri uri = IssuePreviewEntry.buildIssuePreviewsWithProjectId("1");
         Uri filteredUri = IssuePreviewEntry.addStatusQueryParameterToUri(uri, STATUS_ISSUE_OPEN);
         Cursor cursor = shadowContentResolver.query(filteredUri, null, null, null, null);
         assertThat(cursor.getCount(), equalTo(1));
@@ -257,6 +257,7 @@ public class BacklogProviderTest {
 
     @Test
     public void returnsIssuesOpenedAfterPreviousSync() {
+        insertSampleProject();
         insertSampleIssue();
         final Uri uri = IssueEntry.buildIssueUriWithStatusAndCreatedDate(STATUS_ISSUE_OPEN, "2000-01-01T00:00:00Z");
         final Cursor cursor = shadowContentResolver.query(uri, null, null, null, null);

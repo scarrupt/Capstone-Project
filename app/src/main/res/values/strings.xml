@@ -81,8 +81,11 @@
     <string name="a11y_not_assigned">issue not assigned</string>
 
     <!-- Notifications -->
-    <string name="notification_title">New issue was added</string>
-    <string name="notification_message"># <xliff:g id="issueKey">%s</xliff:g> - <xliff:g id="created_date">%s</xliff:g>
+    <string name="notification_title">New issue</string>
+    <string name="notification_message"># <xliff:g id="issue_key">%s</xliff:g> - <xliff:g id="issue_summary">%s</xliff:g>
+    </string>
+    <string name="notification_multiple_title">New issues</string>
+    <string name="notification_multiple_message">New issues were added to project <xliff:g id="project_name">%s</xliff:g>
     </string>
 
 </resources>

@@ -25,6 +25,7 @@ import android.util.Log;
 import com.codefactoring.android.backlogapi.BacklogApiClient;
 import com.codefactoring.android.backlogtracker.Config;
 import com.codefactoring.android.backlogtracker.R;
+import com.codefactoring.android.backlogtracker.provider.BacklogContract;
 import com.codefactoring.android.backlogtracker.sync.fetchers.CommentDataFetcher;
 import com.codefactoring.android.backlogtracker.sync.fetchers.IssueDataFetcher;
 import com.codefactoring.android.backlogtracker.sync.fetchers.ProjectDataFetcher;
@@ -40,6 +41,7 @@ import com.codefactoring.android.backlogtracker.sync.models.IssueTypeDto;
 import com.codefactoring.android.backlogtracker.sync.models.ProjectDto;
 import com.codefactoring.android.backlogtracker.sync.models.UserDto;
 import com.codefactoring.android.backlogtracker.view.issue.IssueDetailActivity;
+import com.google.common.base.Objects;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +56,7 @@ import static com.codefactoring.android.backlogapi.BacklogApiConstants.DATE_FORM
 import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_OPEN;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.CONTENT_AUTHORITY;
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.IssueEntry;
+import static com.codefactoring.android.backlogtracker.provider.BacklogContract.ProjectEntry;
 
 public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
@@ -80,13 +83,15 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
                     IssueEntry._ID,
                     IssueEntry.ISSUE_KEY,
                     IssueEntry.PROJECT_ID,
+                    ProjectEntry.NAME,
                     IssueEntry.SUMMARY
             };
 
     private static final int INDEX_ISSUE_ID = 0;
     private static final int INDEX_ISSUE_KEY = 1;
     private static final int INDEX_PROJECT_ID = 2;
-    private static final int INDEX_ISSUE_SUMMARY = 3;
+    private static final int INDEX_PROJECT_NAME = 3;
+    private static final int INDEX_ISSUE_SUMMARY = 4;
 
 
     public BacklogSyncAdapter(Context context, boolean autoInitialize, AccountManager accountManager,
@@ -179,11 +184,16 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
                     mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
             if (data != null) {
+                final Set<ProjectData> projectDataSet = new HashSet<>();
+
                 while (data.moveToNext()) {
                     final int issueId = data.getInt(INDEX_ISSUE_ID);
                     final String projectId = data.getString(INDEX_PROJECT_ID);
+                    final String projectName = data.getString(INDEX_PROJECT_NAME);
                     final String issueKey = data.getString(INDEX_ISSUE_KEY);
                     final String summary = data.getString(INDEX_ISSUE_SUMMARY);
+
+                    projectDataSet.add(new ProjectData(projectId, projectName));
 
                     final Intent intent = new Intent(mContext, IssueDetailActivity.class);
                     intent.setData(IssueEntry.buildIssueUriFromIssueId(String.valueOf(issueId)));
@@ -201,6 +211,25 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
                     notificationManager.notify(issueId, builder.build());
                 }
                 data.close();
+
+                for (ProjectData projectData : projectDataSet) {
+
+                    final Intent intent = new Intent(mContext, IssueDetailActivity.class);
+                    intent.setData(BacklogContract.IssuePreviewEntry.buildIssuePreviewsWithProjectId(projectData.getProjectId()));
+                    final PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentTitle(mContext.getString(R.string.notification_multiple_title))
+                            .setContentText(mContext.getString(R.string.notification_multiple_message,
+                                    projectData.getProjectName()))
+                            .setContentIntent(pendingIntent)
+                            .setAutoCancel(true)
+                            .setGroup(projectData.getProjectId())
+                            .setGroupSummary(true);
+                    notificationManager.notify(Integer.valueOf(projectData.getProjectId()), builder.build());
+                }
+
             }
         }
     }
@@ -281,9 +310,41 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     public void startDataBootstrap() {
-        if(!isDataBootstrapDone()) {
+        if (!isDataBootstrapDone()) {
             syncImmediately();
             markDataBootstrapDone();
+        }
+    }
+
+    private static class ProjectData {
+        private final String projectId;
+        private final String projectName;
+
+        public ProjectData(String projectId, String projectName) {
+            this.projectId = projectId;
+            this.projectName = projectName;
+        }
+
+        public String getProjectId() {
+            return projectId;
+        }
+
+        public String getProjectName() {
+            return projectName;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ProjectData that = (ProjectData) o;
+            return Objects.equal(projectId, that.projectId) &&
+                    Objects.equal(projectName, that.projectName);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(projectId, projectName);
         }
     }
 }
