@@ -74,6 +74,11 @@
     <!-- A11y -->
     <string name="a11y_issue_key">issue key</string>
     <string name="a11y_issue_summary">issue summary</string>
+    <string name="a11y_issue_status">issue status</string>
+    <string name="a11y_issue_priority">issue priority</string>
+    <string name="a11y_issue_type">issue type</string>
+    <string name="a11y_issue_milestones">issue milestones</string>
+    <string name="a11y_not_assigned">issue not assigned</string>
 
     <!-- Notifications -->
     <string name="notification_title">New issue was added</string>

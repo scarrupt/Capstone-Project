@@ -8,16 +8,15 @@
         android:id="@+id/text_project_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/project_name_margin_top"
         android:gravity="center"
-        android:padding="16dp"
-        />
+        android:padding="16dp" />
 
     <View
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/project_separator"
         android:background="?android:attr/listDivider" />
 
 </LinearLayout>

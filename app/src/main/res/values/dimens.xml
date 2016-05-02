@@ -8,4 +8,15 @@ Refer to App Widget Documentation for margin information
 http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     -->
     <dimen name="widget_margin">8dp</dimen>
+    <dimen name="progress_bar_width">30dp</dimen>
+    <dimen name="progress_bar_height">30dp</dimen>
+    <dimen name="progress_bar_margin_bottom">8dp</dimen>
+    <dimen name="account_btn_next_margin_top">16dp</dimen>
+    <dimen name="issue_detail_divider_margin_top">16dp</dimen>
+    <dimen name="issue_detail_separator_margin_top">16dp</dimen>
+    <dimen name="comment_separator_margin_top">16dp</dimen>
+    <dimen name="issue_separator_margin_top">16dp</dimen>
+    <dimen name="issue_assignee_padding">16dp</dimen>
+    <dimen name="project_separator">16dp</dimen>
+    <dimen name="project_name_margin_top">10dp</dimen>
 </resources>

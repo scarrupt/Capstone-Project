@@ -25,7 +25,7 @@ public class BacklogApiClient {
 
     private IssueOperations mIssueOperations;
 
-    private BacklogToolConfig mBacklogApiConfig;
+    private final BacklogToolConfig mBacklogApiConfig;
 
     private String mBaseURL;
 

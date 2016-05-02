@@ -8,8 +8,6 @@ import com.codefactoring.android.backlogtracker.R;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
-import java.io.IOException;
-
 import okhttp3.ResponseBody;
 import rx.Observable;
 
@@ -38,7 +36,7 @@ public class RegistrationIntentService extends IntentService {
         }
     }
 
-    private void sendRegistrationToServer(String token) throws IOException {
+    private void sendRegistrationToServer(String token) {
         final Registration registration = new Registration();
         registration.setRegId(token);
         final Observable<ResponseBody> register = new UpdateApiClient().getRegisterOperations().register(registration);

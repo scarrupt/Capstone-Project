@@ -50,7 +50,7 @@ public class AccountActivityTest {
 
     private static final String ERROR_SPACE_KEY_LENGTH = "Space key must between 3 and 10 characters long";
 
-    private MockWebServer server = new MockWebServer();
+    private final MockWebServer server = new MockWebServer();
 
     private TestApplication mTestApplication;
 
@@ -58,7 +58,7 @@ public class AccountActivityTest {
     Context mContext;
 
     @Rule
-    public ActivityTestRule<AccountActivity> activityTestRule =
+    public final ActivityTestRule<AccountActivity> activityTestRule =
             new ActivityTestRule<>(AccountActivity.class);
 
     @Before

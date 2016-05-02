@@ -9,7 +9,7 @@ public class BacklogApiException extends RuntimeException {
 
     public static final int DEFAULT_ERROR_CODE = 0;
 
-    private BacklogError mBacklogError;
+    private final BacklogError mBacklogError;
 
     public BacklogApiException(String responseBody) {
         mBacklogError = readHttpException(responseBody);

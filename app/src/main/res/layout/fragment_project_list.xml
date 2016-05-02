@@ -12,11 +12,10 @@
     <ProgressBar
         android:id="@+id/progress_project"
         style="?android:attr/progressBarStyleLarge"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/progress_bar_width"
+        android:layout_height="@dimen/progress_bar_height"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="8dp"
-        android:indeterminate="true"
-        />
+        android:layout_marginBottom="@dimen/progress_bar_margin_bottom"
+        android:indeterminate="true" />
 
 </FrameLayout>

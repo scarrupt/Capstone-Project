@@ -9,13 +9,13 @@ import com.google.gson.annotations.SerializedName;
 public class BacklogError {
 
     @SerializedName("message")
-    private String message;
+    private final String message;
 
     @SerializedName("code")
-    private int code;
+    private final int code;
 
     @SerializedName("moreInfo")
-    private String moreInfo;
+    private final String moreInfo;
 
     public BacklogError(String message, int code, String moreInfo) {
         this.message = message;

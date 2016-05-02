@@ -1,5 +1,6 @@
 package com.codefactoring.android.backlogapi.models;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Comment {
@@ -77,7 +78,7 @@ public class Comment {
         return "Comment{" +
                 "id=" + id +
                 ", content='" + content + '\'' +
-                ", changeLog='" + changeLog + '\'' +
+                ", changeLog='" + Arrays.toString(changeLog) + '\'' +
                 ", createdUser=" + createdUser +
                 ", created='" + created + '\'' +
                 ", updated='" + updated + '\'' +

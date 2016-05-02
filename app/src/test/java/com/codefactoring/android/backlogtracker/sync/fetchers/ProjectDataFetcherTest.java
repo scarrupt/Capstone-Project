@@ -33,7 +33,7 @@ public class ProjectDataFetcherTest {
 
     private final MockWebServer server = new MockWebServer();
 
-    private BacklogApiClient mBacklogApiClient = new BacklogApiClient(new BacklogTestConfig());
+    private final BacklogApiClient mBacklogApiClient = new BacklogApiClient(new BacklogTestConfig());
 
     private ProjectDataFetcher mProjectDataFetcher;
 

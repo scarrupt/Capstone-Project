@@ -15,7 +15,6 @@
             android:id="@+id/text_space_key"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
             android:hint="@string/prompt_space_key"
             android:inputType="text"
             android:maxLines="1"
@@ -44,7 +43,7 @@
         style="?android:textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/account_btn_next_margin_top"
         android:background="@color/colorPrimary"
         android:text="@string/action_next"
         android:textStyle="bold" />

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.codefactoring.android.backlog.view.issue.IssueListFragment">
+    tools:context="com.codefactoring.android.backlogtracker.appwidget.LastOpenedIssuesProvider">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,10 +14,10 @@
             android:id="@+id/btn_widget_logo"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:scaleType="fitStart"
-            android:src="@mipmap/ic_launcher"
             android:background="?android:selectableItemBackground"
-            android:contentDescription="@string/app_name"/>
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitStart"
+            android:src="@mipmap/ic_launcher" />
 
     </LinearLayout>
 

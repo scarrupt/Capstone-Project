@@ -46,7 +46,7 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
             ProjectEntry.THUMBNAIL_URL
     };
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (Config.ACTION_SYNC_STARTED.equals(intent.getAction())) {
