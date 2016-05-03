@@ -364,7 +364,6 @@ public class BacklogProvider extends ContentProvider {
         columnMap.put(UserEntry.USER_PREFIX + UserEntry.NAME, UserEntry.TABLE_NAME + "." + UserEntry.NAME);
         columnMap.put(IssueEntry.CREATED_DATE, IssueEntry.CREATED_DATE);
         columnMap.put(IssueEntry.DESCRIPTION, IssueEntry.DESCRIPTION);
-        columnMap.put(UserEntry.ASSIGNEE_PREFIX + UserEntry.THUMBNAIL_URL, UserEntry.ASSIGNEE_ALIAS + "." + UserEntry.THUMBNAIL_URL);
         columnMap.put(UserEntry.ASSIGNEE_PREFIX + UserEntry.NAME, UserEntry.ASSIGNEE_ALIAS + "." + UserEntry.NAME);
         columnMap.put(IssueEntry.STATUS, IssueEntry.STATUS);
         columnMap.put(IssueEntry.PRIORITY, IssueEntry.PRIORITY);
@@ -384,7 +383,6 @@ public class BacklogProvider extends ContentProvider {
                         UserEntry.USER_PREFIX + UserEntry.NAME,
                         IssueEntry.CREATED_DATE,
                         IssueEntry.DESCRIPTION,
-                        UserEntry.ASSIGNEE_PREFIX + UserEntry.THUMBNAIL_URL,
                         UserEntry.ASSIGNEE_PREFIX + UserEntry.NAME, IssueEntry.STATUS,
                         IssueEntry.PRIORITY,
                         IssueTypeEntry.PREFIX + IssueTypeEntry.NAME,

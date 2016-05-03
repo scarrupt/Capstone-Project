@@ -168,7 +168,6 @@ public class ProjectListActivity extends AppCompatActivity implements
     public void onIssueSelected(Uri uri, String issueKey) {
         final IssueDetailFragment fragment = IssueDetailFragment.newInstance(uri, issueKey);
         fragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppDialogTheme);
-
         fragment.show(getSupportFragmentManager(), ISSUE_DETAIL_FRAGMENT_TAG);
     }
 }

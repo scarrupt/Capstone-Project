@@ -8,7 +8,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -42,13 +41,12 @@ public class IssueDetailFragment extends DialogFragment implements LoaderManager
     private static final int COL_AUTHOR_NAME = 1;
     private static final int COL_CREATED_DATE = 2;
     private static final int COL_DESCRIPTION = 3;
-    private static final int COL_ASSIGNEE_THUMBNAIL = 4;
-    private static final int COL_ASSIGNEE_NAME = 5;
-    private static final int COL_STATUS = 6;
-    private static final int COL_PRIORITY = 7;
-    private static final int COL_TYPE = 8;
-    private static final int COL_MILESTONES = 9;
-    private static final int COL_URL = 10;
+    private static final int COL_ASSIGNEE_NAME = 4;
+    private static final int COL_STATUS = 5;
+    private static final int COL_PRIORITY = 6;
+    private static final int COL_TYPE = 7;
+    private static final int COL_MILESTONES = 8;
+    private static final int COL_URL = 9;
 
     private static final String ARG_URI = "arg_uri";
 
@@ -97,19 +95,6 @@ public class IssueDetailFragment extends DialogFragment implements LoaderManager
         return fragment;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (savedInstanceState == null) {
-            final CommentListFragment commentListFragment = CommentListFragment.newInstance(mUri);
-            getChildFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.comment_list_container, commentListFragment)
-                    .commit();
-        }
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -121,8 +106,17 @@ public class IssueDetailFragment extends DialogFragment implements LoaderManager
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (getArguments() != null) {
-            mUri = getArguments().getParcelable(ARG_URI);
+        if (savedInstanceState == null) {
+            if (getArguments() != null) {
+                mUri = getArguments().getParcelable(ARG_URI);
+
+
+                final CommentListFragment commentListFragment = CommentListFragment.newInstance(mUri);
+                getChildFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.comment_list_container, commentListFragment)
+                        .commit();
+            }
         }
 
         final View view = inflater.inflate(R.layout.fragment_issue_detail, container, false);

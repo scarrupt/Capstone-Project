@@ -16,8 +16,6 @@ public class IssueDetailActivity extends AppCompatActivity {
 
     private static final String ISSUE_DETAIL_FRAGMENT_TAG = "IssueDetailFragmentTag";
 
-    private static final String COMMENT_LIST_FRAGMENT_TAG = "CommentListFragmentTag";
-
     @Inject
     Tracker mTracker;
 
@@ -39,7 +37,7 @@ public class IssueDetailActivity extends AppCompatActivity {
                 }
 
                 final IssueDetailFragment issueDetailFragment = IssueDetailFragment.newInstance(getIntent().getData(), issueKey);
-                final CommentListFragment commentListFragment = CommentListFragment.newInstance(getIntent().getData());
+
                 getSupportFragmentManager()
                         .beginTransaction()
                         .add(R.id.issue_detail_container, issueDetailFragment, ISSUE_DETAIL_FRAGMENT_TAG)

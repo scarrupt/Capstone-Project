@@ -45,8 +45,8 @@ public class CommentListFragment extends Fragment  implements LoaderManager.Load
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getActivity().getIntent() != null) {
-            mUri = getActivity().getIntent().getData();
+        if (getArguments() != null) {
+            mUri = getArguments().getParcelable(ARG_URI);
         }
     }
 
