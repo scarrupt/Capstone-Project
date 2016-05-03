@@ -41,6 +41,7 @@ import com.codefactoring.android.backlogtracker.sync.models.IssueTypeDto;
 import com.codefactoring.android.backlogtracker.sync.models.ProjectDto;
 import com.codefactoring.android.backlogtracker.sync.models.UserDto;
 import com.codefactoring.android.backlogtracker.view.issue.IssueDetailActivity;
+import com.codefactoring.android.backlogtracker.view.issue.IssuesMainActivity;
 import com.google.common.base.Objects;
 
 import java.text.SimpleDateFormat;
@@ -214,7 +215,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
                 for (ProjectData projectData : projectDataSet) {
 
-                    final Intent intent = new Intent(mContext, IssueDetailActivity.class);
+                    final Intent intent = new Intent(mContext, IssuesMainActivity.class);
                     intent.setData(BacklogContract.IssuePreviewEntry.buildIssuePreviewsWithProjectId(projectData.getProjectId()));
                     final PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
