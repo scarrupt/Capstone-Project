@@ -47,4 +47,14 @@
         android:background="@color/colorPrimary"
         android:text="@string/action_next"
         android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/progress_login"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="@dimen/progress_bar_width"
+        android:layout_height="@dimen/progress_bar_height"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/progress_bar_margin_bottom"
+        android:visibility="gone"
+        />
 </LinearLayout>

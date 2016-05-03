@@ -9,7 +9,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.codefactoring.android.backlogapi.BacklogApiClient;
 import com.codefactoring.android.backlogapi.models.User;
@@ -36,6 +38,10 @@ public class AccountActivity extends AccountAuthenticatorActivity {
 
     @Bind(R.id.text_api_key)
     EditText mApiKeyView;
+
+
+    @Bind(R.id.progress_login)
+    ProgressBar mLoadingIndicator;
 
     @Inject
     AccountManager mAccountManager;
@@ -101,6 +107,7 @@ public class AccountActivity extends AccountAuthenticatorActivity {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new AuthenticationSubscriber(spaceKey, apiKey));
+            showLoadingIndicator();
         }
     }
 
@@ -161,6 +168,7 @@ public class AccountActivity extends AccountAuthenticatorActivity {
 
         @Override
         public void onError(Throwable throwable) {
+            hideLoadingIndicator();
             final AlertDialog alertDialog = new AlertDialog
                     .Builder(AccountActivity.this)
                     .setTitle(getString(R.string.error_dialog_title))
@@ -177,6 +185,7 @@ public class AccountActivity extends AccountAuthenticatorActivity {
 
         @Override
         public void onNext(User user) {
+            hideLoadingIndicator();
             final Intent intent = new Intent();
             final String accountType = getString(R.string.account_type);
             intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, user.getUserId());
@@ -207,5 +216,13 @@ public class AccountActivity extends AccountAuthenticatorActivity {
             startActivity(ProjectListActivity.makeIntent(getApplicationContext()));
             finish();
         }
+    }
+
+    public void showLoadingIndicator() {
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+    }
+
+    public void hideLoadingIndicator() {
+        mLoadingIndicator.setVisibility(View.GONE);
     }
 }
