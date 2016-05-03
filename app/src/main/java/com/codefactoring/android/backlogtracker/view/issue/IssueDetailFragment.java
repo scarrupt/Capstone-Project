@@ -1,12 +1,15 @@
 package com.codefactoring.android.backlogtracker.view.issue;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -31,7 +34,7 @@ import com.codefactoring.android.backlogtracker.view.settings.SettingsActivity;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class IssueDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class IssueDetailFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER = 0;
 
@@ -46,6 +49,10 @@ public class IssueDetailFragment extends Fragment implements LoaderManager.Loade
     private static final int COL_TYPE = 8;
     private static final int COL_MILESTONES = 9;
     private static final int COL_URL = 10;
+
+    private static final String ARG_URI = "arg_uri";
+
+    private static final String ARG_ISSUE_KEY = "arg_issue_key";
 
     @Bind(R.id.text_author)
     TextView mAuthorView;
@@ -81,17 +88,43 @@ public class IssueDetailFragment extends Fragment implements LoaderManager.Loade
         setHasOptionsMenu(true);
     }
 
+    public static IssueDetailFragment newInstance(Uri uri, String issueKey) {
+        final IssueDetailFragment fragment = new IssueDetailFragment();
+        final Bundle args = new Bundle();
+        args.putParcelable(ARG_URI, uri);
+        args.putString(ARG_ISSUE_KEY, issueKey);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getActivity().getIntent() != null) {
-            mUri = getActivity().getIntent().getData();
+
+        if (savedInstanceState == null) {
+            final CommentListFragment commentListFragment = CommentListFragment.newInstance(mUri);
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.comment_list_container, commentListFragment)
+                    .commit();
         }
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.setTitle(getArguments().getString(ARG_ISSUE_KEY));
+        return dialog;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (getArguments() != null) {
+            mUri = getArguments().getParcelable(ARG_URI);
+        }
+
         final View view = inflater.inflate(R.layout.fragment_issue_detail, container, false);
         ButterKnife.bind(this, view);
         return view;
@@ -137,12 +170,16 @@ public class IssueDetailFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(),
-                mUri,
-                null,
-                null,
-                null,
-                BacklogContract.IssueEntry.DEFAULT_SORT);
+        if (mUri != null) {
+            return new CursorLoader(getActivity(),
+                    mUri,
+                    null,
+                    null,
+                    null,
+                    BacklogContract.IssueEntry.DEFAULT_SORT);
+        }
+
+        return null;
     }
 
     @Override
@@ -178,15 +215,6 @@ public class IssueDetailFragment extends Fragment implements LoaderManager.Loade
             final String assigneeName = data.getString(COL_ASSIGNEE_NAME);
             mAssigneeView.setText(assigneeName);
 
-            final String assigneeThumbnailPath = data.getString(COL_ASSIGNEE_THUMBNAIL);
-            Glide.with(getContext())
-                    .load(assigneeThumbnailPath)
-                    .asBitmap()
-                    .centerCrop()
-                    .placeholder(R.drawable.person_image_empty)
-                    .into(mAssigneeThumbnail);
-            mAssigneeThumbnail.setContentDescription(assigneeName);
-
             final String status = data.getString(COL_STATUS);
             mStatusView.setText(status);
 
@@ -210,5 +238,16 @@ public class IssueDetailFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    /*
+    Workaround for issue 17423
+    https://code.google.com/p/android/issues/detail?id=17423&q=setRetaininstance&colspec=ID%20Type%20Status%20Owner%20Summary%20Stars
+     */
+    @Override
+    public void onDestroyView() {
+        if (getDialog() != null && getRetainInstance())
+            getDialog().setOnDismissListener(null);
+        super.onDestroyView();
     }
 }

@@ -28,20 +28,22 @@ public class IssuesMainActivity extends AppCompatActivity implements IssueListFr
         setTitle(R.string.title_activity_issues_main);
         initializeDependencyInjector();
 
-        if (getIntent() != null && getIntent().hasExtra(Intent.EXTRA_TEXT)) {
-            final String projectKey = getIntent().getStringExtra(Intent.EXTRA_TEXT);
-            final ActionBar supportActionBar = getSupportActionBar();
-            if (supportActionBar != null) {
-                supportActionBar.setSubtitle(projectKey);
-            }
-        }
+        if (savedInstanceState == null) {
+            if (getIntent() != null && getIntent().hasExtra(Intent.EXTRA_TEXT)) {
+                final String projectKey = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+                final ActionBar supportActionBar = getSupportActionBar();
+                if (supportActionBar != null) {
+                    supportActionBar.setSubtitle(projectKey);
+                }
 
-        if (savedInstanceState == null && getIntent() != null) {
-            final IssuesMainFragment issuesMainFragment = IssuesMainFragment.newInstance(getIntent().getData());
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.issues_main_container, issuesMainFragment)
-                    .commit();
+                final IssuesMainFragment issuesMainFragment = IssuesMainFragment
+                        .newInstance(getIntent().getData(), getIntent().getStringExtra(Intent.EXTRA_TEXT));
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.issues_main_container, issuesMainFragment)
+                        .commit();
+            }
         }
 
         mTracker.setScreenName(IssuesMainActivity.class.getSimpleName());
@@ -72,7 +74,7 @@ public class IssuesMainActivity extends AppCompatActivity implements IssueListFr
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri, String issueKey) {
+    public void onIssueSelected(Uri uri, String issueKey) {
         final Intent intent = new Intent(this, IssueDetailActivity.class).setData(uri);
         intent.putExtra(Intent.EXTRA_TEXT, issueKey);
         startActivity(intent);

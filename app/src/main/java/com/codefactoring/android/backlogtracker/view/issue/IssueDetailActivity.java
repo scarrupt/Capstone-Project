@@ -14,6 +14,10 @@ import javax.inject.Inject;
 
 public class IssueDetailActivity extends AppCompatActivity {
 
+    private static final String ISSUE_DETAIL_FRAGMENT_TAG = "IssueDetailFragmentTag";
+
+    private static final String COMMENT_LIST_FRAGMENT_TAG = "CommentListFragmentTag";
+
     @Inject
     Tracker mTracker;
 
@@ -26,11 +30,20 @@ public class IssueDetailActivity extends AppCompatActivity {
         mTracker.setScreenName(IssueDetailActivity.class.getSimpleName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
-        if (getIntent() != null && getIntent().hasExtra(Intent.EXTRA_TEXT)) {
-            final String issueKey = getIntent().getStringExtra(Intent.EXTRA_TEXT);
-            final ActionBar supportActionBar = getSupportActionBar();
-            if (supportActionBar != null) {
-                supportActionBar.setSubtitle(issueKey);
+        if (savedInstanceState == null) {
+            if (getIntent() != null && getIntent().hasExtra(Intent.EXTRA_TEXT)) {
+                final String issueKey = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+                final ActionBar supportActionBar = getSupportActionBar();
+                if (supportActionBar != null) {
+                    supportActionBar.setSubtitle(issueKey);
+                }
+
+                final IssueDetailFragment issueDetailFragment = IssueDetailFragment.newInstance(getIntent().getData(), issueKey);
+                final CommentListFragment commentListFragment = CommentListFragment.newInstance(getIntent().getData());
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.issue_detail_container, issueDetailFragment, ISSUE_DETAIL_FRAGMENT_TAG)
+                        .commit();
             }
         }
     }

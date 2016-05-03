@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -19,7 +20,10 @@ import com.codefactoring.android.backlogtracker.injector.modules.ApplicationModu
 import com.codefactoring.android.backlogtracker.injector.modules.BacklogModule;
 import com.codefactoring.android.backlogtracker.sync.BacklogSyncAdapter;
 import com.codefactoring.android.backlogtracker.view.account.AccountActivity;
+import com.codefactoring.android.backlogtracker.view.issue.IssueDetailFragment;
+import com.codefactoring.android.backlogtracker.view.issue.IssueListFragment;
 import com.codefactoring.android.backlogtracker.view.issue.IssuesMainActivity;
+import com.codefactoring.android.backlogtracker.view.issue.IssuesMainFragment;
 import com.codefactoring.android.backlogtracker.view.settings.SettingsActivity;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -28,10 +32,19 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 import javax.inject.Inject;
 
-public class ProjectListActivity extends AppCompatActivity implements ProjectListFragment.OnFragmentInteractionListener {
+public class ProjectListActivity extends AppCompatActivity implements
+        ProjectListFragment.OnFragmentInteractionListener,
+        IssueListFragment.OnFragmentInteractionListener {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
     private static final String TAG_NAME = ProjectListActivity.class.getSimpleName();
+
+    private static final String ISSUES_MAIN_FRAGMENT_TAG = "IssuesMainFragmentTag";
+
+    private static final String ISSUE_DETAIL_FRAGMENT_TAG = "IssueDetailFragmentTag";
+
+    private boolean mTwoPane;
 
     @Inject
     BacklogSyncAdapter mBacklogSyncAdapter;
@@ -43,11 +56,27 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
     Tracker mTracker;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_list);
         setTitle(R.string.title_activity_project_list);
         initializeDependencyInjector();
+
+        if (findViewById(R.id.issues_main_container) != null) {
+            mTwoPane = true;
+
+            if (savedInstanceState == null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.issues_main_container,
+                                new IssuesMainFragment(),
+                                ISSUES_MAIN_FRAGMENT_TAG)
+                        .commit();
+            }
+
+        } else {
+            mTwoPane = false;
+        }
 
         mTracker.setScreenName(ProjectListActivity.class.getSimpleName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -70,9 +99,18 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
 
     @Override
     public void onFragmentInteraction(Uri uri, String projectKey) {
-        final Intent intent = new Intent(this, IssuesMainActivity.class).setData(uri);
-        intent.putExtra(Intent.EXTRA_TEXT, projectKey);
-        startActivity(intent);
+        if (mTwoPane) {
+            final IssuesMainFragment fragment = IssuesMainFragment.newInstance(uri, projectKey);
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.issues_main_container, fragment, ISSUES_MAIN_FRAGMENT_TAG)
+                    .commit();
+        } else {
+            final Intent intent = new Intent(this, IssuesMainActivity.class).setData(uri);
+            intent.putExtra(Intent.EXTRA_TEXT, projectKey);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -124,5 +162,13 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onIssueSelected(Uri uri, String issueKey) {
+        final IssueDetailFragment fragment = IssueDetailFragment.newInstance(uri, issueKey);
+        fragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppDialogTheme);
+
+        fragment.show(getSupportFragmentManager(), ISSUE_DETAIL_FRAGMENT_TAG);
     }
 }

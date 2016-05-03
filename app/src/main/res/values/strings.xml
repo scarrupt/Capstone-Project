@@ -79,7 +79,7 @@
     <string name="a11y_issue_priority">issue priority</string>
     <string name="a11y_issue_type">issue type</string>
     <string name="a11y_issue_milestones">issue milestones</string>
-    <string name="a11y_not_assigned">issue not assigned</string>
+    <string name="a11y_assigned_to">issue assigned to</string>
 
     <!-- Notifications -->
     <string name="notification_title">New issue</string>

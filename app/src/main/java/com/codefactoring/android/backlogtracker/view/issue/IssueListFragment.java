@@ -32,7 +32,7 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
             BacklogContract.IssuePreviewEntry.ASSIGNEE_THUMBNAIL_URL_ALIAS,
     };
 
-    private Uri mIssueListUri;
+    private Uri mUri;
     private IssueAdapter mIssueAdapter;
     private OnFragmentInteractionListener mListener;
 
@@ -48,7 +48,7 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mIssueListUri = getArguments().getParcelable(ARG_ISSUE_LIST_URI);
+            mUri = getArguments().getParcelable(ARG_ISSUE_LIST_URI);
         }
     }
 
@@ -69,7 +69,7 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null && mListener != null) {
-                    mListener.onFragmentInteraction(BacklogContract.IssueEntry
+                    mListener.onIssueSelected(BacklogContract.IssueEntry
                             .buildIssueUriFromIssueId(cursor.getString(
                                     cursor.getColumnIndex(BacklogContract.IssueEntry._ID))),
                                     cursor.getString(cursor.getColumnIndex(BacklogContract.IssueEntry.ISSUE_KEY)));
@@ -104,17 +104,21 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri, String issueKey);
+        void onIssueSelected(Uri uri, String issueKey);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(),
-                mIssueListUri,
-                ISSUE_COLUMNS,
-                null,
-                null,
-                BacklogContract.IssueEntry.DEFAULT_SORT);
+        if (mUri == null) {
+            return null;
+        } else {
+            return new CursorLoader(getActivity(),
+                    mUri,
+                    ISSUE_COLUMNS,
+                    null,
+                    null,
+                    BacklogContract.IssueEntry.DEFAULT_SORT);
+        }
     }
 
     @Override

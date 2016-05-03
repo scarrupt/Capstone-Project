@@ -6,6 +6,7 @@
 
     <ListView
         android:id="@+id/listview_project"
+        style="@style/ProjectListStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -16,7 +17,6 @@
         android:layout_height="@dimen/progress_bar_height"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="@dimen/progress_bar_margin_bottom"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
 </FrameLayout>

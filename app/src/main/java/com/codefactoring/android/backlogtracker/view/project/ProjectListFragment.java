@@ -32,19 +32,26 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
 
     private static final int PROJECT_LIST_LOADER = 0;
 
-    @Bind(R.id.progress_project)
-    ProgressBar mLoadingIndicator;
-
-    private OnFragmentInteractionListener mListener;
-
-    private ProjectAdapter mProjectAdapter;
-
     private static final String[] PROJECT_COLUMNS = {
             ProjectEntry._ID,
             ProjectEntry.NAME,
             ProjectEntry.PROJECT_KEY,
             ProjectEntry.THUMBNAIL_URL
     };
+
+    private static final String KEY_SELECTED_POSITION = "key_selected_position";
+
+    @Bind(R.id.progress_project)
+    ProgressBar mLoadingIndicator;
+
+    @Bind(R.id.listview_project)
+    ListView mListView;
+
+    private OnFragmentInteractionListener mListener;
+
+    private ProjectAdapter mProjectAdapter;
+
+    private int mPosition = ListView.INVALID_POSITION;
 
     private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -71,22 +78,26 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
         final View rootView = inflater.inflate(R.layout.fragment_project_list, container, false);
         ButterKnife.bind(this, rootView);
 
-        final ListView listView = (ListView) rootView.findViewById(R.id.listview_project);
-        listView.setAdapter(mProjectAdapter);
+        mListView.setAdapter(mProjectAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null && mListener != null) {
                     mListener.onFragmentInteraction(BacklogContract.IssuePreviewEntry
-                            .buildIssuePreviewsWithProjectId(cursor.getString(
-                                    cursor.getColumnIndex(ProjectEntry._ID))),
+                                    .buildIssuePreviewsWithProjectId(cursor.getString(
+                                            cursor.getColumnIndex(ProjectEntry._ID))),
                             cursor.getString(
                                     cursor.getColumnIndex(ProjectEntry.PROJECT_KEY)));
+                    mPosition = position;
                 }
             }
         });
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(KEY_SELECTED_POSITION)) {
+            mPosition = savedInstanceState.getInt(KEY_SELECTED_POSITION);
+        }
 
         return rootView;
     }
@@ -124,6 +135,16 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        if (ListView.INVALID_POSITION != mPosition) {
+            outState.putInt(KEY_SELECTED_POSITION, mPosition);
+        }
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(getActivity(),
                 ProjectEntry.CONTENT_URI,
@@ -136,6 +157,10 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mProjectAdapter.swapCursor(data);
+
+        if (mPosition != ListView.INVALID_POSITION) {
+            mListView.smoothScrollToPosition(mPosition);
+        }
     }
 
     @Override

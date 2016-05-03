@@ -20,6 +20,8 @@ public class CommentListFragment extends Fragment  implements LoaderManager.Load
 
     private static final int LOADER = 1;
 
+    private static final String ARG_URI = "arg_uri";
+
     private static final String[] COMMENT_COLUMNS = {
             BacklogContract.CommentEntry.TABLE_NAME + "." +
             BacklogContract.CommentEntry._ID,
@@ -31,6 +33,14 @@ public class CommentListFragment extends Fragment  implements LoaderManager.Load
 
     private CommentAdapter mCommentAdapter;
     private Uri mUri;
+
+    public static CommentListFragment newInstance(Uri uri) {
+        final CommentListFragment fragment = new CommentListFragment();
+        final Bundle args = new Bundle();
+        args.putParcelable(ARG_URI, uri);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,12 +71,16 @@ public class CommentListFragment extends Fragment  implements LoaderManager.Load
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(),
-                BacklogContract.CommentEntry.buildCommentUriFromIssueUri(mUri),
-                COMMENT_COLUMNS,
-                null,
-                null,
-                BacklogContract.CommentEntry.DEFAULT_SORT);
+        if (mUri != null) {
+            return new CursorLoader(getActivity(),
+                    BacklogContract.CommentEntry.buildCommentUriFromIssueUri(mUri),
+                    COMMENT_COLUMNS,
+                    null,
+                    null,
+                    BacklogContract.CommentEntry.DEFAULT_SORT);
+        }
+
+        return null;
     }
 
     @Override

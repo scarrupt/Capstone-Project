@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/touch_selector">
 
     <TextView
         android:id="@+id/text_project_name"
@@ -10,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/project_name_margin_top"
         android:gravity="center"
-        android:padding="16dp" />
+        android:padding="@dimen/project_name_padding" />
 
     <View
         android:id="@+id/separator"

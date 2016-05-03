@@ -54,12 +54,16 @@ public class IssueStatsFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(),
-                mUri,
-                null,
-                null,
-                null,
-                BacklogContract.IssueEntry.DEFAULT_SORT);
+        if (mUri == null) {
+            return null;
+        } else {
+            return new CursorLoader(getActivity(),
+                    mUri,
+                    null,
+                    null,
+                    null,
+                    BacklogContract.IssueEntry.DEFAULT_SORT);
+        }
     }
 
     @Override

@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/issue_detail_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.codefactoring.android.backlogtracker.view.issue.IssueDetailActivity">
-
-    <fragment
-        android:id="@+id/fragment_issue_detail"
-        android:name="com.codefactoring.android.backlogtracker.view.issue.IssueDetailFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-</LinearLayout>
+    tools:context="com.codefactoring.android.backlogtracker.view.issue.IssueDetailActivity"
+    tools:ignore="MergeRootFrame"/>

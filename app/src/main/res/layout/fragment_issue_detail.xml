@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context="com.codefactoring.android.backlogtracker.view.issue.IssueDetailFragment">
 
@@ -53,10 +53,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.2"
                 android:adjustViewBounds="true"
-                android:contentDescription="@string/a11y_not_assigned"
+                android:contentDescription="@string/a11y_assigned_to"
                 android:maxHeight="24dp"
                 android:maxWidth="24dp"
-                android:src="@drawable/person_image_empty" />
+                android:src="@drawable/ic_person_pin" />
 
             <TextView
                 android:id="@+id/label_assignee"
@@ -189,12 +189,8 @@
         android:layout_marginTop="@dimen/issue_detail_divider_margin_top"
         android:background="?android:attr/listDivider" />
 
-    <fragment
-        android:id="@+id/fragment_comment_list"
-        android:name="com.codefactoring.android.backlogtracker.view.issue.CommentListFragment"
-        class="com.codefactoring.android.backlogtracker.view.issue.CommentListFragment"
+    <FrameLayout
+        android:id="@+id/comment_list_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:layout="@layout/fragment_comment_list" />
-
+        android:layout_height="match_parent" />
 </LinearLayout>
