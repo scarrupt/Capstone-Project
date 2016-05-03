@@ -80,7 +80,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public static final String[] ISSUES_COLUMNS =
             new String[]{
-                    IssueEntry._ID,
+                    IssueEntry.TABLE_NAME + "." + IssueEntry._ID,
                     IssueEntry.ISSUE_KEY,
                     IssueEntry.PROJECT_ID,
                     ProjectEntry.NAME,
