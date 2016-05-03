@@ -48,9 +48,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import static com.codefactoring.android.backlogapi.BacklogApiConstants.DATE_FORMAT_PATTERN;
@@ -85,6 +87,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
                     IssueEntry.ISSUE_KEY,
                     IssueEntry.PROJECT_ID,
                     ProjectEntry.NAME,
+                    ProjectEntry.PROJECT_KEY,
                     IssueEntry.SUMMARY
             };
 
@@ -92,7 +95,8 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final int INDEX_ISSUE_KEY = 1;
     private static final int INDEX_PROJECT_ID = 2;
     private static final int INDEX_PROJECT_NAME = 3;
-    private static final int INDEX_ISSUE_SUMMARY = 4;
+    private static final int INDEX_PROJECT_KEY = 4;
+    private static final int INDEX_ISSUE_SUMMARY = 5;
 
 
     public BacklogSyncAdapter(Context context, boolean autoInitialize, AccountManager accountManager,
@@ -185,19 +189,26 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
                     mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
             if (data != null) {
-                final Set<ProjectData> projectDataSet = new HashSet<>();
+                final Map<String, ProjectData> projectDataMap = new HashMap<>();
 
                 while (data.moveToNext()) {
                     final int issueId = data.getInt(INDEX_ISSUE_ID);
                     final String projectId = data.getString(INDEX_PROJECT_ID);
                     final String projectName = data.getString(INDEX_PROJECT_NAME);
+                    final String projectKey = data.getString(INDEX_PROJECT_KEY);
                     final String issueKey = data.getString(INDEX_ISSUE_KEY);
                     final String summary = data.getString(INDEX_ISSUE_SUMMARY);
 
-                    projectDataSet.add(new ProjectData(projectId, projectName));
+                    if (projectDataMap.containsKey(projectId)) {
+                        final ProjectData projectData = projectDataMap.get(projectId);
+                        projectData.setCount(projectData.getCount() + 1);
+                    } else {
+                        projectDataMap.put(projectId, new ProjectData(projectId, projectName, projectKey));
+                    }
 
                     final Intent intent = new Intent(mContext, IssueDetailActivity.class);
                     intent.setData(IssueEntry.buildIssueUriFromIssueId(String.valueOf(issueId)));
+                    intent.putExtra(Intent.EXTRA_TEXT, issueKey);
                     final PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                     final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
@@ -213,28 +224,31 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
                 data.close();
 
-                for (ProjectData projectData : projectDataSet) {
+                for (String project : projectDataMap.keySet()) {
 
-                    final Intent intent = new Intent(mContext, IssuesMainActivity.class);
-                    intent.setData(BacklogContract.IssuePreviewEntry.buildIssuePreviewsWithProjectId(projectData.getProjectId()));
-                    final PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    final ProjectData projectData = projectDataMap.get(project);
 
-                    final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
-                            .setSmallIcon(R.mipmap.ic_launcher)
-                            .setContentTitle(mContext.getString(R.string.notification_multiple_title))
-                            .setContentText(mContext.getString(R.string.notification_multiple_message,
-                                    projectData.getProjectName()))
-                            .setContentIntent(pendingIntent)
-                            .setAutoCancel(true)
-                            .setGroup(projectData.getProjectId())
-                            .setGroupSummary(true);
-                    notificationManager.notify(Integer.valueOf(projectData.getProjectId()), builder.build());
+                    if (projectData.getCount() > 1) {
+                        final Intent intent = new Intent(mContext, IssuesMainActivity.class);
+                        intent.setData(BacklogContract.IssuePreviewEntry.buildIssuePreviewsWithProjectId(projectData.getProjectId()));
+                        intent.putExtra(Intent.EXTRA_TEXT, projectData.getProjectKey());
+                        final PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                        final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
+                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setContentTitle(mContext.getString(R.string.notification_multiple_title))
+                                .setContentText(mContext.getString(R.string.notification_multiple_message,
+                                        projectData.getProjectName()))
+                                .setContentIntent(pendingIntent)
+                                .setAutoCancel(true)
+                                .setGroup(projectData.getProjectId())
+                                .setGroupSummary(true);
+                        notificationManager.notify(Integer.valueOf(projectData.getProjectId()), builder.build());
+                    }
                 }
-
             }
         }
     }
-
 
     protected ArrayList<ContentProviderOperation> syncProjectData() {
         final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
@@ -320,10 +334,13 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
     private static class ProjectData {
         private final String projectId;
         private final String projectName;
+        private final String projectKey;
+        private int count = 1;
 
-        public ProjectData(String projectId, String projectName) {
+        public ProjectData(String projectId, String projectName, String projectKey) {
             this.projectId = projectId;
             this.projectName = projectName;
+            this.projectKey = projectKey;
         }
 
         public String getProjectId() {
@@ -332,6 +349,18 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
         public String getProjectName() {
             return projectName;
+        }
+
+        public String getProjectKey() {
+            return projectKey;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public void setCount(int count) {
+            this.count = count;
         }
 
         @Override
