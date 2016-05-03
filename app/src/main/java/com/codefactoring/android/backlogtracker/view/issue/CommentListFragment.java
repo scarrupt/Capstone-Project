@@ -65,6 +65,7 @@ public class CommentListFragment extends Fragment  implements LoaderManager.Load
 
         final ListView listView = (ListView) rootView.findViewById(R.id.listview_comment);
         listView.setAdapter(mCommentAdapter);
+        listView.setEmptyView(rootView.findViewById(R.id.text_empty_comments));
 
         return rootView;
     }

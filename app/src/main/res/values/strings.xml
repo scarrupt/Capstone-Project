@@ -37,6 +37,7 @@
     <string name="label_priority">Priority:</string>
     <string name="label_type">Type:</string>
     <string name="label_milestones">Milestones:</string>
+    <string name="text_empty_comments">No comments</string>
 
     <!-- Settings screen -->
     <string name="title_activity_settings">Settings</string>
