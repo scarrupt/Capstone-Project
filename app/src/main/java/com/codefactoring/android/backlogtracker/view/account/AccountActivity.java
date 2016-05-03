@@ -1,7 +1,6 @@
 package com.codefactoring.android.backlogtracker.view.account;
 
 import android.accounts.Account;
-import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
