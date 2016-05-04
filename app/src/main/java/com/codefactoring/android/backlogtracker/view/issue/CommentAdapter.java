@@ -4,10 +4,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -16,30 +17,58 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.provider.BacklogContract;
 
-public class CommentAdapter extends CursorAdapter {
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
-    public CommentAdapter(Context context, Cursor c, int flags) {
-        super(context, c, flags);
+public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentAdapterViewHolder> {
+
+    private final String LOG_TAG = CommentAdapter.class.getSimpleName();
+
+    private Cursor mCursor;
+
+    private final Context mContext;
+
+    private final View mEmptyView;
+
+    public class CommentAdapterViewHolder extends RecyclerView.ViewHolder {
+
+        @Bind(R.id.text_comment_author)
+        TextView authorView;
+        @Bind(R.id.text_comment_description)
+        TextView contentView;
+
+        public CommentAdapterViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+    }
+
+    public CommentAdapter(Context context, View emptyView) {
+        mContext = context;
+        mEmptyView = emptyView;
+    }
+
+    public CommentAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewTyped) {
+        if (viewGroup instanceof RecyclerView) {
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_comment, viewGroup, false);
+            view.setFocusable(true);
+            return new CommentAdapterViewHolder(view);
+        } else {
+            Log.e(LOG_TAG, "Not an instance of RecyclerView");
+            throw new RuntimeException("Not bound to a RecyclerView");
+        }
     }
 
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        final View view = LayoutInflater.from(context).inflate(R.layout.item_comment, parent, false);
-        final ViewHolder viewHolder = new ViewHolder(view);
-        view.setTag(viewHolder);
-        return view;
-    }
+    public void onBindViewHolder(final CommentAdapterViewHolder holder, int position) {
+        mCursor.moveToPosition(position);
 
-    @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        final ViewHolder viewHolder = (ViewHolder) view.getTag();
+        final String author = mCursor.getString(mCursor.getColumnIndex(BacklogContract.UserEntry.NAME));
+        final String createdDate = mCursor.getString(mCursor.getColumnIndex(BacklogContract.CommentEntry.CREATED));
+        holder.authorView.setText(mContext.getString(R.string.format_author_comment, author, createdDate));
 
-        final String author = cursor.getString(cursor.getColumnIndex(BacklogContract.UserEntry.NAME));
-        final String createdDate = cursor.getString(cursor.getColumnIndex(BacklogContract.CommentEntry.CREATED));
-        viewHolder.authorView.setText(context.getString(R.string.format_author, author, " commented ", createdDate));
-
-        final String authorThumbnailPath = cursor.getString(cursor.getColumnIndex(BacklogContract.UserEntry.THUMBNAIL_URL));
-        Glide.with(view.getContext())
+        final String authorThumbnailPath = mCursor.getString(mCursor.getColumnIndex(BacklogContract.UserEntry.THUMBNAIL_URL));
+        Glide.with(mContext)
                 .load(authorThumbnailPath)
                 .asBitmap()
                 .centerCrop()
@@ -47,27 +76,29 @@ public class CommentAdapter extends CursorAdapter {
                 .into(new SimpleTarget<Bitmap>(200, 200) {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
-                        viewHolder.authorView.setCompoundDrawablesWithIntrinsicBounds(
-                                new BitmapDrawable(viewHolder.authorView.getResources(), resource),
+                        holder.authorView.setCompoundDrawablesWithIntrinsicBounds(
+                                new BitmapDrawable(holder.authorView.getResources(), resource),
                                 null,
                                 null,
                                 null);
-                        viewHolder.authorView.setCompoundDrawablePadding(16);
+                        holder.authorView.setCompoundDrawablePadding(16);
                     }
                 });
-        viewHolder.authorView.setContentDescription(author);
+        holder.authorView.setContentDescription(author);
 
-        final String content = cursor.getString(cursor.getColumnIndex(BacklogContract.CommentEntry.CONTENT));
-        viewHolder.contentView.setText(content);
+        final String content = mCursor.getString(mCursor.getColumnIndex(BacklogContract.CommentEntry.CONTENT));
+        holder.contentView.setText(content);
     }
 
-    private static final class ViewHolder {
-        public final TextView authorView;
-        public final TextView contentView;
+    @Override
+    public int getItemCount() {
+        if (null == mCursor) return 0;
+        return mCursor.getCount();
+    }
 
-        public ViewHolder(View view) {
-            authorView = (TextView) view.findViewById(R.id.text_comment_author);
-            contentView = (TextView) view.findViewById(R.id.text_comment_description);
-        }
+    public void swapCursor(Cursor newCursor) {
+        mCursor = newCursor;
+        notifyDataSetChanged();
+        mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
     }
 }

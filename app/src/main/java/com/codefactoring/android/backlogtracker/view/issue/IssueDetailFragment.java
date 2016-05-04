@@ -1,23 +1,19 @@
 package com.codefactoring.android.backlogtracker.view.issue;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -28,14 +24,28 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.provider.BacklogContract;
-import com.codefactoring.android.backlogtracker.view.settings.SettingsActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class IssueDetailFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private final String LOG_TAG = IssueDetailFragment.class.getSimpleName();
+
     private static final int LOADER = 0;
+
+    private static final String[] COLUMNS = new String[] {
+            BacklogContract.UserEntry.USER_PREFIX + BacklogContract.UserEntry.THUMBNAIL_URL,
+            BacklogContract.UserEntry.USER_PREFIX + BacklogContract.UserEntry.NAME,
+            BacklogContract.IssueEntry.CREATED_DATE,
+            BacklogContract.IssueEntry.DESCRIPTION,
+            BacklogContract.UserEntry.ASSIGNEE_PREFIX + BacklogContract.UserEntry.NAME,
+            BacklogContract.IssueEntry.STATUS,
+            BacklogContract.IssueEntry.PRIORITY,
+            BacklogContract.IssueTypeEntry.PREFIX + BacklogContract.IssueTypeEntry.NAME,
+            BacklogContract.IssueEntry.MILESTONES,
+            BacklogContract.IssueEntry.SUMMARY
+    };
 
     private static final int COL_AUTHOR_THUMBNAIL = 0;
     private static final int COL_AUTHOR_NAME = 1;
@@ -46,11 +56,14 @@ public class IssueDetailFragment extends DialogFragment implements LoaderManager
     private static final int COL_PRIORITY = 6;
     private static final int COL_TYPE = 7;
     private static final int COL_MILESTONES = 8;
-    private static final int COL_URL = 9;
+    private static final int COL_SUMMARY = 9;
 
-    private static final String ARG_URI = "arg_uri";
+    private static final String ARG_URI = "ARG_URI";
 
-    private static final String ARG_ISSUE_KEY = "arg_issue_key";
+    private static final String ARG_ISSUE_KEY = "ARG_ISSUE_KEY";
+
+    @Bind(R.id.text_title)
+    TextView mTitle;
 
     @Bind(R.id.text_author)
     TextView mAuthorView;
@@ -78,10 +91,6 @@ public class IssueDetailFragment extends DialogFragment implements LoaderManager
 
     private Uri mUri;
 
-    private ShareActionProvider mShareActionProvider;
-
-    private String mIssueUrl;
-
     public IssueDetailFragment() {
         setHasOptionsMenu(true);
     }
@@ -104,21 +113,26 @@ public class IssueDetailFragment extends DialogFragment implements LoaderManager
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            if (getArguments() != null) {
-                mUri = getArguments().getParcelable(ARG_URI);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-
-                final CommentListFragment commentListFragment = CommentListFragment.newInstance(mUri);
-                getChildFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.comment_list_container, commentListFragment)
-                        .commit();
-            }
+        if (getArguments() != null) {
+            mUri = getArguments().getParcelable(ARG_URI);
+            Log.i(LOG_TAG, "URI: " + mUri);
         }
 
+        if (savedInstanceState == null) {
+            final CommentListFragment commentListFragment = CommentListFragment.newInstance(mUri);
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.comment_list_container, commentListFragment)
+                    .commit();
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_issue_detail, container, false);
         ButterKnife.bind(this, view);
         return view;
@@ -131,43 +145,11 @@ public class IssueDetailFragment extends DialogFragment implements LoaderManager
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_issue_detail, menu);
-
-        MenuItem menuItem = menu.findItem(R.id.action_share);
-
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
-
-        if (mIssueUrl != null) {
-            mShareActionProvider.setShareIntent(createShareIntent());
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        final int itemId = item.getItemId();
-
-        if (itemId == R.id.action_settings) {
-            startActivity(new Intent(getContext(), SettingsActivity.class));
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private Intent createShareIntent() {
-        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, mIssueUrl);
-        return shareIntent;
-    }
-
-    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (mUri != null) {
             return new CursorLoader(getActivity(),
                     mUri,
-                    null,
+                    COLUMNS,
                     null,
                     null,
                     BacklogContract.IssueEntry.DEFAULT_SORT);
@@ -180,9 +162,13 @@ public class IssueDetailFragment extends DialogFragment implements LoaderManager
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.moveToFirst()) {
 
+            final String title = data.getString(COL_SUMMARY);
+            mTitle.setText(title);
+
             final String authorName = data.getString(COL_AUTHOR_NAME);
             final String createdDate = data.getString(COL_CREATED_DATE);
-            mAuthorView.setText(getString(R.string.format_author, authorName, "opened", createdDate));
+
+            mAuthorView.setText(getString(R.string.format_author_issue, authorName, createdDate));
 
             final String authorThumbnailPath = data.getString(COL_AUTHOR_THUMBNAIL);
             Glide.with(getContext())
@@ -220,18 +206,11 @@ public class IssueDetailFragment extends DialogFragment implements LoaderManager
 
             final String milestones = data.getString(COL_MILESTONES);
             mMilestonesView.setText(milestones);
-
-            mIssueUrl = data.getString(COL_URL);
-
-            if (mShareActionProvider != null) {
-                mShareActionProvider.setShareIntent(createShareIntent());
-            }
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 
     /*

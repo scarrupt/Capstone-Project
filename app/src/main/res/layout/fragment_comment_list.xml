@@ -1,11 +1,13 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.CardContent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.codefactoring.android.backlogtracker.view.issue.CommentListFragment">
+    tools:context=".view.issue.CommentListFragment">
 
-    <ListView
-        android:id="@+id/listview_comment"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_comment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -14,8 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fontFamily="sans-serif-condensed"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:text="@string/text_empty_comments"
-        android:textAppearance="?android:textAppearanceLarge" />
+        android:textAppearance="?android:textAppearanceLarge"
+        app:layout_anchor="@id/recycler_view_comment"
+        app:layout_anchorGravity="fill" />
 
 </FrameLayout>

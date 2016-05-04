@@ -88,6 +88,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
                     IssueEntry.PROJECT_ID,
                     ProjectEntry.NAME,
                     ProjectEntry.PROJECT_KEY,
+                    IssueEntry.URL,
                     IssueEntry.SUMMARY
             };
 
@@ -97,6 +98,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final int INDEX_PROJECT_NAME = 3;
     private static final int INDEX_PROJECT_KEY = 4;
     private static final int INDEX_ISSUE_SUMMARY = 5;
+    private static final int INDEX_ISSUE_URL = 6;
 
 
     public BacklogSyncAdapter(Context context, boolean autoInitialize, AccountManager accountManager,
@@ -198,6 +200,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
                     final String projectKey = data.getString(INDEX_PROJECT_KEY);
                     final String issueKey = data.getString(INDEX_ISSUE_KEY);
                     final String summary = data.getString(INDEX_ISSUE_SUMMARY);
+                    final String issueUrl = data.getString(INDEX_ISSUE_URL);
 
                     if (projectDataMap.containsKey(projectId)) {
                         final ProjectData projectData = projectDataMap.get(projectId);
@@ -208,7 +211,8 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
                     final Intent intent = new Intent(mContext, IssueDetailActivity.class);
                     intent.setData(IssueEntry.buildIssueUriFromIssueId(String.valueOf(issueId)));
-                    intent.putExtra(Intent.EXTRA_TEXT, issueKey);
+                    intent.putExtra(Config.KEY_ISSUE_KEY, issueKey);
+                    intent.putExtra(Config.KEY_ISSUE_URL, issueUrl);
                     final PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                     final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)

@@ -20,4 +20,11 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="project_separator">16dp</dimen>
     <dimen name="project_name_margin_top">10dp</dimen>
     <dimen name="project_name_padding">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_elevation">6dp</dimen>
+    <dimen name="fab_pressed_translation_z">12dp</dimen>
+    <dimen name="app_bar_height">150dp</dimen>
+    <dimen name="expanded_title_margin_end">64dp</dimen>
+    <dimen name="expanded_title_margin_start">48dp</dimen>
+    <dimen name="default_layout_margin">16dp</dimen>
 </resources>

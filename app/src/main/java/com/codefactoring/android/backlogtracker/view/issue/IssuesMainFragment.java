@@ -24,9 +24,9 @@ import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_IS
 
 public class IssuesMainFragment extends Fragment {
 
-    private static final String ARG_URI = "arg_uri";
+    private static final String ARG_URI = "ARG_URI";
 
-    private static final String ARG_PROJECT_KEY = "arg_project_key";
+    private static final String ARG_PROJECT_KEY = "ARG_PROJECT_KEY";
 
     @Bind(R.id.pager_issues)
     ViewPager viewPager;

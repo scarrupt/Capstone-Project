@@ -8,30 +8,41 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.provider.BacklogContract;
 
-public class CommentListFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor> {
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
+public class CommentListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER = 1;
 
-    private static final String ARG_URI = "arg_uri";
+    private static final String ARG_URI = "ARG_URI";
 
     private static final String[] COMMENT_COLUMNS = {
             BacklogContract.CommentEntry.TABLE_NAME + "." +
-            BacklogContract.CommentEntry._ID,
+                    BacklogContract.CommentEntry._ID,
             BacklogContract.UserEntry.NAME,
             BacklogContract.UserEntry.THUMBNAIL_URL,
             BacklogContract.CommentEntry.CREATED,
             BacklogContract.CommentEntry.CONTENT
     };
 
+    @Bind(R.id.recycler_view_comment)
+    RecyclerView mRecyclerView;
+
+    @Bind(R.id.text_empty_comments)
+    View emptyView;
+
     private CommentAdapter mCommentAdapter;
+
     private Uri mUri;
 
     public static CommentListFragment newInstance(Uri uri) {
@@ -59,15 +70,17 @@ public class CommentListFragment extends Fragment  implements LoaderManager.Load
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mCommentAdapter = new CommentAdapter(getActivity(), null, 0);
 
-        final View rootView = inflater.inflate(R.layout.fragment_comment_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_comment_list, container, false);
+        ButterKnife.bind(this, view);
 
-        final ListView listView = (ListView) rootView.findViewById(R.id.listview_comment);
-        listView.setAdapter(mCommentAdapter);
-        listView.setEmptyView(rootView.findViewById(R.id.text_empty_comments));
+        mCommentAdapter = new CommentAdapter(getActivity(), emptyView);
 
-        return rootView;
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setAdapter(mCommentAdapter);
+
+        return view;
     }
 
     @Override

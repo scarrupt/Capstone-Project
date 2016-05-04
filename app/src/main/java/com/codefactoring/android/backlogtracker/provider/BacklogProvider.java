@@ -127,7 +127,7 @@ public class BacklogProvider extends ContentProvider {
                 break;
             }
             case ISSUE: {
-                retCursor = findIssueById(uri);
+                retCursor = findIssueById(uri, projection);
                 break;
             }
             case ISSUE_COMMENTS: {
@@ -347,7 +347,7 @@ public class BacklogProvider extends ContentProvider {
                 null, null);
     }
 
-    private Cursor findIssueById(Uri uri) {
+    private Cursor findIssueById(Uri uri, String[] projection) {
         final String issueId = uri.getLastPathSegment();
 
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
@@ -369,6 +369,7 @@ public class BacklogProvider extends ContentProvider {
         columnMap.put(IssueEntry.PRIORITY, IssueEntry.PRIORITY);
         columnMap.put(IssueTypeEntry.PREFIX + IssueTypeEntry.NAME, IssueTypeEntry.TABLE_NAME + "." + IssueTypeEntry.NAME);
         columnMap.put(IssueEntry.MILESTONES, IssueEntry.MILESTONES);
+        columnMap.put(IssueEntry.SUMMARY, IssueEntry.SUMMARY);
         columnMap.put(IssueEntry.URL, IssueEntry.URL);
         queryBuilder.setProjectionMap(columnMap);
         queryBuilder.appendWhere(IssueEntry.TABLE_NAME + "." + IssueEntry._ID + "=");
@@ -378,16 +379,7 @@ public class BacklogProvider extends ContentProvider {
 
         return queryBuilder.query(
                 db,
-                new String[]{
-                        UserEntry.USER_PREFIX + UserEntry.THUMBNAIL_URL,
-                        UserEntry.USER_PREFIX + UserEntry.NAME,
-                        IssueEntry.CREATED_DATE,
-                        IssueEntry.DESCRIPTION,
-                        UserEntry.ASSIGNEE_PREFIX + UserEntry.NAME, IssueEntry.STATUS,
-                        IssueEntry.PRIORITY,
-                        IssueTypeEntry.PREFIX + IssueTypeEntry.NAME,
-                        IssueEntry.MILESTONES,
-                        IssueEntry.URL},
+                projection,
                 null,
                 null,
                 null,
