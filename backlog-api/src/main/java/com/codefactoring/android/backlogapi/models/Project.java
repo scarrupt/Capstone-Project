@@ -1,6 +1,6 @@
 package com.codefactoring.android.backlogapi.models;
 
-import java.util.Objects;
+import com.google.common.base.Objects;
 
 public class Project {
 
@@ -82,12 +82,12 @@ public class Project {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return Objects.equals(projectKey, project.projectKey);
+        return Objects.equal(projectKey, project.projectKey);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(projectKey);
+        return Objects.hashCode(projectKey);
     }
 
     @Override

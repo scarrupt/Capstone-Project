@@ -1,6 +1,6 @@
 package com.codefactoring.android.backlogapi.models;
 
-import java.util.Objects;
+import com.google.common.base.Objects;
 
 public class Status {
 
@@ -28,12 +28,12 @@ public class Status {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Status status = (Status) o;
-        return Objects.equals(id, status.id);
+        return Objects.equal(id, status.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hashCode(id);
     }
 
     @Override

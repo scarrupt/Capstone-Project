@@ -1,6 +1,6 @@
 package com.codefactoring.android.backlogapi.models;
 
-import java.util.Objects;
+import com.google.common.base.Objects;
 
 public class Priority {
 
@@ -28,12 +28,12 @@ public class Priority {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Priority priority = (Priority) o;
-        return Objects.equals(id, priority.id);
+        return Objects.equal(id, priority.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hashCode(id);
     }
 
     @Override

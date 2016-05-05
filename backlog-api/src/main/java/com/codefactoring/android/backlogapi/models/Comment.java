@@ -1,7 +1,8 @@
 package com.codefactoring.android.backlogapi.models;
 
+import com.google.common.base.Objects;
+
 import java.util.Arrays;
-import java.util.Objects;
 
 public class Comment {
 
@@ -65,12 +66,12 @@ public class Comment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Comment comment = (Comment) o;
-        return Objects.equals(id, comment.id);
+        return Objects.equal(id, comment.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hashCode(id);
     }
 
     @Override

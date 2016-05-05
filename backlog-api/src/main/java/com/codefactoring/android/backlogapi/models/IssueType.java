@@ -1,6 +1,6 @@
 package com.codefactoring.android.backlogapi.models;
 
-import java.util.Objects;
+import com.google.common.base.Objects;
 
 public class IssueType {
 
@@ -55,13 +55,13 @@ public class IssueType {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         IssueType issueType = (IssueType) o;
-        return Objects.equals(id, issueType.id) &&
-                Objects.equals(projectId, issueType.projectId);
+        return Objects.equal(id, issueType.id) &&
+                Objects.equal(projectId, issueType.projectId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, projectId);
+        return Objects.hashCode(id, projectId);
     }
 
     @Override

@@ -1,7 +1,8 @@
 package com.codefactoring.android.backlogapi.models;
 
+import com.google.common.base.Objects;
+
 import java.util.Date;
-import java.util.Objects;
 
 public class Milestone {
 
@@ -83,13 +84,13 @@ public class Milestone {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Milestone milestone = (Milestone) o;
-        return Objects.equals(id, milestone.id) &&
-                Objects.equals(projectId, milestone.projectId);
+        return Objects.equal(id, milestone.id) &&
+                Objects.equal(projectId, milestone.projectId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, projectId);
+        return Objects.hashCode(id, projectId);
     }
 
     @Override

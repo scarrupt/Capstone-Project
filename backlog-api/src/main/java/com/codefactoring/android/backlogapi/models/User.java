@@ -1,6 +1,6 @@
 package com.codefactoring.android.backlogapi.models;
 
-import java.util.Objects;
+import com.google.common.base.Objects;
 
 public class User {
 
@@ -64,11 +64,11 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(userId, user.userId);
+        return Objects.equal(userId, user.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId);
+        return Objects.hashCode(userId);
     }
 }

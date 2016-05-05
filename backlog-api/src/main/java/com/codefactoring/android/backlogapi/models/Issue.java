@@ -1,9 +1,10 @@
 package com.codefactoring.android.backlogapi.models;
 
+import com.google.common.base.Objects;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 public class Issue {
 
@@ -148,12 +149,12 @@ public class Issue {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Issue issue = (Issue) o;
-        return Objects.equals(keyId, issue.keyId);
+        return Objects.equal(keyId, issue.keyId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(keyId);
+        return Objects.hashCode(keyId);
     }
 
     @Override

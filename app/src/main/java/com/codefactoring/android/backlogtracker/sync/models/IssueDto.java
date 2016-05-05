@@ -1,6 +1,6 @@
 package com.codefactoring.android.backlogtracker.sync.models;
 
-import java.util.Objects;
+import com.google.common.base.Objects;
 
 public class IssueDto {
     private long id;
@@ -144,11 +144,11 @@ public class IssueDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         IssueDto issueDto = (IssueDto) o;
-        return Objects.equals(issueKey, issueDto.issueKey);
+        return Objects.equal(issueKey, issueDto.issueKey);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(issueKey);
+        return Objects.hashCode(issueKey);
     }
 }

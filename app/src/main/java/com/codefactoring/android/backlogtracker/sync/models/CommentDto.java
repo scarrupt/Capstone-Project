@@ -1,6 +1,6 @@
 package com.codefactoring.android.backlogtracker.sync.models;
 
-import java.util.Objects;
+import com.google.common.base.Objects;
 
 public class CommentDto {
 
@@ -64,11 +64,11 @@ public class CommentDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CommentDto that = (CommentDto) o;
-        return Objects.equals(id, that.id);
+        return Objects.equal(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hashCode(id);
     }
 }

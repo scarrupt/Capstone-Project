@@ -37,7 +37,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
                 android:gravity="center|start"
-                android:padding="@dimen/issue_assignee_padding" />
+                android:padding="@dimen/default_padding" />
 
             <TextView
                 android:id="@+id/text_issue_priority"

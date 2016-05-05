@@ -1,6 +1,6 @@
 package com.codefactoring.android.backlogtracker.sync.models;
 
-import java.util.Objects;
+import com.google.common.base.Objects;
 
 public class ProjectDto {
 
@@ -49,7 +49,7 @@ public class ProjectDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProjectDto that = (ProjectDto) o;
-        return Objects.equals(projectKey, that.projectKey);
+        return Objects.equal(projectKey, that.projectKey);
     }
 
     @Override

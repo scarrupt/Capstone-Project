@@ -18,8 +18,8 @@
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginBottom="@dimen/comment_separator_margin_top"
-        android:layout_marginTop="@dimen/comment_separator_margin_top"
+        android:layout_marginBottom="@dimen/default_layout_margin"
+        android:layout_marginTop="@dimen/default_layout_margin"
         android:background="?android:attr/listDivider" />
 
 </LinearLayout>

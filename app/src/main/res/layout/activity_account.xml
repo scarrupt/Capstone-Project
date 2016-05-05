@@ -51,7 +51,7 @@
         style="?android:textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/account_btn_next_margin_top"
+        android:layout_marginTop="@dimen/default_layout_margin"
         android:background="@color/colorPrimary"
         android:text="@string/action_next"
         android:textStyle="bold" />
