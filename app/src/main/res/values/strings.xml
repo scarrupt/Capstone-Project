@@ -91,4 +91,7 @@
     <string name="notification_multiple_message">New issues were added to project <xliff:g id="project_name">%s</xliff:g>
     </string>
 
+    <!-- Shared Transitions -->
+    <string name="transition_name_summary">transition:SUMMARY</string>
+
 </resources>

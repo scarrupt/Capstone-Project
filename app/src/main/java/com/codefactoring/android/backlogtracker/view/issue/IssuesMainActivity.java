@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.codefactoring.android.backlogtracker.BacklogTrackerApplication;
 import com.codefactoring.android.backlogtracker.Config;
@@ -98,10 +101,15 @@ public class IssuesMainActivity extends AppCompatActivity implements IssueListFr
     }
 
     @Override
-    public void onIssueSelected(Uri uri, String issueKey, String issueUrl) {
+    public void onIssueSelected(Uri uri, String issueKey, String issueUrl, View issueSummary) {
         final Intent intent = new Intent(this, IssueDetailActivity.class).setData(uri);
         intent.putExtra(Config.KEY_ISSUE_KEY, issueKey);
         intent.putExtra(Config.KEY_ISSUE_URL, issueUrl);
-        startActivity(intent);
+
+        final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this,
+                issueSummary,
+                getString(R.string.transition_name_summary));
+        ActivityCompat.startActivity(this, intent, options.toBundle());
     }
 }

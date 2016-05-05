@@ -83,7 +83,8 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
                 mListener.onIssueSelected(
                         BacklogContract.IssueEntry.buildIssueUriFromIssueId(issueId),
                         issueKey,
-                        issueUrl);
+                        issueUrl,
+                        viewHolder.issueSummaryView);
             }
         });
 
@@ -118,7 +119,7 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     public interface OnFragmentInteractionListener {
-        void onIssueSelected(Uri uri, String issueKey, String issueUrl);
+        void onIssueSelected(Uri uri, String issueKey, String issueUrl, View issueSummary);
     }
 
     @Override

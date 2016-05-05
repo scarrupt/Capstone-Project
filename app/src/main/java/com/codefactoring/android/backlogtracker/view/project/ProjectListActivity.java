@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.codefactoring.android.backlogapi.BacklogToolConfig;
 import com.codefactoring.android.backlogtracker.Config;
@@ -166,7 +167,7 @@ public class ProjectListActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onIssueSelected(Uri uri, String issueKey, String issueUrl) {
+    public void onIssueSelected(Uri uri, String issueKey, String issueUrl, View issueSummary) {
         final IssueDetailFragment fragment = IssueDetailFragment.newInstance(uri, issueKey);
         fragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppDialogTheme);
         fragment.show(getSupportFragmentManager(), ISSUE_DETAIL_FRAGMENT_TAG);
