@@ -8,6 +8,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -38,9 +41,12 @@ public class AccountActivity extends AccountAuthenticatorActivity {
     @Bind(R.id.text_api_key)
     EditText mApiKeyView;
 
-
     @Bind(R.id.progress_login)
     ProgressBar mLoadingIndicator;
+
+    @Nullable
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
 
     @Inject
     AccountManager mAccountManager;
@@ -57,6 +63,17 @@ public class AccountActivity extends AccountAuthenticatorActivity {
         setContentView(R.layout.activity_account);
         initButterKnife();
         initializeDependencyInjector();
+        initializeAnalytics();
+
+        setSupportActionBar(mToolbar);
+
+        final ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setTitle(R.string.app_name);
+        }
+    }
+
+    private void initializeAnalytics() {
         mTracker.setScreenName(AccountActivity.class.getSimpleName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
