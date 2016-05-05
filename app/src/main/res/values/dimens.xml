@@ -27,4 +27,7 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="expanded_title_margin_end">64dp</dimen>
     <dimen name="expanded_title_margin_start">48dp</dimen>
     <dimen name="default_layout_margin">16dp</dimen>
+    <dimen name="card_issue_layout_margin">8dp</dimen>
+    <dimen name="card_horizontal_padding">16dp</dimen>
+    <dimen name="card_vertical_padding">24dp</dimen>
 </resources>

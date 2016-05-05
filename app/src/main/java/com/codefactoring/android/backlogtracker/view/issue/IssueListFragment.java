@@ -9,31 +9,48 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.provider.BacklogContract;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class IssueListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String ARG_ISSUE_LIST_URI = "projectId";
-    private static final int ISSUE_LIST_LOADER = 0;
+
+    private static final int ISSUE_LIST_LOADER = 200;
 
     private static final String[] ISSUE_COLUMNS = {
             BacklogContract.IssueEntry._ID,
             BacklogContract.IssueEntry.ISSUE_KEY,
             BacklogContract.IssueEntry.SUMMARY,
             BacklogContract.IssueEntry.PRIORITY,
+            BacklogContract.IssueEntry.URL,
             BacklogContract.IssuePreviewEntry.ASSIGNEE_NAME_ALIAS,
             BacklogContract.IssuePreviewEntry.ASSIGNEE_THUMBNAIL_URL_ALIAS,
     };
 
+    public static final int COL_ISSUE_ID = 0;
+    public static final int COL_ISSUE_KEY = 1;
+    public static final int COL_URL = 4;
+
+    @Bind(R.id.recycler_view_issues)
+    RecyclerView mRecyclerView;
+
+    @Bind(R.id.text_empty_issues)
+    View mEmptyView;
+
     private Uri mUri;
+
     private IssueAdapter mIssueAdapter;
+
     private OnFragmentInteractionListener mListener;
 
     public static IssueListFragment newInstance(Uri issueListUri) {
@@ -56,28 +73,25 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mIssueAdapter = new IssueAdapter(getActivity(), null, 0);
+        final View view = inflater.inflate(R.layout.fragment_issue_list, container, false);
+        ButterKnife.bind(this, view);
 
-        final View rootView = inflater.inflate(R.layout.fragment_issue_list, container, false);
+        mIssueAdapter = new IssueAdapter(getActivity(), mEmptyView, new IssueAdapter.IssueAdapterOnClickHandler() {
 
-        final ListView listView = (ListView) rootView.findViewById(R.id.listview_issue);
-        listView.setAdapter(mIssueAdapter);
-        listView.setEmptyView(rootView.findViewById(R.id.text_empty_issues));
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Cursor cursor = (Cursor) parent.getItemAtPosition(position);
-                if (cursor != null && mListener != null) {
-                    mListener.onIssueSelected(BacklogContract.IssueEntry
-                            .buildIssueUriFromIssueId(cursor.getString(
-                                    cursor.getColumnIndex(BacklogContract.IssueEntry._ID))),
-                                    cursor.getString(cursor.getColumnIndex(BacklogContract.IssueEntry.ISSUE_KEY)));
-                }
+            public void onClick(String issueId, String issueKey, String issueUrl, IssueAdapter.IssuerAdapterViewHolder viewHolder) {
+                mListener.onIssueSelected(
+                        BacklogContract.IssueEntry.buildIssueUriFromIssueId(issueId),
+                        issueKey,
+                        issueUrl);
             }
         });
 
-        return rootView;
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setAdapter(mIssueAdapter);
+
+        return view;
     }
 
     @Override
@@ -104,14 +118,12 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     public interface OnFragmentInteractionListener {
-        void onIssueSelected(Uri uri, String issueKey);
+        void onIssueSelected(Uri uri, String issueKey, String issueUrl);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (mUri == null) {
-            return null;
-        } else {
+        if (mUri != null) {
             return new CursorLoader(getActivity(),
                     mUri,
                     ISSUE_COLUMNS,
@@ -119,6 +131,8 @@ public class IssueListFragment extends Fragment implements LoaderManager.LoaderC
                     null,
                     BacklogContract.IssueEntry.DEFAULT_SORT);
         }
+
+        return null;
     }
 
     @Override

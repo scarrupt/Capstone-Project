@@ -6,6 +6,8 @@ public interface Config {
 
     String KEY_SPACE_KEY = "com.codefactoring.android.backlogtracker.spaceKey";
 
+    String KEY_PROJECT_KEY = "com.codefactoring.android.backlogtracker.projectKey";
+
     String KEY_ISSUE_KEY = "com.codefactoring.android.backlogtracker.issueKey";
 
     String KEY_ISSUE_URL = "com.codefactoring.android.backlogtracker.issueUrl";

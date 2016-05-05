@@ -13,7 +13,7 @@ import static com.codefactoring.android.backlogtracker.provider.BacklogContract.
 
 public class BacklogDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 1;
     private static final String DROP_TABLE_IF_EXISTS = "DROP TABLE IF EXISTS ";
 
     static final String DATABASE_NAME = "backlog.db";
@@ -98,6 +98,7 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
                 IssueEntry.PRIORITY + ", " +
                 IssueEntry.STATUS + ", " +
                 IssueEntry.CREATED_DATE + ", " +
+                IssueEntry.URL + ", " +
                 UserEntry.NAME + " AS " + IssuePreviewEntry.ASSIGNEE_NAME_ALIAS + ", " +
                 UserEntry.THUMBNAIL_URL + " AS " + IssuePreviewEntry.ASSIGNEE_THUMBNAIL_URL_ALIAS +
                 " FROM " + IssueEntry.TABLE_NAME + " LEFT JOIN " + UserEntry.TABLE_NAME +

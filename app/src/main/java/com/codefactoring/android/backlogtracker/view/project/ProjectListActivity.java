@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.codefactoring.android.backlogapi.BacklogToolConfig;
+import com.codefactoring.android.backlogtracker.Config;
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.gcm.RegistrationIntentService;
 import com.codefactoring.android.backlogtracker.injector.components.DaggerApplicationComponent;
@@ -108,7 +109,7 @@ public class ProjectListActivity extends AppCompatActivity implements
                     .commit();
         } else {
             final Intent intent = new Intent(this, IssuesMainActivity.class).setData(uri);
-            intent.putExtra(Intent.EXTRA_TEXT, projectKey);
+            intent.putExtra(Config.KEY_PROJECT_KEY, projectKey);
             startActivity(intent);
         }
     }
@@ -165,7 +166,7 @@ public class ProjectListActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onIssueSelected(Uri uri, String issueKey) {
+    public void onIssueSelected(Uri uri, String issueKey, String issueUrl) {
         final IssueDetailFragment fragment = IssueDetailFragment.newInstance(uri, issueKey);
         fragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppDialogTheme);
         fragment.show(getSupportFragmentManager(), ISSUE_DETAIL_FRAGMENT_TAG);

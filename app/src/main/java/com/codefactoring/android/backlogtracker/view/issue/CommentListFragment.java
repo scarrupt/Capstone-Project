@@ -39,7 +39,7 @@ public class CommentListFragment extends Fragment implements LoaderManager.Loade
     RecyclerView mRecyclerView;
 
     @Bind(R.id.text_empty_comments)
-    View emptyView;
+    View mEmptyView;
 
     private CommentAdapter mCommentAdapter;
 
@@ -74,10 +74,11 @@ public class CommentListFragment extends Fragment implements LoaderManager.Loade
         final View view = inflater.inflate(R.layout.fragment_comment_list, container, false);
         ButterKnife.bind(this, view);
 
-        mCommentAdapter = new CommentAdapter(getActivity(), emptyView);
+        mCommentAdapter = new CommentAdapter(getActivity(), mEmptyView);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setAdapter(mCommentAdapter);
 
         return view;

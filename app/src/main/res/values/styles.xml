@@ -1,8 +1,9 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -13,14 +14,15 @@
         for two-pane layout -->
     </style>
 
-    <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog"/>
+    <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog" />
 
     <style name="Widget.CardContent" parent="android:Widget">
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:paddingTop">24dp</item>
-        <item name="android:paddingBottom">24dp</item>
+        <item name="android:paddingLeft">@dimen/card_horizontal_padding</item>
+        <item name="android:paddingRight">@dimen/card_horizontal_padding</item>
+        <item name="android:paddingTop">@dimen/card_vertical_padding</item>
+        <item name="android:paddingBottom">@dimen/card_vertical_padding</item>
         <item name="android:orientation">vertical</item>
     </style>
+
 
 </resources>

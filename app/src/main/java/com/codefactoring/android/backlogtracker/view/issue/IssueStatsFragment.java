@@ -22,12 +22,21 @@ import butterknife.ButterKnife;
 public class IssueStatsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String ARG_PROJECT_ID = "projectId";
+
     private static final int ISSUE_STATS_LOADER = 0;
 
     @Bind(R.id.chart_issues_stats)
     BarChartView barChartView;
 
     private Uri mUri;
+
+    public static IssueStatsFragment newInstance(Uri uri) {
+        final IssueStatsFragment fragment = new IssueStatsFragment();
+        final Bundle args = new Bundle();
+        args.putParcelable(ARG_PROJECT_ID, uri);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,9 +63,7 @@ public class IssueStatsFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (mUri == null) {
-            return null;
-        } else {
+        if (mUri != null) {
             return new CursorLoader(getActivity(),
                     mUri,
                     null,
@@ -64,6 +71,8 @@ public class IssueStatsFragment extends Fragment implements LoaderManager.Loader
                     null,
                     BacklogContract.IssueEntry.DEFAULT_SORT);
         }
+
+        return null;
     }
 
     @Override
@@ -80,13 +89,5 @@ public class IssueStatsFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
-    }
-
-    public static IssueStatsFragment newInstance(Uri uri) {
-        final IssueStatsFragment fragment = new IssueStatsFragment();
-        final Bundle args = new Bundle();
-        args.putParcelable(ARG_PROJECT_ID, uri);
-        fragment.setArguments(args);
-        return fragment;
     }
 }

@@ -3,11 +3,13 @@ package com.codefactoring.android.backlogtracker.view.issue;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,8 @@ import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_IS
 
 public class IssuesMainFragment extends Fragment {
 
+    private final String LOG_TAG = IssuesMainFragment.class.getSimpleName();
+
     private static final String ARG_URI = "ARG_URI";
 
     private static final String ARG_PROJECT_KEY = "ARG_PROJECT_KEY";
@@ -34,6 +38,8 @@ public class IssuesMainFragment extends Fragment {
     @Bind(R.id.sliding_tabs)
     TabLayout tabLayout;
 
+    private Uri mUri;
+
     public static IssuesMainFragment newInstance(Uri uri, String projectKey) {
         final IssuesMainFragment fragment = new IssuesMainFragment();
         final Bundle args = new Bundle();
@@ -41,6 +47,16 @@ public class IssuesMainFragment extends Fragment {
         args.putString(ARG_PROJECT_KEY, projectKey);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            mUri = getArguments().getParcelable(ARG_URI);
+            Log.i(LOG_TAG, "URI: " + mUri);
+        }
     }
 
     @Override
@@ -75,33 +91,28 @@ public class IssuesMainFragment extends Fragment {
         @Override
         public Fragment getItem(int position) {
 
-            if (getArguments() != null) {
-
-                final Uri uri = getArguments().getParcelable(ARG_URI);
-
-                if (uri != null) {
-                    switch (position) {
-                        case TAB_OPEN_ISSUES: {
-                            final Uri filteredUri = BacklogContract.IssuePreviewEntry.addStatusQueryParameterToUri(uri,
-                                    STATUS_ISSUE_OPEN);
-                            return IssueListFragment.newInstance(filteredUri);
-                        }
-                        case TAB_IN_PROGRESS_ISSUES: {
-                            final Uri filteredUri = BacklogContract.IssuePreviewEntry.addStatusQueryParameterToUri(uri,
-                                    STATUS_ISSUE_IN_PROGRESS);
-                            return IssueListFragment.newInstance(filteredUri);
-                        }
-                        case TAB_RESOLVED_ISSUES: {
-                            final Uri filteredUri = BacklogContract.IssuePreviewEntry.addStatusQueryParameterToUri(uri,
-                                    STATUS_ISSUE_RESOLVED);
-                            return IssueListFragment.newInstance(filteredUri);
-                        }
-                        case TAB_ISSUE_STATS:
-                            final String projectId = uri.getQueryParameter(BacklogContract.IssueStatsEntry.QUERY_PARAMETER_PROJECT_ID);
-                            return IssueStatsFragment.newInstance(BacklogContract.IssueStatsEntry.buildIssueStatsUriWithProjectId(projectId));
-                        default:
-                            throw new IllegalArgumentException();
+            if (mUri != null) {
+                switch (position) {
+                    case TAB_OPEN_ISSUES: {
+                        final Uri filteredUri = BacklogContract.IssuePreviewEntry.addStatusQueryParameterToUri(mUri,
+                                STATUS_ISSUE_OPEN);
+                        return IssueListFragment.newInstance(filteredUri);
                     }
+                    case TAB_IN_PROGRESS_ISSUES: {
+                        final Uri filteredUri = BacklogContract.IssuePreviewEntry.addStatusQueryParameterToUri(mUri,
+                                STATUS_ISSUE_IN_PROGRESS);
+                        return IssueListFragment.newInstance(filteredUri);
+                    }
+                    case TAB_RESOLVED_ISSUES: {
+                        final Uri filteredUri = BacklogContract.IssuePreviewEntry.addStatusQueryParameterToUri(mUri,
+                                STATUS_ISSUE_RESOLVED);
+                        return IssueListFragment.newInstance(filteredUri);
+                    }
+                    case TAB_ISSUE_STATS:
+                        final String projectId = mUri.getQueryParameter(BacklogContract.IssueStatsEntry.QUERY_PARAMETER_PROJECT_ID);
+                        return IssueStatsFragment.newInstance(BacklogContract.IssueStatsEntry.buildIssueStatsUriWithProjectId(projectId));
+                    default:
+                        throw new IllegalArgumentException();
                 }
             }
 
