@@ -24,6 +24,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.provider.BacklogContract;
+import com.codefactoring.android.backlogtracker.view.util.DateTimeUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -167,8 +168,10 @@ public class IssueDetailFragment extends DialogFragment implements LoaderManager
 
             final String authorName = data.getString(COL_AUTHOR_NAME);
             final String createdDate = data.getString(COL_CREATED_DATE);
+            final String formattedDate = DateTimeUtils.convertUTCDateTimeToLocalDateTime(
+                    getContext(), createdDate);
 
-            mAuthorView.setText(getString(R.string.format_author_issue, authorName, createdDate));
+            mAuthorView.setText(getString(R.string.format_author_issue, authorName, formattedDate));
 
             final String authorThumbnailPath = data.getString(COL_AUTHOR_THUMBNAIL);
             Glide.with(getContext())

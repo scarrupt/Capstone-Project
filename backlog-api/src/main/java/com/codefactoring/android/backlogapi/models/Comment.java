@@ -3,6 +3,7 @@ package com.codefactoring.android.backlogapi.models;
 import com.google.common.base.Objects;
 
 import java.util.Arrays;
+import java.util.Date;
 
 public class Comment {
 
@@ -10,8 +11,8 @@ public class Comment {
     private String content;
     private ChangeLog[] changeLog;
     private User createdUser;
-    private String created;
-    private String updated;
+    private Date created;
+    private Date updated;
 
     public long getId() {
         return id;
@@ -45,19 +46,19 @@ public class Comment {
         this.createdUser = createdUser;
     }
 
-    public String getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(String created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
-    public String getUpdated() {
+    public Date getUpdated() {
         return updated;
     }
 
-    public void setUpdated(String updated) {
+    public void setUpdated(Date updated) {
         this.updated = updated;
     }
 

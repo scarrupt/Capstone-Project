@@ -6,6 +6,7 @@ import com.codefactoring.android.backlogapi.BacklogApiClient;
 import com.codefactoring.android.backlogapi.models.ChangeLog;
 import com.codefactoring.android.backlogapi.models.Comment;
 import com.codefactoring.android.backlogtracker.sync.models.CommentDto;
+import com.codefactoring.android.backlogtracker.sync.utils.SyncUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +50,8 @@ public class CommentDataFetcher {
                                 comment.getContent() == null || comment.getContent().isEmpty()
                                         ? transformToString(comment.getChangeLog())
                                         : comment.getContent());
-                        commentDto.setCreated(comment.getCreated());
-                        commentDto.setUpdated(comment.getUpdated());
+                        commentDto.setCreated(SyncUtils.formatDate(comment.getCreated()));
+                        commentDto.setUpdated(SyncUtils.formatDate(comment.getUpdated()));
                         return Observable.just(commentDto);
                     }
                 })

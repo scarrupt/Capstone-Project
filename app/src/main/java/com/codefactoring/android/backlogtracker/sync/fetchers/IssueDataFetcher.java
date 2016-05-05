@@ -8,20 +8,16 @@ import com.codefactoring.android.backlogapi.models.Milestone;
 import com.codefactoring.android.backlogapi.models.User;
 import com.codefactoring.android.backlogtracker.sync.models.IssueDto;
 import com.codefactoring.android.backlogtracker.sync.models.IssueTypeDto;
+import com.codefactoring.android.backlogtracker.sync.utils.SyncUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import rx.Observable;
 import rx.functions.Func1;
-
-import static com.codefactoring.android.backlogapi.BacklogApiConstants.DATE_FORMAT_PATTERN;
 
 public class IssueDataFetcher {
 
@@ -72,9 +68,9 @@ public class IssueDataFetcher {
                         )));
 
                         issueDto.setCreatedUserId(issue.getCreatedUser().getId());
-                        issueDto.setCreatedDate(formatDate(issue.getCreated()));
+                        issueDto.setCreatedDate(SyncUtils.formatDate(issue.getCreated()));
                         issueDto.setUpdatedUserId(getUserIdOrNull(issue.getUpdatedUser()));
-                        issueDto.setUpdatedDate(formatDate(issue.getUpdated()));
+                        issueDto.setUpdatedDate(SyncUtils.formatDate(issue.getUpdated()));
                         issueDto.setUrl(mBacklogApiClient.getBaseURL() + issue.getIssueKey());
 
                         final IssueTypeDto issueTypeDto = new IssueTypeDto();
@@ -93,14 +89,5 @@ public class IssueDataFetcher {
 
     private Long getUserIdOrNull(User user) {
         return user == null ? null : user.getId();
-    }
-
-    private String formatDate(Date date) {
-        if (date == null) {
-            return null;
-        } else {
-            final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.getDefault());
-            return simpleDateFormat.format(date);
-        }
     }
 }

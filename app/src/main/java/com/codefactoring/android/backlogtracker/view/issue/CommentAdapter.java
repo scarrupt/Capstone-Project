@@ -16,6 +16,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.codefactoring.android.backlogtracker.R;
 import com.codefactoring.android.backlogtracker.provider.BacklogContract;
+import com.codefactoring.android.backlogtracker.view.util.DateTimeUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -65,7 +66,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentA
 
         final String author = mCursor.getString(mCursor.getColumnIndex(BacklogContract.UserEntry.NAME));
         final String createdDate = mCursor.getString(mCursor.getColumnIndex(BacklogContract.CommentEntry.CREATED));
-        holder.authorView.setText(mContext.getString(R.string.format_author_comment, author, createdDate));
+        final String formattedDate = DateTimeUtils.convertUTCDateTimeToLocalDateTime(mContext, createdDate);
+        holder.authorView.setText(mContext.getString(R.string.format_author_comment, author, formattedDate));
 
         final String authorThumbnailPath = mCursor.getString(mCursor.getColumnIndex(BacklogContract.UserEntry.THUMBNAIL_URL));
         Glide.with(mContext)
