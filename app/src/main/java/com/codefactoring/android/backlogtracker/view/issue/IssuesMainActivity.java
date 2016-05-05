@@ -29,7 +29,7 @@ public class IssuesMainActivity extends AppCompatActivity implements IssueListFr
 
     @Nullable
     @Bind(R.id.toolbar)
-    Toolbar toolbar;
+    Toolbar mToolbar;
 
     @Inject
     Tracker mTracker;
@@ -43,7 +43,7 @@ public class IssuesMainActivity extends AppCompatActivity implements IssueListFr
         initializeAnalytics();
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
 
         final String projectKey = getIntent().getStringExtra(Config.KEY_PROJECT_KEY);
 

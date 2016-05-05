@@ -56,7 +56,7 @@ public class ProjectListActivity extends AppCompatActivity implements
 
     @Nullable
     @Bind(R.id.toolbar)
-    Toolbar toolbar;
+    Toolbar mToolbar;
 
     @Inject
     BacklogSyncAdapter mBacklogSyncAdapter;
@@ -75,7 +75,7 @@ public class ProjectListActivity extends AppCompatActivity implements
         initializeAnalytics();
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
 
         final ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {

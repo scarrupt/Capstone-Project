@@ -32,7 +32,7 @@ public class IssueDetailActivity extends AppCompatActivity {
 
     @Nullable
     @Bind(R.id.toolbar)
-    Toolbar toolbar;
+    Toolbar mToolbar;
 
     @Nullable
     @Bind(R.id.collapsing_toolbar)
@@ -54,7 +54,7 @@ public class IssueDetailActivity extends AppCompatActivity {
         initializeAnalytics();
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
 
         final ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
