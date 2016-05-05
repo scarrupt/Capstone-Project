@@ -131,6 +131,7 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onPause() {
         super.onPause();
+        hideLoadingIndicator();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mMessageReceiver);
     }
 

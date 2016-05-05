@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +37,9 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class ProjectListActivity extends AppCompatActivity implements
         ProjectListFragment.OnFragmentInteractionListener,
         IssueListFragment.OnFragmentInteractionListener {
@@ -48,6 +54,10 @@ public class ProjectListActivity extends AppCompatActivity implements
 
     private boolean mTwoPane;
 
+    @Nullable
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
     @Inject
     BacklogSyncAdapter mBacklogSyncAdapter;
 
@@ -61,8 +71,16 @@ public class ProjectListActivity extends AppCompatActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_list);
-        setTitle(R.string.title_activity_project_list);
         initializeDependencyInjector();
+        initializeAnalytics();
+        ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+
+        final ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setTitle(R.string.title_activity_project_list);
+        }
 
         if (findViewById(R.id.issues_main_container) != null) {
             mTwoPane = true;
@@ -80,14 +98,16 @@ public class ProjectListActivity extends AppCompatActivity implements
             mTwoPane = false;
         }
 
-        mTracker.setScreenName(ProjectListActivity.class.getSimpleName());
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
-
         if (isAuthenticated() && checkPlayServices()) {
             mBacklogSyncAdapter.startDataBootstrap();
             final Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
+    }
+
+    private void initializeAnalytics() {
+        mTracker.setScreenName(ProjectListActivity.class.getSimpleName());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     private void initializeDependencyInjector() {
