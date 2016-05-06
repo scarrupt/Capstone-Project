@@ -3,6 +3,16 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.neenbedankt.android-apt'
 
 android {
+
+    signingConfigs {
+        release {
+            storeFile file("keystore.jks")
+            storePassword "store_password"
+            keyAlias "backlogtracker_android"
+            keyPassword "key_password"
+        }
+    }
+
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
@@ -24,6 +34,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     testOptions {
