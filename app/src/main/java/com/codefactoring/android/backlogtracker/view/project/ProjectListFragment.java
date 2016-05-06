@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -58,8 +59,18 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
         public void onReceive(Context context, Intent intent) {
             if (Config.ACTION_SYNC_STARTED.equals(intent.getAction())) {
                 showLoadingIndicator();
+                if (getView() != null) {
+                    Snackbar.make(getView(), R.string.syncing_data_start, Snackbar.LENGTH_LONG)
+                            .show();
+                }
+
             } else if (Config.ACTION_SYNC_DONE.equals(intent.getAction())) {
                 hideLoadingIndicator();
+                if (getView() != null) {
+                    Snackbar.make(getView(), R.string.syncing_data_done, Snackbar.LENGTH_LONG)
+                            .show();
+                }
+
             }
         }
     };

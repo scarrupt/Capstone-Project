@@ -143,9 +143,13 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
 
                 final Date now = GregorianCalendar.getInstance().getTime();
                 setDataTimestamp(formatDate(now));
+                syncResult.stats.numEntries += operations.size();
+                syncResult.stats.numUpdates += operations.size();
             } catch (RemoteException ex) {
+                syncResult.stats.numAuthExceptions++;
                 Log.e(LOG_TAG, "RemoteException while applying content provider operations.", ex);
             } catch (OperationApplicationException ex) {
+                syncResult.stats.numAuthExceptions++;
                 Log.e(LOG_TAG, "OperationApplicationException while applying content provider operations.", ex);
             }
         }
@@ -302,13 +306,40 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
     public void syncImmediately() {
         final Account[] accounts = getSyncAccounts(mContext);
         for (Account account : accounts) {
+            final String authority = mContext.getString(R.string.content_authority);
+
+            final boolean pending = isSyncPending(account, authority);
+
+            final boolean active = isSyncActive(account, authority);
+
+            if (pending || active) {
+                Log.d(LOG_TAG, "Cancelling previously pending/active sync.");
+                ContentResolver.cancelSync(account, authority);
+            }
+
             final Bundle bundle = new Bundle();
             bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
             bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-            ContentResolver.requestSync(account,
-                    mContext.getString(R.string.content_authority), bundle);
 
+            ContentResolver.requestSync(account, authority, bundle);
         }
+    }
+
+    private boolean isSyncActive(Account account, String authority) {
+        final boolean active = ContentResolver.isSyncActive(account, authority);
+
+        if (active) {
+            Log.d(LOG_TAG, "Warning: sync is ACTIVE. Will cancel.");
+        }
+        return active;
+    }
+
+    private boolean isSyncPending(Account account, String authority) {
+        final boolean pending = ContentResolver.isSyncPending(account, authority);
+        if (pending) {
+            Log.d(LOG_TAG, "Warning: sync is PENDING. Will cancel.");
+        }
+        return pending;
     }
 
     private Account[] getSyncAccounts(Context context) {
