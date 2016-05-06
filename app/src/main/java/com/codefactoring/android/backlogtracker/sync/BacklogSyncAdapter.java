@@ -10,14 +10,12 @@ import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -145,12 +143,9 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
                 setDataTimestamp(formatDate(now));
                 syncResult.stats.numEntries += operations.size();
                 syncResult.stats.numUpdates += operations.size();
-            } catch (RemoteException ex) {
+            } catch (Throwable ex) {
                 syncResult.stats.numAuthExceptions++;
-                Log.e(LOG_TAG, "RemoteException while applying content provider operations.", ex);
-            } catch (OperationApplicationException ex) {
-                syncResult.stats.numAuthExceptions++;
-                Log.e(LOG_TAG, "OperationApplicationException while applying content provider operations.", ex);
+                Log.e(LOG_TAG, "Exception while applying content provider operations.", ex);
             }
         }
 
