@@ -69,7 +69,7 @@ public class IssueDataFetcherTest {
         @Override
         public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
             switch (request.getPath()) {
-                case "/api/v2/issues?projectId[]=1&apiKey=" + PARAM_API_KEY:
+                case "/api/v2/issues?projectId[]=1&statusId[]=1&statusId[]=2&statusId[]=3&apiKey=" + PARAM_API_KEY:
                     return new MockResponse()
                             .setResponseCode(200)
                             .setBody("[\n" +
@@ -194,7 +194,7 @@ public class IssueDataFetcherTest {
                                     "        ]\n" +
                                     "    }\n" +
                                     "]");
-                case "/api/v2/issues?projectId[]=1&apiKey=" + PARAM_ERROR_GET_ISSUE_LIST_API_KEY:
+                case "/api/v2/issues?projectId[]=1&statusId[]=1&statusId[]=2&statusId[]=3&apiKey=" + PARAM_ERROR_GET_ISSUE_LIST_API_KEY:
                     return new MockResponse()
                             .setResponseCode(404);
                 default:

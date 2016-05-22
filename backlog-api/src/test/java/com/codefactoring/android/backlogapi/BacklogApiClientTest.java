@@ -4,6 +4,7 @@ import com.codefactoring.android.backlogapi.models.Comment;
 import com.codefactoring.android.backlogapi.models.Issue;
 import com.codefactoring.android.backlogapi.models.Project;
 import com.codefactoring.android.backlogapi.models.User;
+import com.google.common.collect.Lists;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +20,9 @@ import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import rx.observers.TestSubscriber;
 
+import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_ID_IN_PROGRESS;
+import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_ID_OPEN;
+import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_ID_RESOLVED;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -289,7 +293,12 @@ public class BacklogApiClientTest {
 
         final BacklogApiClient backlogApi = new BacklogApiClient(new BacklogTestConfig())
                 .connectWith(baseUrl.toString(), PARAM_API_KEY);
-        backlogApi.getIssueOperations().getIssueList(PROJECT_ID).subscribe(subscriber);
+        backlogApi.getIssueOperations()
+                .getIssueList(PROJECT_ID, Lists.newArrayList(
+                        STATUS_ISSUE_ID_OPEN,
+                        STATUS_ISSUE_ID_IN_PROGRESS,
+                        STATUS_ISSUE_ID_RESOLVED))
+                .subscribe(subscriber);
 
         final List<Issue> issues = new ArrayList<>();
         final Issue expectedIssue = new Issue();
@@ -307,23 +316,23 @@ public class BacklogApiClientTest {
         final TestSubscriber<List<Comment>> subscriber = new TestSubscriber<>();
 
         final String commentListJson = "[\n" +
-                    " {\n" +
-                    "    \"id\": 6586,\n" +
-                    "    \"content\": \"test\",\n" +
-                    "    \"changeLog\": null,\n" +
-                    "    \"createdUser\": {\n" +
-                    "        \"id\": 1,\n" +
-                    "        \"userId\": \"admin\",\n" +
-                    "        \"name\": \"admin\",\n" +
-                    "        \"roleType\": 1,\n" +
-                    "        \"lang\": \"ja\",\n" +
-                    "        \"mailAddress\": \"eguchi@nulab.example\"\n" +
-                    "    },\n" +
-                    "    \"created\": \"2013-08-05T06:15:06Z\",\n" +
-                    "    \"updated\": \"2013-08-05T06:15:06Z\",\n" +
-                    "    \"stars\": [],\n" +
-                    "    \"notifications\": []\n" +
-                    "}" +
+                " {\n" +
+                "    \"id\": 6586,\n" +
+                "    \"content\": \"test\",\n" +
+                "    \"changeLog\": null,\n" +
+                "    \"createdUser\": {\n" +
+                "        \"id\": 1,\n" +
+                "        \"userId\": \"admin\",\n" +
+                "        \"name\": \"admin\",\n" +
+                "        \"roleType\": 1,\n" +
+                "        \"lang\": \"ja\",\n" +
+                "        \"mailAddress\": \"eguchi@nulab.example\"\n" +
+                "    },\n" +
+                "    \"created\": \"2013-08-05T06:15:06Z\",\n" +
+                "    \"updated\": \"2013-08-05T06:15:06Z\",\n" +
+                "    \"stars\": [],\n" +
+                "    \"notifications\": []\n" +
+                "}" +
                 "]";
 
         server.enqueue(new MockResponse().setBody(commentListJson));

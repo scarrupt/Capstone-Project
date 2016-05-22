@@ -19,6 +19,10 @@ import java.util.List;
 import rx.Observable;
 import rx.functions.Func1;
 
+import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_ID_IN_PROGRESS;
+import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_ID_OPEN;
+import static com.codefactoring.android.backlogapi.BacklogApiConstants.STATUS_ISSUE_ID_RESOLVED;
+
 public class IssueDataFetcher {
 
     private final String LOG_TAG = IssueDataFetcher.class.getSimpleName();
@@ -32,7 +36,10 @@ public class IssueDataFetcher {
     public List<IssueDto> getIssueList(long projectId) {
         return mBacklogApiClient
                 .getIssueOperations()
-                .getIssueList(projectId)
+                .getIssueList(projectId, Lists.newArrayList(
+                        STATUS_ISSUE_ID_OPEN,
+                        STATUS_ISSUE_ID_IN_PROGRESS,
+                        STATUS_ISSUE_ID_RESOLVED))
                 .onErrorReturn(new Func1<Throwable, List<Issue>>() {
                     @Override
                     public List<Issue> call(Throwable throwable) {

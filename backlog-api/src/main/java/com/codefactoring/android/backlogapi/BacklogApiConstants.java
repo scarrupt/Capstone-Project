@@ -6,6 +6,9 @@ public interface BacklogApiConstants {
     String API_KEY_PARAMETER = "apiKey";
     String ERRORS = "errors";
     String STATUS_ISSUE_OPEN = "Open";
+    int STATUS_ISSUE_ID_OPEN = 1;
     String STATUS_ISSUE_IN_PROGRESS = "In Progress";
+    int STATUS_ISSUE_ID_IN_PROGRESS = 2;
     String STATUS_ISSUE_RESOLVED = "Resolved";
+    int STATUS_ISSUE_ID_RESOLVED = 3;
 }

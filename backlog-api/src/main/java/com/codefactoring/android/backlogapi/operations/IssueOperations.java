@@ -13,7 +13,7 @@ import rx.Observable;
 public interface IssueOperations {
 
     @GET("issues")
-    Observable<List<Issue>> getIssueList(@Query("projectId[]") long projectId);
+    Observable<List<Issue>> getIssueList(@Query("projectId[]") long projectId, @Query("statusId[]") List<Integer> statusId);
 
     @GET("issues/{issueId}/comments")
     Observable<List<Comment>> getCommentList(@Path("issueId") long issueId);
