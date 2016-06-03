@@ -56,4 +56,14 @@ public class ProjectDto {
     public int hashCode() {
         return Objects.hashCode(projectKey);
     }
+
+    @Override
+    public String toString() {
+        return "ProjectDto{" +
+                "id=" + id +
+                ", projectKey='" + projectKey + '\'' +
+                ", name='" + name + '\'' +
+                ", image=" + image +
+                '}';
+    }
 }

@@ -3,6 +3,7 @@ package com.codefactoring.android.backlogtracker.sync.handlers;
 import android.content.ContentProviderOperation;
 
 import com.codefactoring.android.backlogtracker.sync.models.IssueDto;
+import com.codefactoring.android.backlogtracker.sync.utils.SyncUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,8 @@ public class IssueDataHandler {
                     .withValue(IssueEntry.CREATED_USER_ID, issue.getCreatedUserId())
                     .withValue(IssueEntry.CREATED_DATE, issue.getCreatedDate())
                     .withValue(IssueEntry.UPDATED_USER_ID, issue.getUpdatedUserId())
-                    .withValue(IssueEntry.UPDATED_DATE, issue.getUpdatedDate());
+                    .withValue(IssueEntry.UPDATED_DATE, issue.getUpdatedDate())
+                    .withValue(IssueEntry.FINGERPRINT, SyncUtils.computeWeakHash(issue.toString()));
 
             operations.add(builder.build());
         }

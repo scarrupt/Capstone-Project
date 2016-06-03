@@ -7,6 +7,7 @@ import android.content.Context;
 import com.codefactoring.android.backlogtracker.sync.models.BacklogImage;
 import com.codefactoring.android.backlogtracker.sync.models.ProjectDto;
 import com.codefactoring.android.backlogtracker.sync.utils.BacklogImageUtils;
+import com.codefactoring.android.backlogtracker.sync.utils.SyncUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,7 +36,8 @@ public class ProjectDataHandler {
                     .newInsert(ProjectEntry.CONTENT_URI)
                     .withValue(ProjectEntry._ID, project.getId())
                     .withValue(ProjectEntry.PROJECT_KEY, project.getProjectKey())
-                    .withValue(ProjectEntry.NAME, project.getName());
+                    .withValue(ProjectEntry.NAME, project.getName())
+                    .withValue(ProjectEntry.FINGERPRINT, SyncUtils.computeWeakHash(project.toString()));
 
             final String imagePath = getImagePathOrNull(project.getImage());
             builder.withValue(ProjectEntry.THUMBNAIL_URL, imagePath);

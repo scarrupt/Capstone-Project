@@ -13,7 +13,7 @@ import static com.codefactoring.android.backlogtracker.provider.BacklogContract.
 
 public class BacklogDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DROP_TABLE_IF_EXISTS = "DROP TABLE IF EXISTS ";
 
     static final String DATABASE_NAME = "backlog.db";
@@ -28,14 +28,16 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
                 ProjectEntry._ID + " INTEGER PRIMARY KEY," +
                 ProjectEntry.PROJECT_KEY + " TEXT NOT NULL, " +
                 ProjectEntry.NAME + " TEXT NOT NULL, " +
-                ProjectEntry.THUMBNAIL_URL + " TEXT NULL " +
+                ProjectEntry.THUMBNAIL_URL + " TEXT NULL, " +
+                ProjectEntry.FINGERPRINT + " TEXT NOT NULL " +
                 " );";
 
         final String SQL_CREATE_USER_TABLE = "CREATE TABLE " + UserEntry.TABLE_NAME + " (" +
                 UserEntry._ID + " INTEGER PRIMARY KEY," +
                 UserEntry.USER_ID + " TEXT NOT NULL, " +
                 UserEntry.NAME + " TEXT NOT NULL, " +
-                UserEntry.THUMBNAIL_URL + " TEXT NULL " +
+                UserEntry.THUMBNAIL_URL + " TEXT NULL, " +
+                UserEntry.FINGERPRINT + " TEXT NOT NULL " +
                 " );";
 
         final String SQL_CREATE_ISSUE_TYPE_TABLE = "CREATE TABLE " + IssueTypeEntry.TABLE_NAME + " (" +
@@ -64,6 +66,7 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
                 IssueEntry.CREATED_DATE + " TEXT NOT NULL, " +
                 IssueEntry.UPDATED_USER_ID + " INTEGER, " +
                 IssueEntry.UPDATED_DATE + " TEXT, " +
+                IssueEntry.FINGERPRINT + " TEXT NOT NULL, " +
                 " FOREIGN KEY (" + IssueEntry.PROJECT_ID + ") REFERENCES " +
                 ProjectEntry.TABLE_NAME + " (" + ProjectEntry._ID + "), " +
                 " FOREIGN KEY (" + IssueEntry.TYPE_ID + ") REFERENCES " +
@@ -83,6 +86,7 @@ public class BacklogDbHelper extends SQLiteOpenHelper {
                 CommentEntry.CREATED_USER_ID + " INTEGER NOT NULL, " +
                 CommentEntry.CREATED + " TEXT NOT NULL, " +
                 CommentEntry.UPDATED + " TEXT NOT NULL, " +
+                CommentEntry.FINGERPRINT + " TEXT NOT NULL, " +
                 " FOREIGN KEY (" + CommentEntry.ISSUE_ID + ") REFERENCES " +
                 IssueEntry.TABLE_NAME + " (" + IssueEntry._ID + "), " +
                 " FOREIGN KEY (" + IssueEntry.CREATED_USER_ID + ") REFERENCES " +

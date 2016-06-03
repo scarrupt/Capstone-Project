@@ -151,4 +151,25 @@ public class IssueDto {
     public int hashCode() {
         return Objects.hashCode(issueKey);
     }
+
+    @Override
+    public String toString() {
+        return "IssueDto{" +
+                "id=" + id +
+                ", projectId=" + projectId +
+                ", issueKey='" + issueKey + '\'' +
+                ", issueType=" + issueType +
+                ", summary='" + summary + '\'' +
+                ", description='" + description + '\'' +
+                ", priority='" + priority + '\'' +
+                ", status='" + status + '\'' +
+                ", assigneeId=" + assigneeId +
+                ", milestones='" + milestones + '\'' +
+                ", createdUserId=" + createdUserId +
+                ", createdDate='" + createdDate + '\'' +
+                ", updatedUserId=" + updatedUserId +
+                ", updatedDate='" + updatedDate + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }

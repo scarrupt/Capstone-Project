@@ -56,4 +56,14 @@ public class UserDto {
     public int hashCode() {
         return Objects.hashCode(userId);
     }
+
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "id=" + id +
+                ", userId='" + userId + '\'' +
+                ", name='" + name + '\'' +
+                ", image=" + image +
+                '}';
+    }
 }

@@ -71,4 +71,16 @@ public class CommentDto {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+    @Override
+    public String toString() {
+        return "CommentDto{" +
+                "id=" + id +
+                ", issueId=" + issueId +
+                ", content='" + content + '\'' +
+                ", createdUserId=" + createdUserId +
+                ", created='" + created + '\'' +
+                ", updated='" + updated + '\'' +
+                '}';
+    }
 }

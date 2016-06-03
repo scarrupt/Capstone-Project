@@ -138,6 +138,18 @@ public class BacklogProvider extends ContentProvider {
                 retCursor = findLastTenOpenedIssues(projection);
                 break;
             }
+            case USERS: {
+                retCursor = db.query(
+                        UserEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -255,6 +267,10 @@ public class BacklogProvider extends ContentProvider {
         switch (match) {
             case PROJECTS:
                 rowsUpdated = db.update(ProjectEntry.TABLE_NAME, values, selection,
+                        selectionArgs);
+                break;
+            case USERS:
+                rowsUpdated = db.update(UserEntry.TABLE_NAME, values, selection,
                         selectionArgs);
                 break;
             default:
@@ -453,4 +469,6 @@ public class BacklogProvider extends ContentProvider {
                 "10",
                 null);
     }
+
+
 }

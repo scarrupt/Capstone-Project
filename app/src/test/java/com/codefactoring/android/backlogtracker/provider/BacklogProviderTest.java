@@ -76,6 +76,7 @@ public class BacklogProviderTest {
         contentValues.put(ProjectEntry.PROJECT_KEY, "TEST");
         contentValues.put(ProjectEntry.NAME, "test");
         contentValues.put(ProjectEntry.THUMBNAIL_URL, "/thumbnails/projects/TEST.png");
+        contentValues.put(ProjectEntry.FINGERPRINT, "fingerprint");
 
         final Uri projectUri = shadowContentResolver.insert(ProjectEntry.CONTENT_URI, contentValues);
         final long projectRowId = ContentUris.parseId(projectUri);
@@ -103,6 +104,7 @@ public class BacklogProviderTest {
             contentValues.put(ProjectEntry.PROJECT_KEY, "TEST");
             contentValues.put(ProjectEntry.NAME, "test");
             contentValues.put(ProjectEntry.THUMBNAIL_URL, "/thumbnails/projects/TEST.png");
+            contentValues.put(ProjectEntry.FINGERPRINT, "fingerprint");
             contentValuesArray[i] = contentValues;
         }
 
@@ -123,6 +125,7 @@ public class BacklogProviderTest {
         contentValues.put(ProjectEntry.PROJECT_KEY, "TEST");
         contentValues.put(ProjectEntry.NAME, "test");
         contentValues.put(ProjectEntry.THUMBNAIL_URL, "/thumbnails/projects/TEST.png");
+        contentValues.put(ProjectEntry.FINGERPRINT, "fingerprint");
 
         return shadowContentResolver.insert(ProjectEntry.CONTENT_URI, contentValues);
     }
@@ -138,10 +141,30 @@ public class BacklogProviderTest {
     }
 
     @Test
-    public void deletesExistingUser() {
-        insertSampleUser();
+    public void updatesExistingUser() {
+        final Uri uri = insertSampleUser();
+        final long id = ContentUris.parseId(uri);
 
-        final int count = shadowContentResolver.delete(UserEntry.CONTENT_URI, null, null);
+        final ContentValues contentValues = new ContentValues();
+        contentValues.put(UserEntry._ID, 1);
+        contentValues.put(UserEntry.NAME, "Hiroki Nakamura");
+        contentValues.put(UserEntry.USER_ID, "hiroki_nakamura");
+        contentValues.put(UserEntry.THUMBNAIL_URL, "/thumbnails/users/hiroki_nakamura.png");
+        contentValues.put(UserEntry.FINGERPRINT, "fingerprint");
+
+        final int count = this.shadowContentResolver.update(UserEntry.CONTENT_URI, contentValues,
+                UserEntry._ID + "= ?", new String[]{Long.toString(id)});
+        assertThat(count, equalTo(1));
+    }
+
+    @Test
+    public void deletesExistingUser() {
+        final Uri uri = insertSampleUser();
+        final Long id = ContentUris.parseId(uri);
+
+        final int count = shadowContentResolver.delete(
+                UserEntry.CONTENT_URI,
+                UserEntry._ID + "= ?", new String[]{Long.toString(id)});
         assertThat(count, equalTo(1));
     }
 
@@ -151,6 +174,7 @@ public class BacklogProviderTest {
         contentValues.put(UserEntry.NAME, "Hiroki Nakamura");
         contentValues.put(UserEntry.USER_ID, "hiroki_nakamura");
         contentValues.put(UserEntry.THUMBNAIL_URL, "/thumbnails/users/hiroki_nakamura.png");
+        contentValues.put(UserEntry.FINGERPRINT, "fingerprint");
 
         return shadowContentResolver.insert(UserEntry.CONTENT_URI, contentValues);
     }
@@ -291,6 +315,7 @@ public class BacklogProviderTest {
         contentValues.put(CommentEntry.CREATED_USER_ID, 1);
         contentValues.put(CommentEntry.CREATED, "2013-08-05T06:15:06Z");
         contentValues.put(CommentEntry.UPDATED, "2013-08-05T06:15:06Z");
+        contentValues.put(CommentEntry.FINGERPRINT, "fingerprint");
 
         final Uri uri = CommentEntry.buildCommentUriFromIssueIdUri(ISSUE_ID);
 
@@ -314,6 +339,7 @@ public class BacklogProviderTest {
         contentValues.put(IssueEntry.CREATED_DATE, "2013-02-07T08:09:49Z");
         contentValues.put(IssueEntry.UPDATED_USER_ID, 1);
         contentValues.put(IssueEntry.UPDATED_DATE, "2013-02-07T08:09:49Z");
+        contentValues.put(IssueEntry.FINGERPRINT, "fingerprint");
 
         return shadowContentResolver.insert(IssueEntry.CONTENT_URI, contentValues);
     }

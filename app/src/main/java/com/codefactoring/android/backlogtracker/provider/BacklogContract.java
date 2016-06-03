@@ -37,6 +37,7 @@ public class BacklogContract {
         String PROJECT_KEY = "project_key";
         String NAME = "name";
         String THUMBNAIL_URL = "thumbnail_url";
+        String FINGERPRINT = "fingerprint";
     }
 
     public static final class ProjectEntry implements ProjectColumns {
@@ -57,6 +58,7 @@ public class BacklogContract {
         String USER_ID = "user_id";
         String NAME = "name";
         String THUMBNAIL_URL = "thumbnail_url";
+        String FINGERPRINT = "fingerprint";
     }
 
     public static final class UserEntry implements UserColumns {
@@ -109,6 +111,7 @@ public class BacklogContract {
         String CREATED_DATE = "created_date";
         String UPDATED_USER_ID = "updated_user_id";
         String UPDATED_DATE = "updated_date";
+        String FINGERPRINT = "fingerprint";
     }
 
     public static final class IssueEntry implements IssueColumns {
@@ -196,6 +199,7 @@ public class BacklogContract {
         String CREATED_USER_ID = "created_user_id";
         String CREATED = "created";
         String UPDATED = "updated";
+        String FINGERPRINT = "fingerprint";
     }
 
     public static final class CommentEntry implements CommentColumns {

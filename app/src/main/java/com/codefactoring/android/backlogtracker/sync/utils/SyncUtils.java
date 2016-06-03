@@ -20,6 +20,13 @@ public final class SyncUtils {
 
         return null;
     }
+
+    /*
+     * From Google iosched 2015
+     */
+    public static String computeWeakHash(String string) {
+        return String.format(Locale.US, "%08x%08x", string.hashCode(), string.length());
+    }
 }
 
 
