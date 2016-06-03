@@ -3,9 +3,11 @@ package com.codefactoring.android.backlogtracker.sync.handlers;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 
 import com.codefactoring.android.backlogtracker.BuildConfig;
 import com.codefactoring.android.backlogtracker.sync.models.ProjectDto;
+import com.google.common.collect.Lists;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,15 +25,16 @@ import static com.codefactoring.android.backlogtracker.provider.BacklogContract.
 import static com.codefactoring.android.backlogtracker.provider.BacklogContract.ProjectEntry.CONTENT_URI;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.robolectric.shadows.ShadowContentProviderOperation.TYPE_DELETE;
 import static org.robolectric.shadows.ShadowContentProviderOperation.TYPE_INSERT;
+import static org.robolectric.shadows.ShadowContentProviderOperation.TYPE_UPDATE;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 public class ProjectDataHandlerTest {
-
-    private static final int INDEX_TYPE_DELETE = 0;
-    private static final int INDEX_TYPE_INSERT = 1;
 
     private Context mContext;
 
@@ -41,15 +44,55 @@ public class ProjectDataHandlerTest {
     }
 
     @Test
-    public void createsOperationDeleteAllProjectsAtFirst() {
-        final ArrayList<ContentProviderOperation> operations = new ProjectDataHandler(mContext)
-                .makeContentProviderOperations(new ArrayList<ProjectDto>());
+    public void createsOperationDeleteRemovedProject() {
+        final ProjectDataHandler projectDataHandler = new ProjectDataHandler(mContext) {
+            @Override
+            protected Cursor query() {
+                final Cursor cursor = mock(Cursor.class);
+                when(cursor.getCount()).thenReturn(1);
+                when(cursor.moveToFirst()).thenReturn(true);
+                when(cursor.getString(eq(COL_PROJECT_KEY))).thenReturn("removedId");
+                return cursor;
+            }
+        };
 
-        final ContentProviderOperation operation = operations.get(INDEX_TYPE_DELETE);
+        final ArrayList<ContentProviderOperation> operations = projectDataHandler.makeContentProviderOperations(new ArrayList<ProjectDto>());
+
+        final ContentProviderOperation operation = operations.get(0);
 
         assertThat(operation.getUri(), equalTo(CONTENT_URI));
         final ShadowContentProviderOperation shadowOperation = Shadows.shadowOf(operation);
         assertThat(shadowOperation.getType(), equalTo(TYPE_DELETE));
+    }
+
+    @Test
+    public void createsOperationUpdateProject(){
+
+        final String existingKey = "existingKey";
+
+        final ProjectDataHandler projectDataHandler = new ProjectDataHandler(mContext) {
+            @Override
+            protected Cursor query() {
+                final Cursor cursor = mock(Cursor.class);
+                when(cursor.getCount()).thenReturn(1);
+                when(cursor.moveToFirst()).thenReturn(true);
+                when(cursor.getString(eq(COL_PROJECT_KEY))).thenReturn(existingKey);
+                return cursor;
+            }
+        };
+
+        final ProjectDto projectDto = new ProjectDto();
+        projectDto.setProjectKey(existingKey);
+        projectDto.setName("updatedName");
+
+        final ArrayList<ContentProviderOperation> operations = projectDataHandler
+                .makeContentProviderOperations(Lists.newArrayList(projectDto));
+
+        final ContentProviderOperation operation = operations.get(0);
+
+        assertThat(operation.getUri(), equalTo(ProjectEntry.CONTENT_URI));
+        final ShadowContentProviderOperation shadowOperation = Shadows.shadowOf(operation);
+        assertThat(shadowOperation.getType(), equalTo(TYPE_UPDATE));
     }
 
     @Test
@@ -64,7 +107,7 @@ public class ProjectDataHandlerTest {
         final ArrayList<ContentProviderOperation> operations = new ProjectDataHandler(mContext)
                 .makeContentProviderOperations(projects);
 
-        final ContentProviderOperation operation = operations.get(INDEX_TYPE_INSERT);
+        final ContentProviderOperation operation = operations.get(0);
         assertThat(operation.getUri(), equalTo(CONTENT_URI));
 
         final ShadowContentProviderOperation shadowOperation = Shadows.shadowOf(operation);
