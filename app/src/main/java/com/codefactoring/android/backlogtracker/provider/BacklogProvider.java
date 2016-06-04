@@ -123,7 +123,20 @@ public class BacklogProvider extends ContentProvider {
             case ISSUES: {
                 final String status = uri.getQueryParameter(IssueEntry.QUERY_PARAMETER_STATUS);
                 final String created = uri.getQueryParameter(IssueEntry.QUERY_PARAMETER_CREATED_DATE);
-                retCursor = findIssuesByStatusAndCreated(projection, status, created);
+
+                if (status == null || created == null) {
+                    retCursor = db.query(
+                            IssueEntry.TABLE_NAME,
+                            projection,
+                            selection,
+                            selectionArgs,
+                            null,
+                            null,
+                            sortOrder
+                    );
+                } else {
+                    retCursor = findIssuesByStatusAndCreated(projection, status, created);
+                }
                 break;
             }
             case ISSUE: {
@@ -213,14 +226,6 @@ public class BacklogProvider extends ContentProvider {
                     throw new SQLException("Failed to insert row into " + uri);
                 break;
             }
-            case ISSUE_COMMENTS: {
-                final long _id = db.insert(CommentEntry.TABLE_NAME, null, values);
-                if (_id > 0)
-                    returnUri = ContentUris.withAppendedId(CommentEntry.CONTENT_URI, _id);
-                else
-                    throw new SQLException("Failed to insert row into " + uri);
-                break;
-            }
             case COMMENTS: {
                 final long _id = db.insert(CommentEntry.TABLE_NAME, null, values);
                 if (_id > 0)
@@ -287,6 +292,10 @@ public class BacklogProvider extends ContentProvider {
         switch (match) {
             case PROJECTS:
                 rowsUpdated = db.update(ProjectEntry.TABLE_NAME, values, selection,
+                        selectionArgs);
+                break;
+            case ISSUES:
+                rowsUpdated = db.update(IssueEntry.TABLE_NAME, values, selection,
                         selectionArgs);
                 break;
             case USERS:

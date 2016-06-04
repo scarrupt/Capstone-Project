@@ -275,7 +275,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
         final IssueTypeDataHandler issueTypeDataHandler = new IssueTypeDataHandler();
         operations.addAll(issueTypeDataHandler.makeContentProviderOperations(issueTypes));
 
-        final IssueDataHandler issueDataHandler = new IssueDataHandler();
+        final IssueDataHandler issueDataHandler = new IssueDataHandler(mContext);
         operations.addAll(issueDataHandler.makeContentProviderOperations(issues));
 
         final CommentDataFetcher commentDataFetcher = new CommentDataFetcher(mBacklogApiClient);

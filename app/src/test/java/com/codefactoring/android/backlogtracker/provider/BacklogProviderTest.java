@@ -288,6 +288,34 @@ public class BacklogProviderTest {
         assertThat(cursor.getCount(), equalTo(1));
     }
 
+    @Test
+    public void updatesExistingIssue() {
+        final Uri uri = insertSampleIssue();
+        final long id = ContentUris.parseId(uri);
+
+        final ContentValues contentValues = new ContentValues();
+        contentValues.put(IssueEntry._ID, 1);
+        contentValues.put(IssueEntry.PROJECT_ID, 1);
+        contentValues.put(IssueEntry.TYPE_ID, 1);
+        contentValues.put(IssueEntry.ISSUE_KEY, "ISSUE_KEY");
+        contentValues.put(IssueEntry.SUMMARY, "summary");
+        contentValues.put(IssueEntry.DESCRIPTION, "description");
+        contentValues.put(IssueEntry.PRIORITY, "priority");
+        contentValues.put(IssueEntry.STATUS, "Open");
+        contentValues.put(IssueEntry.MILESTONES, "milestones");
+        contentValues.put(IssueEntry.ASSIGNEE_ID, 1);
+        contentValues.put(IssueEntry.CREATED_USER_ID, 1);
+        contentValues.put(IssueEntry.CREATED_DATE, "2013-02-07T08:09:49Z");
+        contentValues.put(IssueEntry.UPDATED_USER_ID, 1);
+        contentValues.put(IssueEntry.UPDATED_DATE, "2013-02-07T08:09:49Z");
+        contentValues.put(IssueEntry.FINGERPRINT, "fingerprint");
+
+
+        final int count = this.shadowContentResolver.update(IssueEntry.CONTENT_URI, contentValues,
+                IssueEntry._ID + "= ?", new String[]{Long.toString(id)});
+        assertThat(count, equalTo(1));
+    }
+
     /*
      * Comments
      */
