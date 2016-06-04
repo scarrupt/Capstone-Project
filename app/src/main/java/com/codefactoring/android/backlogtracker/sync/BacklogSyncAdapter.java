@@ -284,7 +284,7 @@ public class BacklogSyncAdapter extends AbstractThreadedSyncAdapter {
             comments.addAll(commentDataFetcher.getCommentList(issue.getId()));
         }
 
-        final CommentDataHandler commentDataHandler = new CommentDataHandler();
+        final CommentDataHandler commentDataHandler = new CommentDataHandler(mContext);
         operations.addAll(commentDataHandler.makeContentProviderOperations(comments));
 
         return operations;

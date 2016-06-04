@@ -300,6 +300,25 @@ public class BacklogProviderTest {
     }
 
     @Test
+    public void updatesExistingComment() {
+        final Uri uri = insertSampleComment();
+        final long id = ContentUris.parseId(uri);
+
+        final ContentValues contentValues = new ContentValues();
+        contentValues.put(CommentEntry._ID, 1);
+        contentValues.put(CommentEntry.ISSUE_ID, 1);
+        contentValues.put(CommentEntry.CONTENT, "test");
+        contentValues.put(CommentEntry.CREATED_USER_ID, 1);
+        contentValues.put(CommentEntry.CREATED, "2013-08-05T06:15:06Z");
+        contentValues.put(CommentEntry.UPDATED, "2013-08-05T06:15:06Z");
+        contentValues.put(CommentEntry.FINGERPRINT, "fingerprint");
+
+        final int count = this.shadowContentResolver.update(CommentEntry.CONTENT_URI, contentValues,
+                CommentEntry._ID + "= ?", new String[]{Long.toString(id)});
+        assertThat(count, equalTo(1));
+    }
+
+    @Test
     public void deletesExistingComment() {
         insertSampleComment();
 
@@ -317,9 +336,7 @@ public class BacklogProviderTest {
         contentValues.put(CommentEntry.UPDATED, "2013-08-05T06:15:06Z");
         contentValues.put(CommentEntry.FINGERPRINT, "fingerprint");
 
-        final Uri uri = CommentEntry.buildCommentUriFromIssueIdUri(ISSUE_ID);
-
-        return shadowContentResolver.insert(uri, contentValues);
+        return shadowContentResolver.insert(CommentEntry.CONTENT_URI, contentValues);
     }
 
 

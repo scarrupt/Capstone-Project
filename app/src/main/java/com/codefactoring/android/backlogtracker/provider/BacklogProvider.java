@@ -150,6 +150,18 @@ public class BacklogProvider extends ContentProvider {
                 );
                 break;
             }
+            case COMMENTS: {
+                retCursor = db.query(
+                        CommentEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -202,6 +214,14 @@ public class BacklogProvider extends ContentProvider {
                 break;
             }
             case ISSUE_COMMENTS: {
+                final long _id = db.insert(CommentEntry.TABLE_NAME, null, values);
+                if (_id > 0)
+                    returnUri = ContentUris.withAppendedId(CommentEntry.CONTENT_URI, _id);
+                else
+                    throw new SQLException("Failed to insert row into " + uri);
+                break;
+            }
+            case COMMENTS: {
                 final long _id = db.insert(CommentEntry.TABLE_NAME, null, values);
                 if (_id > 0)
                     returnUri = ContentUris.withAppendedId(CommentEntry.CONTENT_URI, _id);
@@ -271,6 +291,10 @@ public class BacklogProvider extends ContentProvider {
                 break;
             case USERS:
                 rowsUpdated = db.update(UserEntry.TABLE_NAME, values, selection,
+                        selectionArgs);
+                break;
+            case COMMENTS:
+                rowsUpdated = db.update(CommentEntry.TABLE_NAME, values, selection,
                         selectionArgs);
                 break;
             default:
